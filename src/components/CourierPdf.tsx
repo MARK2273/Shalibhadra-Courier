@@ -7,6 +7,7 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { numberToWords } from "../utils/numberToWords";
+import { currentConfig } from "../constants/courierConfig";
 
 // Register fonts if needed, otherwise use default Helvetica
 // Font.register({ family: 'Roboto', src: 'https://fonts.gstatic.com/s/roboto/v20/KFOmCnqEu92Fr1Mu4mxK.woff2' });
@@ -88,7 +89,9 @@ const styles = StyleSheet.create({
   },
   addressRow: {
     flexDirection: "row",
-    height: 100, // Fixed height for address section
+    // height: 100, // Removed fixed height
+    // minHeight: 100, // Removed minHeight to avoid potential layout issues
+    flexShrink: 0, // Prevent shrinking, allowing expansion
     borderBottomWidth: 1,
     borderBottomColor: "#000",
   },
@@ -101,6 +104,7 @@ const styles = StyleSheet.create({
   receiverBox: {
     width: "50%",
     padding: 5,
+    paddingBottom: 10, // Added extra padding for dynamic space
   },
   sectionTitle: {
     fontSize: 8,
@@ -387,6 +391,7 @@ interface CourierData {
   routing: any;
   barcodeBase64?: string;
   qrCodeBase64?: string;
+  // billingAmount removed as it is inside 'other'
 }
 
 const CourierPdf = ({ data }: { data: CourierData }) => {
@@ -408,9 +413,11 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
           <View style={styles.row}>
             <View style={styles.logoSection}>
               <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-                Shalibhadra
+                {currentConfig.name}
               </Text>
-              <Text style={{ fontSize: 24, fontWeight: "bold" }}>Couriers</Text>
+              <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+                {currentConfig.subName}
+              </Text>
               <Text style={{ fontSize: 10 }}>Courier & Cargo</Text>
             </View>
             <View style={styles.originDestSection}>
@@ -441,15 +448,13 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               <Text style={{ marginTop: 2, fontSize: 9 }}>
                 (AWB No): {data.header.awbNo}
               </Text>
-              <Text style={{ fontSize: 8 }}>
-                https://www.cityinternational.in
-              </Text>
+              <Text style={{ fontSize: 8 }}>{currentConfig.website}</Text>
             </View>
           </View>
 
           {/* Address Bar */}
           <View style={styles.addressBar}>
-            <Text>94/- Kanteshvar Soc. Opp Shardha Soc. Lalita Chowk...</Text>
+            <Text>{currentConfig.address}</Text>
           </View>
 
           {/* Sender / Receiver */}
@@ -468,19 +473,6 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               <Text style={{ marginTop: 4 }}>
                 Contact: {data.receiver.contact}
               </Text>
-              <View
-                style={{
-                  marginTop: 10,
-                  alignSelf: "flex-end",
-                  borderWidth: 1,
-                  borderColor: "#000",
-                  padding: 2,
-                }}
-              >
-                <Text style={{ fontSize: 8 }}>
-                  {data.header.boxNumber ? "Close" : ""}
-                </Text>
-              </View>
             </View>
           </View>
 
@@ -639,8 +631,8 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                 NO CLAIMS FOR SHORT / LATE DELIVERY WILL BE ENTERTAINED.
               </Text>
               <Text style={{ marginTop: 2, fontWeight: "bold" }}>
-                IN CASE OF LOST SHIPMENT, CITY INTERNATIONAL NOT LIABILITY ANY
-                RISK CHARGE
+                IN CASE OF LOST SHIPMENT, {currentConfig.name.toUpperCase()}{" "}
+                COURIERS NOT LIABILITY ANY RISK CHARGE
               </Text>
             </View>
             <View style={styles.qrSection}>
@@ -704,9 +696,11 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
           <View style={[styles.hannyRow, { height: 80 }]}>
             <View style={styles.hannyHeaderLeft}>
               <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-                Shalibhadra
+                {currentConfig.name}
               </Text>
-              <Text style={{ fontSize: 22, fontWeight: "bold" }}>Couriers</Text>
+              <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                {currentConfig.subName}
+              </Text>
               <Text style={{ fontSize: 10, marginTop: 4, textAlign: "center" }}>
                 Courier & Cargo
               </Text>
@@ -740,7 +734,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                 (AWB No): {data.header.awbNo}
               </Text>
               <Text style={{ fontSize: 9, fontWeight: "bold" }}>
-                www.cityinternational.in
+                {currentConfig.website}
               </Text>
             </View>
           </View>
@@ -804,9 +798,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
 
           {/* Footer */}
           <View style={styles.labelFooter}>
-            <Text style={{ fontSize: 12 }}>
-              Shalibhadra Couriers , Surat (PXC-SELF)
-            </Text>
+            <Text style={{ fontSize: 12 }}>{currentConfig.footerText}</Text>
           </View>
         </View>
       </Page>
@@ -1075,9 +1067,9 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                   DESCRIPTION & VALUES OF GOOD :
                 </Text>
                 <Text style={{ lineHeight: 1.2 }}>
-                  I/WE authorize City International. to make Computerised
+                  I/WE authorize Shalibhadra Couriers. to make Computerised
                   invoice on my/ourbehalf for custom purpose. I/WE authorize
-                  City International as my /our agent to ship my/our shipments
+                  Shalibhadra Couriers as my /our agent to ship my/our shipments
                   through courier or cargo mode. This shipper has
                   read,understood and agree's to the standard terms and
                   conditions of carriage.
@@ -1111,17 +1103,15 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
           {/* Header */}
           <View style={[styles.hannyRow, { height: 80 }]}>
             <View style={styles.hannyHeaderLeft}>
-              <Text style={{ fontSize: 22, fontWeight: "bold" }}>Hanny</Text>
               <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-                Logistics
+                Shalibhadra
               </Text>
+              <Text style={{ fontSize: 22, fontWeight: "bold" }}>Couriers</Text>
               <Text style={{ fontSize: 7, marginTop: 4 }}>
-                94/- Kantesh War Soc. Opp Shardha Soc.
+                UG-418 TURNING POINT COMPLEX NEAR MAAKHAN BHOG
               </Text>
-              <Text style={{ fontSize: 7 }}>
-                Near Lalita Chowk, katargam, surat - 395006 /
-              </Text>
-              <Text style={{ fontSize: 7 }}>8320561612</Text>
+              <Text style={{ fontSize: 7 }}>GHOD DOD SURAT-395007 /</Text>
+              <Text style={{ fontSize: 7 }}>9909408678</Text>
             </View>
             <View style={styles.hannyHeaderMiddle}>
               <View style={styles.hannyGridBox}>
@@ -1152,7 +1142,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                 (AWB No): {data.header.awbNo}
               </Text>
               <Text style={{ fontSize: 9, fontWeight: "bold" }}>
-                www.cityinternational.in
+                www.shalibhadracourier.com
               </Text>
             </View>
           </View>
@@ -1306,7 +1296,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               If any issue then first contact our OPS team
             </Text>
             <Text style={{ fontSize: 10, fontWeight: "bold", marginTop: 10 }}>
-              HannyLogistics@gmail.com - 8866336789 / 8320561612
+              ShalibhadraCouriers@gmail.com - 9909408678
             </Text>
           </View>
 

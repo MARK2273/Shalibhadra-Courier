@@ -78,5 +78,5 @@ export const numberToWords = (num: number): string => {
     return str;
   };
 
-  return inWords(num).trim() + " Only";
+  return inWords(num).trim();
 };

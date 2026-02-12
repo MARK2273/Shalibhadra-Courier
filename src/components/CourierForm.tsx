@@ -4,6 +4,7 @@ import { countryList, serviceOptions } from "../constants/formOptions";
 import { numberToWords } from "../utils/numberToWords";
 import { pdf } from "@react-pdf/renderer";
 import CourierPdf from "./CourierPdf";
+import { currentConfig } from "../constants/courierConfig";
 import bwipjs from "bwip-js";
 import QRCode from "qrcode";
 
@@ -27,6 +28,7 @@ interface CourierData {
     invoiceNo: string;
     invoiceDate: string;
     boxNumber: string;
+    serviceDetails: string; // Added field for extra service info
   };
   sender: {
     name: string; // Exporter/Shipper
@@ -55,6 +57,7 @@ interface CourierData {
     currency: string;
     totalAmount: number;
     amountInWords: string; // Added field
+    billingAmount: number; // Renamed from ourAmount
   };
 }
 
@@ -69,6 +72,7 @@ const CourierForm: React.FC = () => {
       invoiceNo: "",
       invoiceDate: "",
       boxNumber: "",
+      serviceDetails: "",
     },
     sender: {
       name: "",
@@ -107,6 +111,7 @@ const CourierForm: React.FC = () => {
       currency: "INR",
       totalAmount: 0,
       amountInWords: "Zero Only",
+      billingAmount: 0,
     },
   });
 
@@ -261,9 +266,8 @@ const CourierForm: React.FC = () => {
         {/* Header Bar */}
         <div className="dashboard-header">
           <div className="logo-section">
-            <h1>Shalibhadra</h1>
-            <br />
-            <h1>Couriers</h1>
+            <h1>{currentConfig.displayName}</h1>
+
             <p>Courier & Cargo</p>
           </div>
           <div className="header-fields">
@@ -366,23 +370,24 @@ const CourierForm: React.FC = () => {
         <div className="parties-container">
           <div className="party-box sender-box">
             <h3>Exporter (Sender)</h3>
+            <input
+              type="text"
+              value={formData.sender.name}
+              onChange={(e) =>
+                handleNestedChange("sender", "name", e.target.value)
+              }
+              placeholder="Sender Name"
+              className="address-input-name"
+              style={{ marginBottom: "5px", width: "100%" }}
+            />
             <textarea
               rows={3}
-              value={
-                formData.sender.name +
-                (formData.sender.address ? "\n" + formData.sender.address : "")
+              value={formData.sender.address}
+              onChange={(e) =>
+                handleNestedChange("sender", "address", e.target.value)
               }
-              onChange={(e) => {
-                const parts = e.target.value.split("\n");
-                handleNestedChange("sender", "name", parts[0]);
-                handleNestedChange(
-                  "sender",
-                  "address",
-                  parts.slice(1).join("\n"),
-                );
-              }}
               className="address-area"
-              placeholder="Sender Name&#10;Address Line 1&#10;Address Line 2"
+              placeholder="Address Line 1&#10;Address Line 2"
             />
             <div className="sub-field">
               <label>Adhar No:</label>
@@ -422,25 +427,24 @@ const CourierForm: React.FC = () => {
 
           <div className="party-box receiver-box">
             <h3>Consignee (Receiver)</h3>
+            <input
+              type="text"
+              value={formData.receiver.name}
+              onChange={(e) =>
+                handleNestedChange("receiver", "name", e.target.value)
+              }
+              placeholder="Receiver Name"
+              className="address-input-name"
+              style={{ marginBottom: "5px", width: "100%" }}
+            />
             <textarea
               rows={3}
-              value={
-                formData.receiver.name +
-                (formData.receiver.address
-                  ? "\n" + formData.receiver.address
-                  : "")
+              value={formData.receiver.address}
+              onChange={(e) =>
+                handleNestedChange("receiver", "address", e.target.value)
               }
-              onChange={(e) => {
-                const parts = e.target.value.split("\n");
-                handleNestedChange("receiver", "name", parts[0]);
-                handleNestedChange(
-                  "receiver",
-                  "address",
-                  parts.slice(1).join("\n"),
-                );
-              }}
               className="address-area"
-              placeholder="Receiver Name&#10;Address Line 1&#10;Address Line 2"
+              placeholder="Address Line 1&#10;Address Line 2"
             />
             <div className="sub-field">
               <label>Contact No:</label>
@@ -481,21 +485,55 @@ const CourierForm: React.FC = () => {
               placeholder="Loading Port"
             />
           </div>
-          <div className="r-item">
-            <label>Service</label>
-            <select
-              value={formData.header.service}
-              onChange={(e) =>
-                handleNestedChange("header", "service", e.target.value)
-              }
+          <div className="r-item" style={{ gridColumn: "span 2" }}>
+            <div
+              style={{ display: "flex", gap: "1rem", alignItems: "flex-end" }}
             >
-              <option value="">Select Service</option>
-              {serviceOptions.map((service) => (
-                <option key={service} value={service}>
-                  {service}
-                </option>
-              ))}
-            </select>
+              <div style={{ flex: 1 }}>
+                <label>Service</label>
+
+                <select
+                  value={formData.header.service}
+                  onChange={(e) =>
+                    handleNestedChange("header", "service", e.target.value)
+                  }
+                >
+                  <option value="">Select Service</option>
+                  {serviceOptions.map((service) => (
+                    <option key={service} value={service}>
+                      {service}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {formData.header.service && (
+                <div style={{ flex: 1.5 }}>
+                  <label
+                    style={{
+                      fontSize: "0.85rem",
+                      fontWeight: 600,
+                      color: "var(--text-secondary)",
+                      marginBottom: "0.4rem",
+                      display: "block",
+                    }}
+                  >
+                    Tracking No
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.header.serviceDetails || ""}
+                    onChange={(e) =>
+                      handleNestedChange(
+                        "header",
+                        "serviceDetails",
+                        e.target.value,
+                      )
+                    }
+                    placeholder="Enter Tracking No"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -642,6 +680,7 @@ const CourierForm: React.FC = () => {
               <input
                 type="number"
                 min="0"
+                step="any"
                 value={formData.other.volumetricWeight}
                 onChange={(e) =>
                   handleNestedChange(
@@ -659,6 +698,7 @@ const CourierForm: React.FC = () => {
               <input
                 type="number"
                 min="0"
+                step="any"
                 value={formData.other.weight}
                 onChange={(e) =>
                   handleNestedChange("other", "weight", e.target.value)
@@ -670,6 +710,19 @@ const CourierForm: React.FC = () => {
             <div className="total-row main-total">
               <span>Total Amount:</span>
               <span>{formData.other.totalAmount}</span>
+            </div>
+            <div className="total-row">
+              <span>Billing Amount:</span>
+              <input
+                type="number"
+                min="0"
+                value={formData.other.billingAmount}
+                onChange={(e) =>
+                  handleNestedChange("other", "billingAmount", e.target.value)
+                }
+                className="small-input"
+                placeholder="0.00"
+              />
             </div>
           </div>
         </div>

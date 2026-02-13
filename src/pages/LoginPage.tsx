@@ -5,7 +5,6 @@ import { currentConfig } from "../constants/courierConfig";
 import AuthCard from "../components/ui/AuthCard";
 import InputField from "../components/ui/InputField";
 import Button from "../components/ui/Button";
-import Checkbox from "../components/ui/Checkbox";
 import "../styles/OneCourierTheme.css";
 
 const LoginPage = () => {

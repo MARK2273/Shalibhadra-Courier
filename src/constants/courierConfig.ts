@@ -16,7 +16,7 @@ export const courierConfigs: Record<string, CourierConfig> = {
     name: "Shalibhadra",
     subName: "Couriers",
     displayName: "Shalibhadra Couriers",
-    website: "www.shalibhadracourier.com",
+    website: "https://shalibhadra-courier.vercel.app",
     address:
       "UG-418 TURNING POINT COMPLEX NEAR MAAKHAN BHOG GHOD DOD SURAT-395007",
       footerText: "Shalibhadra Couriers , Surat (PXC-SELF)"
@@ -25,7 +25,7 @@ export const courierConfigs: Record<string, CourierConfig> = {
     name: "Navkar",
     subName: "Couriers", // Assuming similarity
     displayName: "Navkar Couriers",
-    website: "www.navkarcourier.com", // Placeholder, user can update
+    website: "www.navkar-courier.vercel.app", // Placeholder, user can update
     address: "SHOP NO 12, NAKSHATRA HEIGHTS, NEAR MADHUVAN CIRCLE, ADAJAN, SURAT-395009", // Placeholder
     footerText: "Navkar Couriers , Surat (PXC-SELF)"
   },

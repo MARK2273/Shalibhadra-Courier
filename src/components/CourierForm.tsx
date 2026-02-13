@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../api/api";
 import "../styles/FormStyles.css";
 import { countryList, serviceOptions } from "../constants/formOptions";
 import { numberToWords } from "../utils/numberToWords";
@@ -215,6 +216,27 @@ const CourierForm: React.FC = () => {
     setIsGenerating(true);
 
     try {
+      // 0. Save to Backend
+      try {
+        const payload = {
+          sender_name: formData.sender.name,
+          sender_address: formData.sender.address,
+          receiver_name: formData.receiver.name,
+          receiver_address: formData.receiver.address,
+          invoice_number: formData.header.invoiceNo,
+          invoice_date: formData.header.invoiceDate, // Ensure format matches date or string
+          origin: formData.header.origin,
+          destination: formData.header.destination,
+          box_count: parseInt(formData.header.boxNumber) || 1,
+          packages: formData.items,
+        };
+        await api.post("/form/create", payload);
+        console.log("Shipment saved to backend");
+      } catch (apiError) {
+        console.error("Failed to save shipment:", apiError);
+        alert("Failed to save shipment to database, but proceeding with PDF.");
+      }
+
       // 1. Generate Barcode (Code 128)
       let barcodeBase64 = "";
       try {

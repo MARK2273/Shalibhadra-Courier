@@ -67,9 +67,6 @@ interface CourierData {
   };
   routing: {
     portOfLoading: string;
-    finalDestination: string;
-    originCountry: string;
-    finalCountry: string;
   };
   items: LineItem[];
   other: {
@@ -111,9 +108,6 @@ const CourierForm: React.FC = () => {
     },
     routing: {
       portOfLoading: "",
-      finalDestination: "",
-      originCountry: "",
-      finalCountry: "",
     },
     items: [
       {
@@ -233,19 +227,8 @@ const CourierForm: React.FC = () => {
 
     try {
       try {
-        const payload = {
-          sender_name: formData.sender.name,
-          sender_address: formData.sender.address,
-          receiver_name: formData.receiver.name,
-          receiver_address: formData.receiver.address,
-          invoice_number: formData.header.invoiceNo,
-          invoice_date: formData.header.invoiceDate,
-          origin: formData.header.origin,
-          destination: formData.header.destination,
-          box_count: parseInt(formData.header.boxNumber) || 1,
-          packages: formData.items,
-        };
-        await api.post("/form/create", payload);
+        // Send the nested formData structure directly to match the backend schema
+        await api.post("/form/create", formData);
         console.log("Shipment saved to backend");
       } catch (apiError) {
         console.error("Failed to save shipment:", apiError);
@@ -368,6 +351,7 @@ const CourierForm: React.FC = () => {
             />
             <FormInput
               label="Invoice Date"
+              type="date"
               icon={Calendar}
               value={formData.header.invoiceDate}
               onChange={(e) =>
@@ -501,7 +485,7 @@ const CourierForm: React.FC = () => {
 
         {/* Routing */}
         <ShipmentSectionCard title="Routing Information" icon={Anchor}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormInput
               label="Port of Loading"
               icon={Anchor}

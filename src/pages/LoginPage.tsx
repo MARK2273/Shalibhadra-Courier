@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
-import { currentConfig } from "../constants/courierConfig";
+import { brandKey, currentConfig } from "../constants/courierConfig";
 // Removed old CSS import
 // import "../styles/OneCourierTheme.css";
 
@@ -18,7 +18,11 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await api.post("/auth/login", { email, password });
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+        tenantId: brandKey,
+      });
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
       navigate("/dashboard"); // Redirect to dashboard instead of form

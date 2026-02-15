@@ -4,7 +4,6 @@ import { countryList, serviceOptions } from "../constants/formOptions";
 import { numberToWords } from "../utils/numberToWords";
 import { pdf } from "@react-pdf/renderer";
 import CourierPdf from "./CourierPdf";
-import { currentConfig } from "../constants/courierConfig";
 import bwipjs from "bwip-js";
 import QRCode from "qrcode";
 import {
@@ -17,11 +16,10 @@ import {
   Mail,
   CreditCard,
   Anchor,
-  Flag,
   Globe,
   Truck,
   Printer,
-  Save,
+  Hash,
 } from "lucide-react";
 
 // Import Reusable Components
@@ -539,7 +537,6 @@ const CourierForm: React.FC = () => {
         {/* Items Table */}
         <ShipmentItemsTable
           items={formData.items}
-          currency={formData.other.currency}
           onItemChange={handleItemChange}
           onAddItem={addItem}
           onRemoveItem={removeItem}
@@ -548,7 +545,6 @@ const CourierForm: React.FC = () => {
 
         {/* Summary */}
         <SummaryCard
-          currency={formData.other.currency}
           pcs={formData.other.pcs}
           weight={formData.other.weight}
           volumetricWeight={formData.other.volumetricWeight}

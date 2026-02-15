@@ -1,5 +1,5 @@
-import React, { SelectHTMLAttributes } from "react";
-import { LucideIcon, ChevronDown } from "lucide-react";
+import React, { type SelectHTMLAttributes } from "react";
+import { type LucideIcon, ChevronDown } from "lucide-react";
 
 interface FormSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label: string;

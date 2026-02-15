@@ -16,7 +16,7 @@ interface Shipment {
 
 const Dashboard: React.FC = () => {
   // Initialize with empty array to show Empty State
-  const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [shipments] = useState<Shipment[]>([]);
 
   return (
     <div className="space-y-6">

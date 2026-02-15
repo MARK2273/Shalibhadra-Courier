@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Package,
-  Truck,
-  MapPin,
-  Globe,
-  Clock,
-  ShieldCheck,
-} from "lucide-react";
+import { Globe, Truck, MapPin } from "lucide-react";
 
 const Services: React.FC = () => {
   const services = [

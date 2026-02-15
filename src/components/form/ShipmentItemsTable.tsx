@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  Trash2,
-  Plus,
-  Box,
-  Hash,
-  ClipboardList,
-  Layers,
-  IndianRupee,
-} from "lucide-react";
-import FormInput from "./FormInput";
+import { Trash2, Plus, Box, ClipboardList, IndianRupee } from "lucide-react";
 
 interface LineItem {
   id: number;
@@ -22,7 +13,6 @@ interface LineItem {
 
 interface ShipmentItemsTableProps {
   items: LineItem[];
-  currency: string;
   onItemChange: (id: number, field: keyof LineItem, value: any) => void;
   onAddItem: () => void;
   onRemoveItem: (id: number) => void;
@@ -31,7 +21,6 @@ interface ShipmentItemsTableProps {
 
 const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
   items,
-  currency,
   onItemChange,
   onAddItem,
   onRemoveItem,

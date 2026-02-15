@@ -1,9 +1,8 @@
 import React from "react";
-import { IndianRupee, PackageCheck, Scale, Box } from "lucide-react";
+import { IndianRupee, Scale, Box } from "lucide-react";
 import FormInput from "./FormInput";
 
 interface SummaryCardProps {
-  currency: string;
   pcs: number;
   weight: string;
   volumetricWeight: string;
@@ -13,7 +12,6 @@ interface SummaryCardProps {
 }
 
 const SummaryCard: React.FC<SummaryCardProps> = ({
-  currency,
   pcs,
   weight,
   volumetricWeight,

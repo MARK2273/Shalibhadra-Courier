@@ -7,6 +7,7 @@ interface SummaryCardProps {
   weight: string;
   volumetricWeight: string;
   totalAmount: number;
+  billingAmount: number;
   amountInWords: string;
   onFieldChange: (field: string, value: any) => void;
 }
@@ -16,6 +17,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   weight,
   volumetricWeight,
   totalAmount,
+  billingAmount,
   amountInWords,
   onFieldChange,
 }) => {
@@ -72,6 +74,17 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             icon={Scale}
             containerClassName="col-span-2"
             className="text-center font-bold text-lg"
+          />
+
+          <FormInput
+            label="Billable Amount"
+            type="number"
+            min="0"
+            value={billingAmount || ""}
+            onChange={(e) => onFieldChange("billingAmount", Number(e.target.value))}
+            icon={IndianRupee}
+            containerClassName="col-span-2"
+            className="text-center font-bold text-lg bg-green-50 border-green-200 text-green-700"
           />
 
           <div className="col-span-2 mt-4 pt-4 border-t border-gray-100 flex items-center justify-between bg-blue-50/50 p-4 rounded-xl border border-blue-100">

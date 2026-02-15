@@ -17,7 +17,7 @@ interface Shipment {
   receiver_name: string;
   destination: string;
   // status: string; // Not yet in backend, simulating or removing for now
-  total_amount: number;
+  billing_amount: number;
   awb_no: string;
 }
 
@@ -118,7 +118,7 @@ const Dashboard: React.FC = () => {
                 value: `₹${totalRevenue.toLocaleString()}`,
                 color: "bg-green-50",
                 text: "text-green-600",
-              }
+              },
             ].map((stat, idx) => (
               <div
                 key={idx}
@@ -250,7 +250,7 @@ const Dashboard: React.FC = () => {
                     <td className="px-6 py-4">{shipment.receiver_name}</td>
                     <td className="px-6 py-4">{shipment.destination}</td>
                     <td className="px-6 py-4 text-right font-medium text-gray-900">
-                      ₹{shipment.total_amount}
+                      ₹{shipment.billing_amount}
                     </td>
                   </tr>
                 ))}

@@ -1,22 +1,62 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Package, Plus } from "lucide-react";
+import { Package, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import api from "../api/api";
+import { format } from "date-fns";
+// import debounce from "lodash.debounce"; // Or simple timeout
 
-// Mock Data removed, using state for real data simulation
-// In a real app, this would be fetched from an API
 interface Shipment {
   id: string;
-  date: string;
-  sender: string;
-  receiver: string;
+  shipment_date: string;
+  sender_name: string;
+  receiver_name: string;
   destination: string;
-  status: string;
-  amount: string;
+  // status: string; // Not yet in backend, simulating or removing for now
+  total_amount: number;
+  awb_no: string;
 }
 
 const Dashboard: React.FC = () => {
-  // Initialize with empty array to show Empty State
-  const [shipments] = useState<Shipment[]>([]);
+  const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  // Consolidated effect for fetching shipments
+  React.useEffect(() => {
+    const fetchShipments = async () => {
+      setLoading(true);
+      try {
+        const response = await api.get(
+          `/form/mydata?page=${page}&limit=10&search=${search}`,
+        );
+        setShipments(response.data.data);
+        setTotalPages(response.data.meta.totalPages);
+        setTotalCount(response.data.meta.total);
+      } catch (error) {
+        console.error("Failed to fetch shipments", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Debounce logic: Only delay if there's a search term
+    const delay = search ? 500 : 0;
+
+    const timer = setTimeout(() => {
+      fetchShipments();
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [page, search]);
+
+  // Handle search input change - reset page to 1
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setPage(1); // Reset to first page on new search
+  };
 
   return (
     <div className="space-y-6">
@@ -82,15 +122,20 @@ const Dashboard: React.FC = () => {
 
       {/* Recent Shipments Table Container */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[400px] flex flex-col">
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+        <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
           <h2 className="text-lg font-semibold text-gray-800">
             Recent Shipments
           </h2>
-          {shipments.length > 0 && (
-            <button className="text-sm text-primary hover:text-blue-700 font-medium">
-              View All
-            </button>
-          )}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <input
+              type="text"
+              placeholder="Search shipments..."
+              className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-full sm:w-64"
+              value={search}
+              onChange={handleSearchChange}
+            />
+          </div>
         </div>
 
         {shipments.length === 0 ? (
@@ -136,35 +181,56 @@ const Dashboard: React.FC = () => {
                     className="hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-6 py-4 font-medium text-gray-900">
-                      {shipment.id}
+                      {shipment.awb_no || "N/A"}
                     </td>
-                    <td className="px-6 py-4">{shipment.date}</td>
-                    <td className="px-6 py-4">{shipment.sender}</td>
-                    <td className="px-6 py-4">{shipment.receiver}</td>
+                    <td className="px-6 py-4">
+                      {shipment.shipment_date
+                        ? format(
+                            new Date(shipment.shipment_date),
+                            "dd MMM yyyy",
+                          )
+                        : "N/A"}
+                    </td>
+                    <td className="px-6 py-4">{shipment.sender_name}</td>
+                    <td className="px-6 py-4">{shipment.receiver_name}</td>
                     <td className="px-6 py-4">{shipment.destination}</td>
                     <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                ${
-                                                  shipment.status ===
-                                                  "Delivered"
-                                                    ? "bg-green-100 text-green-800"
-                                                    : shipment.status ===
-                                                        "In Transit"
-                                                      ? "bg-blue-100 text-blue-800"
-                                                      : "bg-yellow-100 text-yellow-800"
-                                                }`}
-                      >
-                        {shipment.status}
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        In Transit
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right font-medium text-gray-900">
-                      {shipment.amount}
+                      ₹{shipment.total_amount}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {shipments.length > 0 && (
+          <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center bg-gray-50">
+            <span className="text-sm text-gray-500">
+              Showing Page {page} of {totalPages} ({totalCount} results)
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="p-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="p-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
       </div>

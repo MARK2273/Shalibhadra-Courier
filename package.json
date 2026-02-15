@@ -13,6 +13,7 @@
     "@react-pdf/renderer": "^4.3.2",
     "axios": "^1.13.5",
     "bwip-js": "^4.8.0",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.564.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.0",

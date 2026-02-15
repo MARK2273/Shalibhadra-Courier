@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import api from "../api/api";
-import "../styles/FormStyles.css";
 import { countryList, serviceOptions } from "../constants/formOptions";
 import { numberToWords } from "../utils/numberToWords";
 import { pdf } from "@react-pdf/renderer";
@@ -8,6 +7,30 @@ import CourierPdf from "./CourierPdf";
 import { currentConfig } from "../constants/courierConfig";
 import bwipjs from "bwip-js";
 import QRCode from "qrcode";
+import {
+  MapPin,
+  Calendar,
+  FileText,
+  Box,
+  User,
+  Phone,
+  Mail,
+  CreditCard,
+  Anchor,
+  Flag,
+  Globe,
+  Truck,
+  Printer,
+  Save,
+} from "lucide-react";
+
+// Import Reusable Components
+import ShipmentSectionCard from "./form/ShipmentSectionCard";
+import FormInput from "./form/FormInput";
+import FormSelect from "./form/FormSelect";
+import FormTextArea from "./form/FormTextArea";
+import ShipmentItemsTable from "./form/ShipmentItemsTable";
+import SummaryCard from "./form/SummaryCard";
 
 interface LineItem {
   id: number;
@@ -29,26 +52,26 @@ interface CourierData {
     invoiceNo: string;
     invoiceDate: string;
     boxNumber: string;
-    serviceDetails: string; // Added field for extra service info
+    serviceDetails: string;
   };
   sender: {
-    name: string; // Exporter/Shipper
+    name: string;
     address: string;
     adhaar: string;
-    contact: string; // Added
-    email: string; // Added
+    contact: string;
+    email: string;
   };
   receiver: {
-    name: string; // Consignee
+    name: string;
     address: string;
     contact: string;
-    email: string; // Added
+    email: string;
   };
   routing: {
     portOfLoading: string;
     finalDestination: string;
     originCountry: string;
-    finalCountry: string; // Added field for "Country of Final Destination"
+    finalCountry: string;
   };
   items: LineItem[];
   other: {
@@ -57,8 +80,8 @@ interface CourierData {
     volumetricWeight: string;
     currency: string;
     totalAmount: number;
-    amountInWords: string; // Added field
-    billingAmount: number; // Renamed from ourAmount
+    amountInWords: string;
+    billingAmount: number;
   };
 }
 
@@ -118,11 +141,8 @@ const CourierForm: React.FC = () => {
 
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Initialization Effect: Set Current Date
   useEffect(() => {
     const now = new Date();
-    // Format: YYYY-MM-DDTHH:mm for datetime-local
-    // Adjust to local timezone (approximate for UI)
     const localIso = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
       .toISOString()
       .slice(0, 16);
@@ -133,7 +153,6 @@ const CourierForm: React.FC = () => {
     }));
   }, []);
 
-  // Calculate generic total and Amount in Words when items change
   useEffect(() => {
     const total = formData.items.reduce((sum, item) => sum + item.amount, 0);
     const words = numberToWords(Math.round(total));
@@ -178,7 +197,6 @@ const CourierForm: React.FC = () => {
     });
   };
 
-  // Generate Box Options based on Header Box No
   const boxCount = parseInt(formData.header.boxNumber) || 1;
   const boxOptions = Array.from({ length: boxCount }, (_, i) => i + 1);
 
@@ -216,7 +234,6 @@ const CourierForm: React.FC = () => {
     setIsGenerating(true);
 
     try {
-      // 0. Save to Backend
       try {
         const payload = {
           sender_name: formData.sender.name,
@@ -224,7 +241,7 @@ const CourierForm: React.FC = () => {
           receiver_name: formData.receiver.name,
           receiver_address: formData.receiver.address,
           invoice_number: formData.header.invoiceNo,
-          invoice_date: formData.header.invoiceDate, // Ensure format matches date or string
+          invoice_date: formData.header.invoiceDate,
           origin: formData.header.origin,
           destination: formData.header.destination,
           box_count: parseInt(formData.header.boxNumber) || 1,
@@ -237,24 +254,22 @@ const CourierForm: React.FC = () => {
         alert("Failed to save shipment to database, but proceeding with PDF.");
       }
 
-      // 1. Generate Barcode (Code 128)
       let barcodeBase64 = "";
       try {
         const canvas = document.createElement("canvas");
         bwipjs.toCanvas(canvas, {
-          bcid: "code128", // Barcode type
-          text: formData.header.awbNo || "12345678", // Text to encode
-          scale: 3, // 3x scaling factor
-          height: 10, // Bar height, in millimeters
-          includetext: false, // Show human-readable text
-          textxalign: "center", // Always good to set this
+          bcid: "code128",
+          text: formData.header.awbNo || "12345678",
+          scale: 3,
+          height: 10,
+          includetext: false,
+          textxalign: "center",
         });
         barcodeBase64 = canvas.toDataURL("image/png");
       } catch (e) {
         console.error("Barcode Generation Error:", e);
       }
 
-      // 2. Generate QR Code
       let qrCodeBase64 = "";
       try {
         const qrData = `AWB: ${formData.header.awbNo}\nAmount: ${formData.other.totalAmount}`;
@@ -263,14 +278,12 @@ const CourierForm: React.FC = () => {
         console.error("QR Generation Error:", e);
       }
 
-      // 3. Prepare Data
       const pdfData = {
         ...formData,
         barcodeBase64,
         qrCodeBase64,
       };
 
-      // 4. Generate PDF Blob
       const blob = await pdf(<CourierPdf data={pdfData} />).toBlob();
       const url = URL.createObjectURL(blob);
       window.open(url, "_blank");
@@ -283,475 +296,287 @@ const CourierForm: React.FC = () => {
   };
 
   return (
-    <div className="form-wrapper">
-      <form onSubmit={handleSubmit} className="courier-dashboard">
-        {/* Header Bar */}
-        <div className="dashboard-header">
-          <div className="logo-section">
-            <h1>{currentConfig.displayName}</h1>
-
-            <p>Courier & Cargo</p>
-          </div>
-          <div className="header-fields">
-            <div className="field-block">
-              <label>Origin</label>
-              <select
-                value={formData.header.origin}
-                onChange={(e) =>
-                  handleNestedChange("header", "origin", e.target.value)
-                }
-              >
-                <option value="">Select Origin</option>
-                {countryList.map((country) => (
-                  <option key={country} value={country}>
-                    {country}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="field-block">
-              <label>Destination</label>
-              <select
-                value={formData.header.destination}
-                onChange={(e) =>
-                  handleNestedChange("header", "destination", e.target.value)
-                }
-              >
-                <option value="">Select Destination</option>
-                {countryList.map((country) => (
-                  <option key={country} value={country}>
-                    {country}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="field-block">
-              <label>AWB No.</label>
-              <input
-                type="text"
-                value={formData.header.awbNo}
-                onChange={(e) =>
-                  handleNestedChange("header", "awbNo", e.target.value)
-                }
-                className="highlight-input"
-                placeholder="AWB Number"
-              />
-            </div>
-            <div className="field-block">
-              <label>Date</label>
-              <input
-                type="datetime-local"
-                value={formData.header.date}
-                onChange={(e) =>
-                  handleNestedChange("header", "date", e.target.value)
-                }
-              />
-            </div>
-          </div>
+    <div className="max-w-[1200px] mx-auto pb-12">
+      {/* Page Header */}
+      <div className="mb-8 flex items-center gap-3">
+        <div className="bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
+          <Truck className="h-8 w-8 text-primary" />
         </div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Create New Shipment
+          </h1>
+          <p className="text-gray-500 text-sm">
+            Fill shipment, invoice and package details below
+          </p>
+        </div>
+      </div>
 
-        {/* Invoice Info Bar */}
-        <div className="info-bar">
-          <div className="ib-col">
-            <label>Invoice No.</label>
-            <input
-              type="text"
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Header Section */}
+        <ShipmentSectionCard title="Shipment Information" icon={Globe}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <FormSelect
+              label="Origin"
+              icon={MapPin}
+              options={["Select Origin", ...countryList]}
+              value={formData.header.origin}
+              onChange={(e) =>
+                handleNestedChange("header", "origin", e.target.value)
+              }
+            />
+            <FormSelect
+              label="Destination"
+              icon={MapPin}
+              options={["Select Destination", ...countryList]}
+              value={formData.header.destination}
+              onChange={(e) =>
+                handleNestedChange("header", "destination", e.target.value)
+              }
+            />
+            <FormInput
+              label="AWB Number"
+              icon={FileText} // Barcode icon not available in default set, using FileText
+              value={formData.header.awbNo}
+              onChange={(e) =>
+                handleNestedChange("header", "awbNo", e.target.value)
+              }
+              placeholder="Enter AWB No"
+              className="font-bold text-primary tracking-wide"
+            />
+            <FormInput
+              label="Date"
+              type="datetime-local"
+              icon={Calendar}
+              value={formData.header.date}
+              onChange={(e) =>
+                handleNestedChange("header", "date", e.target.value)
+              }
+            />
+          </div>
+        </ShipmentSectionCard>
+
+        {/* Invoice Info */}
+        <ShipmentSectionCard title="Invoice Details" icon={FileText}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <FormInput
+              label="Invoice No."
+              icon={Hash}
               value={formData.header.invoiceNo}
               onChange={(e) =>
                 handleNestedChange("header", "invoiceNo", e.target.value)
               }
               placeholder="Enter Invoice No"
             />
-          </div>
-          <div className="ib-col">
-            <label>Invoice Date</label>
-            <input
-              type="text"
+            <FormInput
+              label="Invoice Date"
+              icon={Calendar}
               value={formData.header.invoiceDate}
               onChange={(e) =>
                 handleNestedChange("header", "invoiceDate", e.target.value)
               }
               placeholder="YYYY-MM-DD"
             />
-          </div>
-          <div className="ib-col">
-            <label>Box No.</label>
-            <input
+            <FormInput
+              label="Total Box No."
               type="number"
               min="1"
+              icon={Box}
               value={formData.header.boxNumber}
               onChange={(e) =>
                 handleNestedChange("header", "boxNumber", e.target.value)
               }
-              placeholder="Box No"
+              placeholder="1"
             />
           </div>
-        </div>
+        </ShipmentSectionCard>
 
-        {/* Parties Section */}
-        <div className="parties-container">
-          <div className="party-box sender-box">
-            <h3>Exporter (Sender)</h3>
-            <input
-              type="text"
-              value={formData.sender.name}
-              onChange={(e) =>
-                handleNestedChange("sender", "name", e.target.value)
-              }
-              placeholder="Sender Name"
-              className="address-input-name"
-              style={{ marginBottom: "5px", width: "100%" }}
-            />
-            <textarea
-              rows={3}
-              value={formData.sender.address}
-              onChange={(e) =>
-                handleNestedChange("sender", "address", e.target.value)
-              }
-              className="address-area"
-              placeholder="Address Line 1&#10;Address Line 2"
-            />
-            <div className="sub-field">
-              <label>Adhar No:</label>
-              <input
-                type="text"
-                value={formData.sender.adhaar}
+        {/* Parties */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Sender */}
+          <ShipmentSectionCard
+            title="Exporter (Sender)"
+            icon={User}
+            className="h-full"
+          >
+            <div className="space-y-5">
+              <FormInput
+                label="Sender Name"
+                icon={User}
+                value={formData.sender.name}
                 onChange={(e) =>
-                  handleNestedChange("sender", "adhaar", e.target.value)
+                  handleNestedChange("sender", "name", e.target.value)
                 }
-                placeholder="Enter Adhaar No"
+                placeholder="Company or Person Name"
               />
-            </div>
-            {/* Added Sender Email & Contact */}
-            <div className="sub-field">
-              <label>Contact No:</label>
-              <input
-                type="text"
-                value={formData.sender.contact}
+              <FormTextArea
+                label="Address"
+                rows={3}
+                value={formData.sender.address}
                 onChange={(e) =>
-                  handleNestedChange("sender", "contact", e.target.value)
+                  handleNestedChange("sender", "address", e.target.value)
                 }
-                placeholder="Sender Phone No"
+                placeholder="Full Address"
               />
-            </div>
-            <div className="sub-field">
-              <label>Email:</label>
-              <input
+              <div className="grid grid-cols-2 gap-4">
+                <FormInput
+                  label="Adhaar No"
+                  icon={CreditCard}
+                  value={formData.sender.adhaar}
+                  onChange={(e) =>
+                    handleNestedChange("sender", "adhaar", e.target.value)
+                  }
+                  placeholder="Optional"
+                />
+                <FormInput
+                  label="Contact No"
+                  icon={Phone}
+                  value={formData.sender.contact}
+                  onChange={(e) =>
+                    handleNestedChange("sender", "contact", e.target.value)
+                  }
+                  placeholder="+91..."
+                />
+              </div>
+              <FormInput
+                label="Email"
                 type="email"
+                icon={Mail}
                 value={formData.sender.email}
                 onChange={(e) =>
                   handleNestedChange("sender", "email", e.target.value)
                 }
-                placeholder="Sender Email"
+                placeholder="sender@example.com"
               />
             </div>
-          </div>
+          </ShipmentSectionCard>
 
-          <div className="party-box receiver-box">
-            <h3>Consignee (Receiver)</h3>
-            <input
-              type="text"
-              value={formData.receiver.name}
-              onChange={(e) =>
-                handleNestedChange("receiver", "name", e.target.value)
-              }
-              placeholder="Receiver Name"
-              className="address-input-name"
-              style={{ marginBottom: "5px", width: "100%" }}
-            />
-            <textarea
-              rows={3}
-              value={formData.receiver.address}
-              onChange={(e) =>
-                handleNestedChange("receiver", "address", e.target.value)
-              }
-              className="address-area"
-              placeholder="Address Line 1&#10;Address Line 2"
-            />
-            <div className="sub-field">
-              <label>Contact No:</label>
-              <input
-                type="text"
-                value={formData.receiver.contact}
+          {/* Receiver */}
+          <ShipmentSectionCard
+            title="Consignee (Receiver)"
+            icon={User}
+            className="h-full"
+          >
+            <div className="space-y-5">
+              <FormInput
+                label="Receiver Name"
+                icon={User}
+                value={formData.receiver.name}
                 onChange={(e) =>
-                  handleNestedChange("receiver", "contact", e.target.value)
+                  handleNestedChange("receiver", "name", e.target.value)
                 }
-                placeholder="Receiver Phone No"
+                placeholder="Company or Person Name"
               />
-            </div>
-            {/* Added Receiver Email */}
-            <div className="sub-field">
-              <label>Email:</label>
-              <input
-                type="email"
-                value={formData.receiver.email}
+              <FormTextArea
+                label="Address"
+                rows={3}
+                value={formData.receiver.address}
                 onChange={(e) =>
-                  handleNestedChange("receiver", "email", e.target.value)
+                  handleNestedChange("receiver", "address", e.target.value)
                 }
-                placeholder="Receiver Email"
+                placeholder="Full Address"
               />
+              <div className="grid grid-cols-2 gap-4">
+                <FormInput
+                  label="Contact No"
+                  icon={Phone}
+                  value={formData.receiver.contact}
+                  onChange={(e) =>
+                    handleNestedChange("receiver", "contact", e.target.value)
+                  }
+                  placeholder="+1..."
+                />
+                <FormInput
+                  label="Email"
+                  type="email"
+                  icon={Mail}
+                  value={formData.receiver.email}
+                  onChange={(e) =>
+                    handleNestedChange("receiver", "email", e.target.value)
+                  }
+                  placeholder="receiver@example.com"
+                />
+              </div>
             </div>
-          </div>
+          </ShipmentSectionCard>
         </div>
 
-        {/* Simplified Routing Grid */}
-        <div className="routing-grid">
-          <div className="r-item">
-            <label>Port of Loading</label>
-            <input
-              type="text"
+        {/* Routing */}
+        <ShipmentSectionCard title="Routing Information" icon={Anchor}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <FormInput
+              label="Port of Loading"
+              icon={Anchor}
               value={formData.routing.portOfLoading}
               onChange={(e) =>
                 handleNestedChange("routing", "portOfLoading", e.target.value)
               }
-              placeholder="Loading Port"
+              placeholder="e.g. Mumbai Port"
             />
-          </div>
-          <div className="r-item" style={{ gridColumn: "span 2" }}>
-            <div
-              style={{ display: "flex", gap: "1rem", alignItems: "flex-end" }}
-            >
-              <div style={{ flex: 1 }}>
-                <label>Service</label>
-
-                <select
-                  value={formData.header.service}
-                  onChange={(e) =>
-                    handleNestedChange("header", "service", e.target.value)
-                  }
-                >
-                  <option value="">Select Service</option>
-                  {serviceOptions.map((service) => (
-                    <option key={service} value={service}>
-                      {service}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {formData.header.service && (
-                <div style={{ flex: 1.5 }}>
-                  <label
-                    style={{
-                      fontSize: "0.85rem",
-                      fontWeight: 600,
-                      color: "var(--text-secondary)",
-                      marginBottom: "0.4rem",
-                      display: "block",
-                    }}
-                  >
-                    Tracking No
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.header.serviceDetails || ""}
-                    onChange={(e) =>
-                      handleNestedChange(
-                        "header",
-                        "serviceDetails",
-                        e.target.value,
-                      )
-                    }
-                    placeholder="Enter Tracking No"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Line Items Table */}
-        <div className="items-section">
-          <table className="items-table">
-            <thead>
-              <tr>
-                <th style={{ width: "80px" }}>Box No</th>
-                <th>Description</th>
-                <th style={{ width: "100px" }}>HSN Code</th>
-                <th style={{ width: "80px" }}>Qty</th>
-                <th style={{ width: "100px" }}>Rate</th>
-                <th style={{ width: "120px" }}>
-                  Amount ({formData.other.currency})
-                </th>
-                <th style={{ width: "50px" }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {formData.items.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <select
-                      value={item.boxNo}
-                      onChange={(e) =>
-                        handleItemChange(item.id, "boxNo", e.target.value)
-                      }
-                    >
-                      {boxOptions.map((num) => (
-                        <option key={num} value={num}>
-                          {num}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={item.description}
-                      onChange={(e) =>
-                        handleItemChange(item.id, "description", e.target.value)
-                      }
-                      placeholder="Item Description"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={item.hsnCode}
-                      onChange={(e) =>
-                        handleItemChange(item.id, "hsnCode", e.target.value)
-                      }
-                      placeholder="HSN"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      min="0"
-                      value={item.quantity || ""}
-                      onChange={(e) =>
-                        handleItemChange(
-                          item.id,
-                          "quantity",
-                          Number(e.target.value),
-                        )
-                      }
-                      placeholder="0"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      min="0"
-                      value={item.rate || ""}
-                      onChange={(e) =>
-                        handleItemChange(
-                          item.id,
-                          "rate",
-                          Number(e.target.value),
-                        )
-                      }
-                      placeholder="0.00"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={item.amount || ""}
-                      readOnly
-                      className="read-only"
-                      placeholder="0.00"
-                    />
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      onClick={() => removeItem(item.id)}
-                      className="btn-remove"
-                    >
-                      ×
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="table-actions">
-            <button type="button" onClick={addItem} className="btn-add">
-              + Add Item
-            </button>
-          </div>
-        </div>
-
-        {/* Footer Totals */}
-        <div className="footer-section">
-          <div className="footer-left">
-            <p>
-              <strong>Amount in words:</strong> [Auto-generated Amount Words]
-            </p>
-            <p className="declaration">
-              We declare that this invoice shows the actual price of the good
-              Described and that all particulars are true and correct.
-            </p>
-          </div>
-          <div className="footer-right">
-            <div className="total-row">
-              <span>Total PCS:</span>
-              <input
-                type="number"
-                min="0"
-                value={formData.other.pcs || ""}
+            <FormSelect
+              label="Service Type"
+              icon={Truck}
+              options={["Select Service", ...serviceOptions]}
+              value={formData.header.service}
+              onChange={(e) =>
+                handleNestedChange("header", "service", e.target.value)
+              }
+            />
+            {formData.header.service && (
+              <FormInput
+                label="Tracking No / Info"
+                icon={FileText}
+                value={formData.header.serviceDetails || ""}
                 onChange={(e) =>
-                  handleNestedChange("other", "pcs", e.target.value)
+                  handleNestedChange("header", "serviceDetails", e.target.value)
                 }
-                className="small-input"
-                placeholder="0"
+                placeholder="Additional Tracking Info"
               />
-            </div>
-            {/* Added Volumetric Weight */}
-            <div className="total-row">
-              <span>Volumetric Wt:</span>
-              <input
-                type="number"
-                min="0"
-                step="any"
-                value={formData.other.volumetricWeight}
-                onChange={(e) =>
-                  handleNestedChange(
-                    "other",
-                    "volumetricWeight",
-                    e.target.value,
-                  )
-                }
-                className="small-input"
-                placeholder="0.00"
-              />
-            </div>
-            <div className="total-row">
-              <span>Total Weight:</span>
-              <input
-                type="number"
-                min="0"
-                step="any"
-                value={formData.other.weight}
-                onChange={(e) =>
-                  handleNestedChange("other", "weight", e.target.value)
-                }
-                className="small-input"
-                placeholder="0.00"
-              />
-            </div>
-            <div className="total-row main-total">
-              <span>Total Amount:</span>
-              <span>{formData.other.totalAmount}</span>
-            </div>
-            <div className="total-row">
-              <span>Billing Amount:</span>
-              <input
-                type="number"
-                min="0"
-                value={formData.other.billingAmount}
-                onChange={(e) =>
-                  handleNestedChange("other", "billingAmount", e.target.value)
-                }
-                className="small-input"
-                placeholder="0.00"
-              />
-            </div>
+            )}
           </div>
-        </div>
+        </ShipmentSectionCard>
 
-        <div className="final-actions">
-          <button type="submit" className="btn-primary" disabled={isGenerating}>
-            {isGenerating ? "GENERATING..." : "GENERATE PDF / PRINT"}
+        {/* Items Table */}
+        <ShipmentItemsTable
+          items={formData.items}
+          currency={formData.other.currency}
+          onItemChange={handleItemChange}
+          onAddItem={addItem}
+          onRemoveItem={removeItem}
+          boxOptions={boxOptions}
+        />
+
+        {/* Summary */}
+        <SummaryCard
+          currency={formData.other.currency}
+          pcs={formData.other.pcs}
+          weight={formData.other.weight}
+          volumetricWeight={formData.other.volumetricWeight}
+          totalAmount={formData.other.totalAmount}
+          amountInWords={formData.other.amountInWords}
+          onFieldChange={(field, value) =>
+            handleNestedChange("other", field, value)
+          }
+        />
+
+        {/* Actions */}
+        <div className="flex justify-end pt-4">
+          <button
+            type="submit"
+            disabled={isGenerating}
+            className={`
+                    w-full md:w-auto px-8 py-4 rounded-2xl text-white font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-3
+                    ${isGenerating ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700"}
+                `}
+          >
+            {isGenerating ? (
+              <>Processing...</>
+            ) : (
+              <>
+                <Printer className="h-6 w-6" />
+                Generate PDF & Print
+              </>
+            )}
           </button>
         </div>
       </form>

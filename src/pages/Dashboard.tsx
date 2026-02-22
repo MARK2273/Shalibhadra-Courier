@@ -1,25 +1,21 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Package, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Package,
+  Plus,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+} from "lucide-react";
 import api from "../api/api";
 import { format } from "date-fns";
-// import debounce from "lodash.debounce"; // Or simple timeout
+import type { Shipment } from "../types/shipment";
 
 // Simple Skeleton Component
 const Skeleton = ({ className }: { className?: string }) => (
   <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
 );
-
-interface Shipment {
-  id: string;
-  shipment_date: string;
-  sender_name: string;
-  receiver_name: string;
-  destination: string;
-  // status: string; // Not yet in backend, simulating or removing for now
-  billing_amount: number;
-  awb_no: string;
-}
 
 const Dashboard: React.FC = () => {
   const [shipments, setShipments] = useState<Shipment[]>([]);
@@ -164,6 +160,7 @@ const Dashboard: React.FC = () => {
                   <th className="px-6 py-3">Receiver</th>
                   <th className="px-6 py-3">Destination</th>
                   <th className="px-6 py-3 text-right">Amount</th>
+                  <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -188,6 +185,9 @@ const Dashboard: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <Skeleton className="h-4 w-16 ml-auto" />
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <Skeleton className="h-4 w-8 mx-auto" />
                       </td>
                     </tr>
                   ))}
@@ -227,6 +227,7 @@ const Dashboard: React.FC = () => {
                   <th className="px-6 py-3">Receiver</th>
                   <th className="px-6 py-3">Destination</th>
                   <th className="px-6 py-3 text-right">Amount</th>
+                  <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -251,6 +252,15 @@ const Dashboard: React.FC = () => {
                     <td className="px-6 py-4">{shipment.destination}</td>
                     <td className="px-6 py-4 text-right font-medium text-gray-900">
                       ₹{shipment.billing_amount}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <Link
+                        to={`/shipments/${shipment.id}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        View
+                      </Link>
                     </td>
                   </tr>
                 ))}

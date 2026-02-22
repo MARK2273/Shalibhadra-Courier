@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
+import ShipmentDetails from "./pages/ShipmentDetails";
 import Layout from "./components/layout/Layout";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/form" element={<CourierForm />} />
+            <Route path="/shipments/:id" element={<ShipmentDetails />} />
           </Route>
         </Route>
 

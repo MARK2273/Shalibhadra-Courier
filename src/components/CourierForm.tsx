@@ -5,7 +5,6 @@ import { numberToWords } from "../utils/numberToWords";
 import { pdf } from "@react-pdf/renderer";
 import CourierPdf from "./CourierPdf";
 import bwipjs from "bwip-js";
-import QRCode from "qrcode";
 import {
   MapPin,
   Calendar,
@@ -263,18 +262,18 @@ const CourierForm: React.FC = () => {
         console.error("Barcode Generation Error:", e);
       }
 
-      let qrCodeBase64 = "";
-      try {
-        const qrData = `AWB: ${formData.header.awbNo}\nAmount: ${formData.other.totalAmount}`;
-        qrCodeBase64 = await QRCode.toDataURL(qrData);
-      } catch (e) {
-        console.error("QR Generation Error:", e);
-      }
+      // let qrCodeBase64 = "";
+      // try {
+      //   const qrData = `AWB: ${formData.header.awbNo}\nAmount: ${formData.other.totalAmount}`;
+      //   qrCodeBase64 = await QRCode.toDataURL(qrData);
+      // } catch (e) {
+      //   console.error("QR Generation Error:", e);
+      // }
 
       const pdfData = {
         ...formData,
         barcodeBase64,
-        qrCodeBase64,
+        // qrCodeBase64,
       };
 
       const blob = await pdf(<CourierPdf data={pdfData} />).toBlob();

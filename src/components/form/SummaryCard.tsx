@@ -81,7 +81,9 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             type="number"
             min="0"
             value={billingAmount || ""}
-            onChange={(e) => onFieldChange("billingAmount", Number(e.target.value))}
+            onChange={(e) =>
+              onFieldChange("billingAmount", Number(e.target.value))
+            }
             icon={IndianRupee}
             containerClassName="col-span-2"
             className="text-center font-bold text-lg bg-green-50 border-green-200 text-green-700"
@@ -89,7 +91,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
 
           <div className="col-span-2 mt-4 pt-4 border-t border-gray-100 flex items-center justify-between bg-blue-50/50 p-4 rounded-xl border border-blue-100">
             <span className="text-gray-600 font-bold text-lg">
-              Total Amount
+              Product Value
             </span>
             <div className="flex items-center text-primary">
               <IndianRupee className="h-6 w-6" />

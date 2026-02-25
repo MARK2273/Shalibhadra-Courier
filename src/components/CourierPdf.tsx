@@ -390,8 +390,8 @@ interface CourierData {
   other: any;
   routing: any;
   barcodeBase64?: string;
-  qrCodeBase64?: string;
-  // billingAmount removed as it is inside 'other'
+  // qrCodeBase64?: string;
+  // // billingAmount removed as it is inside 'other'
 }
 
 const CourierPdf = ({ data }: { data: CourierData }) => {
@@ -516,7 +516,18 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                     backgroundColor: "#f9f9f9",
                   }}
                 >
-                  <Text style={{ fontSize: 8 }}>No. Of Box</Text>
+                  <Text style={{ fontSize: 7 }}>Box</Text>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    borderRightWidth: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "#f9f9f9",
+                  }}
+                >
+                  <Text style={{ fontSize: 7 }}>Weight</Text>
                 </View>
                 <View
                   style={{
@@ -526,7 +537,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                     backgroundColor: "#f9f9f9",
                   }}
                 >
-                  <Text style={{ fontSize: 8 }}>Weight (kg)</Text>
+                  <Text style={{ fontSize: 7 }}>Vol. Wt</Text>
                 </View>
               </View>
               <View style={{ flexDirection: "row", flex: 1 }}>
@@ -543,11 +554,21 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                 <View
                   style={{
                     flex: 1,
+                    borderRightWidth: 1,
                     justifyContent: "center",
                     alignItems: "center",
                   }}
                 >
                   <Text>{safeWeight}</Text>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text>{safeVolWeight}</Text>
                 </View>
               </View>
             </View>
@@ -566,7 +587,9 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                     padding: 2,
                   }}
                 >
-                  <Text style={{ fontSize: 8 }}>Volumetric Weight</Text>
+                  <Text style={{ fontWeight: "bold", fontSize: 8 }}>
+                    Billing Amount
+                  </Text>
                 </View>
                 <View
                   style={{
@@ -575,7 +598,9 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                     alignItems: "center",
                   }}
                 >
-                  <Text>{safeVolWeight}</Text>
+                  <Text style={{ fontWeight: "bold" }}>
+                    {data.other.billingAmount || 0}
+                  </Text>
                 </View>
               </View>
               <View style={{ flexDirection: "row", flex: 1 }}>
@@ -588,9 +613,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                     padding: 2,
                   }}
                 >
-                  <Text style={{ fontWeight: "bold", fontSize: 9 }}>
-                    Total Amount:
-                  </Text>
+                  <Text style={{ fontSize: 9 }}>Product Value</Text>
                 </View>
                 <View
                   style={{
@@ -599,9 +622,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                     alignItems: "center",
                   }}
                 >
-                  <Text style={{ fontWeight: "bold", fontSize: 10 }}>
-                    {safeTotalAmount}
-                  </Text>
+                  <Text style={{ fontSize: 10 }}>{safeTotalAmount}</Text>
                 </View>
               </View>
             </View>
@@ -636,7 +657,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               </Text>
             </View>
             <View style={styles.qrSection}>
-              {data.qrCodeBase64 && (
+              {/* {data.qrCodeBase64 && (
                 <Image
                   src={data.qrCodeBase64}
                   style={{ width: 80, height: 80 }}
@@ -644,7 +665,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               )}
               <Text style={{ fontSize: 8, marginTop: 4 }}>
                 Scan For Payment
-              </Text>
+              </Text> */}
             </View>
           </View>
 
@@ -759,7 +780,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                   {data.receiver.address.toUpperCase()}
                 </Text>
                 <Text style={{ fontSize: 10, marginTop: 5 }}>
-                  NO.: {data.receiver.contact}
+                  MOB NO.: {data.receiver.contact}
                 </Text>
               </View>
 
@@ -783,7 +804,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
 
             {/* Right Column: Zone Code */}
             <View style={styles.labelRightCol}>
-              <Text style={styles.zoneText}>M</Text>
+              {/* <Text style={styles.zoneText}>M</Text>
               <View
                 style={{
                   width: "80%",
@@ -792,7 +813,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                   marginVertical: 5,
                 }}
               />
-              <Text style={styles.zoneText}>PX</Text>
+              <Text style={styles.zoneText}>PX</Text> */}
             </View>
           </View>
 
@@ -806,6 +827,20 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
       {/* Third Page: Commercial Invoice */}
       <Page size="A4" style={styles.invoicePage}>
         <View style={styles.invoiceContainer}>
+          {/* COMMERCIAL INVOICE HEADING */}
+          <View
+            style={{
+              padding: 5,
+              borderBottomWidth: 1,
+              borderBottomColor: "#000",
+              alignItems: "center",
+              backgroundColor: "#f0f0f0",
+            }}
+          >
+            <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+              COMMERCIAL INVOICE
+            </Text>
+          </View>
           {/* Header */}
           <View style={[styles.invRow, { height: 80 }]}>
             <View style={styles.invHeaderLeft}>
@@ -859,7 +894,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               <Text style={{ fontWeight: "bold" }}>Consignee,</Text>
               <Text>{data.receiver.name}</Text>
               <Text>{data.receiver.address.toUpperCase()}</Text>
-              <Text>NO.: {data.receiver.contact}</Text>
+              <Text>MOB NO.: {data.receiver.contact}</Text>
             </View>
             <View style={{ width: "50%", flexDirection: "column" }}>
               {/* PCS / Weight Header */}
@@ -1045,7 +1080,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontWeight: "bold" }}>Total</Text>
+                <Text style={{ fontSize: 9 }}>Product Value</Text>
               </View>
               <View
                 style={{
@@ -1056,7 +1091,47 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                   alignItems: "center",
                 }}
               >
-                <Text>{safeTotalAmount}</Text>
+                <Text style={{ fontSize: 9 }}>{safeTotalAmount}</Text>
+              </View>
+            </View>
+
+            {/* Billing Amount Row */}
+            <View style={[styles.invFooterTotal, { borderTopWidth: 0 }]}>
+              <View
+                style={{
+                  width: "65%",
+                  borderRightWidth: 1,
+                  padding: 4,
+                  height: "100%",
+                  justifyContent: "center",
+                }}
+              ></View>
+              <View
+                style={{
+                  width: "17.5%",
+                  borderRightWidth: 1,
+                  padding: 4,
+                  height: "100%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontWeight: "bold", fontSize: 9 }}>
+                  Billing Amount
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: "17.5%",
+                  padding: 4,
+                  height: "100%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontWeight: "bold", fontSize: 10 }}>
+                  {data.other.billingAmount || 0}
+                </Text>
               </View>
             </View>
 
@@ -1167,7 +1242,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               <View style={styles.hannyAddressBox}>
                 <Text style={{ fontWeight: "bold" }}>{data.receiver.name}</Text>
                 <Text>{data.receiver.address.toUpperCase()}</Text>
-                <Text>NO.: {data.receiver.contact}</Text>
+                <Text>MOB NO.: {data.receiver.contact}</Text>
               </View>
             </View>
           </View>
@@ -1197,7 +1272,9 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                   flex: 1,
                 }}
               >
-                <Text style={{ fontWeight: "bold" }}>PXC-SELF</Text>
+                <Text style={{ fontWeight: "bold" }}>
+                  {data.header.service}
+                </Text>
               </View>
             </View>
             <View
@@ -1223,7 +1300,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                   flex: 1,
                 }}
               >
-                <Text style={{ fontWeight: "bold" }}>M - PX</Text>
+                <Text style={{ fontWeight: "bold" }}></Text>
               </View>
             </View>
             <View

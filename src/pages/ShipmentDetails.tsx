@@ -278,7 +278,7 @@ const ShipmentDetails: React.FC = () => {
           />
           <InfoRow label="Currency" value={shipment.currency} />
           <InfoRow
-            label="Total Amount"
+            label="Product Value"
             value={
               shipment.total_amount != null
                 ? `₹${shipment.total_amount.toLocaleString()}`

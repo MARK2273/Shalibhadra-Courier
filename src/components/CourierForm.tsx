@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import api from "../api/api";
-import { countryList, serviceOptions } from "../constants/formOptions";
+import api, { getServices, type Service } from "../api/api";
+import { countryList } from "../constants/formOptions";
 import { numberToWords } from "../utils/numberToWords";
 import { pdf } from "@react-pdf/renderer";
 import CourierPdf from "./CourierPdf";
@@ -42,7 +42,6 @@ interface LineItem {
 
 interface CourierData {
   header: {
-    service: string;
     awbNo: string;
     origin: string;
     destination: string;
@@ -51,6 +50,7 @@ interface CourierData {
     invoiceDate: string;
     boxNumber: string;
     serviceDetails: string;
+    serviceId?: string;
   };
   sender: {
     name: string;
@@ -83,7 +83,6 @@ interface CourierData {
 const CourierForm: React.FC = () => {
   const [formData, setFormData] = useState<CourierData>({
     header: {
-      service: "",
       awbNo: "",
       origin: "",
       destination: "",
@@ -132,6 +131,19 @@ const CourierForm: React.FC = () => {
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
+  const [dbServices, setDbServices] = useState<Service[]>([]);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const services = await getServices();
+        setDbServices(services);
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
+    };
+    fetchServices();
+  }, []);
 
   useEffect(() => {
     const now = new Date();
@@ -498,13 +510,26 @@ const CourierForm: React.FC = () => {
             <FormSelect
               label="Service Type"
               icon={Truck}
-              options={["Select Service", ...serviceOptions]}
-              value={formData.header.service}
-              onChange={(e) =>
-                handleNestedChange("header", "service", e.target.value)
+              options={["Select Service", ...dbServices.map((s) => s.name)]}
+              value={
+                dbServices.find((s) => s.id === formData.header.serviceId)
+                  ?.name || ""
               }
+              onChange={(e) => {
+                const selectedName = e.target.value;
+                const selectedService = dbServices.find(
+                  (s) => s.name === selectedName,
+                );
+                setFormData((prev) => ({
+                  ...prev,
+                  header: {
+                    ...prev.header,
+                    serviceId: selectedService?.id,
+                  },
+                }));
+              }}
             />
-            {formData.header.service && (
+            {formData.header.serviceId && (
               <FormInput
                 label="Tracking No / Info"
                 icon={FileText}

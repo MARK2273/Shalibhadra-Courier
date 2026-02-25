@@ -196,7 +196,7 @@ export const countryList  = [
   "Zimbabwe"
 ];
 
-
+/** @deprecated Use database fetch instead */
 export const serviceOptions = [
   "FedEx",
   "DHL",

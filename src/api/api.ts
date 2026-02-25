@@ -18,4 +18,14 @@ api.interceptors.request.use(
   }
 );
 
+export interface Service {
+  id: string;
+  name: string;
+}
+
+export const getServices = async (): Promise<Service[]> => {
+  const response = await api.get('/services');
+  return response.data;
+};
+
 export default api;

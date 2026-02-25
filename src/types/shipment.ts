@@ -7,6 +7,7 @@ export interface Shipment {
   destination: string;
   billing_amount: number;
   awb_no: string;
+  tracking_url?: string | null;
 }
 
 /** Package item stored in the JSONB `packages` column */
@@ -64,6 +65,7 @@ export interface ShipmentDetail {
   total_amount: number | null;
   amount_in_words: string | null;
   billing_amount: number | null;
+  tracking_url?: string | null;
 
   created_at: string;
 }

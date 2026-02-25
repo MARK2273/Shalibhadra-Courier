@@ -8,6 +8,7 @@ import {
   FileText,
   CreditCard,
   AlertCircle,
+  ExternalLink,
 } from "lucide-react";
 import api from "../api/api";
 import { format } from "date-fns";
@@ -161,10 +162,21 @@ const ShipmentDetails: React.FC = () => {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 text-primary uppercase">
             {shipment.service || "Standard"}
           </span>
+          {shipment.tracking_url && (
+            <a
+              href={shipment.tracking_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-primary text-white hover:bg-blue-700 transition-colors shadow-sm"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              Track Shipment
+            </a>
+          )}
         </div>
       </div>
 

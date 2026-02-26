@@ -1107,7 +1107,12 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                   height: "100%",
                   justifyContent: "center",
                 }}
-              ></View>
+              >
+                <Text style={{ fontSize: 9 }}>Amount in words :</Text>
+                <Text style={{ fontSize: 9 }}>
+                  {numberToWords(data.other.billingAmount || 0)} Only
+                </Text>
+              </View>
               <View
                 style={{
                   width: "17.5%",
@@ -1132,7 +1137,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                 }}
               >
                 <Text style={{ fontWeight: "bold", fontSize: 10 }}>
-                  {data.other.billingAmount || 0}
+                  {data.other.currency} {data.other.billingAmount || 0}
                 </Text>
               </View>
             </View>

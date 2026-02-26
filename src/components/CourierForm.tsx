@@ -717,6 +717,7 @@ const CourierForm: React.FC = () => {
           totalAmount={formData.other.totalAmount}
           billingAmount={formData.other.billingAmount}
           amountInWords={formData.other.amountInWords}
+          currency={formData.other.currency}
           onFieldChange={(field, value) =>
             handleNestedChange("other", field, value)
           }

@@ -1,6 +1,7 @@
 import React from "react";
 import { IndianRupee, Scale, Box } from "lucide-react";
 import FormInput from "./FormInput";
+import FormSelect from "./FormSelect";
 
 interface SummaryCardProps {
   pcs: number;
@@ -9,6 +10,7 @@ interface SummaryCardProps {
   totalAmount: number;
   billingAmount: number;
   amountInWords: string;
+  currency: string;
   onFieldChange: (field: string, value: any) => void;
 }
 
@@ -19,8 +21,21 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   totalAmount,
   billingAmount,
   amountInWords,
+  currency,
   onFieldChange,
 }) => {
+  const isINR = currency === "INR";
+
+  const currencyOptions = [
+    { value: "INR", label: "Indian Rupee (INR)" },
+    { value: "USD", label: "US Dollar (USD)" },
+    { value: "EUR", label: "Euro (EUR)" },
+    { value: "GBP", label: "British Pound (GBP)" },
+    { value: "AED", label: "UAE Dirham (AED)" },
+    { value: "CAD", label: "Canadian Dollar (CAD)" },
+    { value: "AUD", label: "Australian Dollar (AUD)" },
+    { value: "SGD", label: "Singapore Dollar (SGD)" },
+  ];
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
@@ -74,6 +89,15 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             icon={Scale}
             containerClassName="col-span-2"
             className="text-center font-bold text-lg"
+          />
+
+          <FormSelect
+            label="Currency"
+            value={currency}
+            onChange={(e) => onFieldChange("currency", e.target.value)}
+            options={currencyOptions}
+            icon={CreditCard}
+            containerClassName="col-span-2"
           />
 
           <FormInput

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Search, ArrowRight, Loader2 } from "lucide-react";
 import { trackShipment } from "../../api/api";
+import { brandKey } from "../../constants/courierConfig";
 
 const Hero: React.FC = () => {
   const [trackingId, setTrackingId] = useState("");
@@ -15,7 +16,7 @@ const Hero: React.FC = () => {
     setError(null);
 
     try {
-      const data = await trackShipment(trackingId.trim());
+      const data = await trackShipment(trackingId.trim(), brandKey);
       if (data.tracking_url) {
         window.open(data.tracking_url, "_blank");
       } else {

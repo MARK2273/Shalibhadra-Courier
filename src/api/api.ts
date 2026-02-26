@@ -41,8 +41,8 @@ export const deleteShipment = async (id: string): Promise<void> => {
   await api.delete(`/form/${id}`);
 };
 
-export const trackShipment = async (awb: string): Promise<any> => {
-  const response = await api.get(`/public/track/${awb}`);
+export const trackShipment = async (awb: string, tenant?: string): Promise<any> => {
+  const response = await api.get(`/public/track/${awb}${tenant ? `?tenant=${tenant}` : ''}`);
   return response.data;
 };
 

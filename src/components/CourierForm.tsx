@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api, { getServices, type Service } from "../api/api";
-import { countryList } from "../constants/formOptions";
+import { countryList, countryData } from "../constants/formOptions";
 import { numberToWords } from "../utils/numberToWords";
 import { pdf } from "@react-pdf/renderer";
 import CourierPdf from "./CourierPdf";
@@ -313,18 +313,34 @@ const CourierForm: React.FC = () => {
               icon={MapPin}
               options={["Select Origin", ...countryList]}
               value={formData.header.origin}
-              onChange={(e) =>
-                handleNestedChange("header", "origin", e.target.value)
-              }
+              onChange={(e) => {
+                const val = e.target.value;
+                const country = countryData.find((c) => c.name === val);
+                setFormData((prev) => ({
+                  ...prev,
+                  header: { ...prev.header, origin: val },
+                  sender: country
+                    ? { ...prev.sender, contact: country.prefix + " " }
+                    : prev.sender,
+                }));
+              }}
             />
             <FormSelect
               label="Destination"
               icon={MapPin}
               options={["Select Destination", ...countryList]}
               value={formData.header.destination}
-              onChange={(e) =>
-                handleNestedChange("header", "destination", e.target.value)
-              }
+              onChange={(e) => {
+                const val = e.target.value;
+                const country = countryData.find((c) => c.name === val);
+                setFormData((prev) => ({
+                  ...prev,
+                  header: { ...prev.header, destination: val },
+                  receiver: country
+                    ? { ...prev.receiver, contact: country.prefix + " " }
+                    : prev.receiver,
+                }));
+              }}
             />
             <FormInput
               label="AWB Number"

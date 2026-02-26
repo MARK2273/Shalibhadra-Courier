@@ -24,7 +24,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   currency,
   onFieldChange,
 }) => {
-  const isINR = currency === "INR";
+  // const isINR = currency === "INR";
 
   const currencyOptions = [
     { value: "INR", label: "Indian Rupee (INR)" },

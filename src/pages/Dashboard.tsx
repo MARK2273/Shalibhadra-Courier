@@ -7,8 +7,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
+  Trash2,
 } from "lucide-react";
-import api from "../api/api";
+import api, { deleteShipment } from "../api/api";
+import Modal from "../components/ui/Modal";
 import { format } from "date-fns";
 import type { Shipment } from "../types/shipment";
 
@@ -26,27 +28,17 @@ const Dashboard: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    id: string;
+  }>({
+    isOpen: false,
+    id: "",
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Consolidated effect for fetching shipments
   React.useEffect(() => {
-    const fetchShipments = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get(
-          `/form/mydata?page=${page}&limit=10&search=${search}`,
-        );
-        setShipments(response.data.data);
-        setTotalPages(response.data.meta.totalPages);
-        setTotalCount(response.data.meta.total);
-        setTotalRevenue(response.data.meta.totalRevenue);
-        setInitialLoad(false); // Disable initial load after first fetch
-      } catch (error) {
-        console.error("Failed to fetch shipments", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     // Debounce logic: Only delay if there's a search term
     const delay = search ? 500 : 0;
 
@@ -56,6 +48,43 @@ const Dashboard: React.FC = () => {
 
     return () => clearTimeout(timer);
   }, [page, search]);
+
+  const fetchShipments = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get(
+        `/form/mydata?page=${page}&limit=10&search=${search}`,
+      );
+      setShipments(response.data.data);
+      setTotalPages(response.data.meta.totalPages);
+      setTotalCount(response.data.meta.total);
+      setTotalRevenue(response.data.meta.totalRevenue);
+      setInitialLoad(false);
+    } catch (error) {
+      console.error("Failed to fetch shipments", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteClick = (id: string, _awb: string) => {
+    setDeleteModal({ isOpen: true, id });
+  };
+
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteShipment(deleteModal.id);
+      // Refresh the list
+      fetchShipments();
+      setDeleteModal({ isOpen: false, id: "" });
+    } catch (error) {
+      console.error("Failed to delete shipment", error);
+      alert("Failed to delete shipment. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   // Handle search input change - reset page to 1
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -254,13 +283,24 @@ const Dashboard: React.FC = () => {
                       ₹{shipment.billing_amount}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <Link
-                        to={`/shipments/${shipment.id}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        View
-                      </Link>
+                      <div className="flex items-center justify-center gap-2">
+                        <Link
+                          to={`/shipments/${shipment.id}`}
+                          className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          View
+                        </Link>
+                        <button
+                          onClick={() =>
+                            handleDeleteClick(shipment.id, shipment.awb_no)
+                          }
+                          className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -294,6 +334,20 @@ const Dashboard: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={deleteModal.isOpen}
+        title="Delete Shipment?"
+        description="Are you sure you want to delete this shipment? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        icon={Trash2}
+        isConfirmLoading={isDeleting}
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 };

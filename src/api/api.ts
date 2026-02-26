@@ -28,4 +28,8 @@ export const getServices = async (): Promise<Service[]> => {
   return response.data;
 };
 
+export const deleteShipment = async (id: string): Promise<void> => {
+  await api.delete(`/form/${id}`);
+};
+
 export default api;

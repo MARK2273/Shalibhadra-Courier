@@ -1,5 +1,5 @@
 import React from "react";
-import { IndianRupee, Scale, Box } from "lucide-react";
+import { IndianRupee, Scale, Box, CreditCard } from "lucide-react";
 import FormInput from "./FormInput";
 import FormSelect from "./FormSelect";
 

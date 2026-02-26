@@ -1,7 +1,41 @@
-import React from "react";
-import { Search, ArrowRight } from "lucide-react";
+import React, { useState } from "react";
+import { Search, ArrowRight, Loader2 } from "lucide-react";
+import { trackShipment } from "../../api/api";
 
 const Hero: React.FC = () => {
+  const [trackingId, setTrackingId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleTrack = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!trackingId.trim()) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await trackShipment(trackingId.trim());
+      if (data.tracking_url) {
+        window.open(data.tracking_url, "_blank");
+      } else {
+        setError("Unable to retrieve tracking URL for this shipment.");
+      }
+    } catch (err: any) {
+      console.error("Tracking Error:", err);
+      if (err.response?.status === 404) {
+        setError("No shipment found with this tracking number.");
+      } else {
+        setError(
+          err.response?.data?.message ||
+            "Something went wrong. Please try again later.",
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div
       id="track"
@@ -42,22 +76,51 @@ const Hero: React.FC = () => {
 
             {/* Tracking Bar */}
             <div className="mt-8 max-w-lg mx-auto lg:mx-0">
-              <div className="relative group">
+              <form onSubmit={handleTrack} className="relative group">
                 <div className="absolute inset-0 bg-blue-200 opacity-20 blur-xl rounded-full group-hover:opacity-30 transition-opacity"></div>
-                <div className="relative flex items-center bg-white rounded-full shadow-lg border border-gray-100 p-1.5 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+                <div
+                  className={`relative flex items-center bg-white rounded-full shadow-lg border ${error ? "border-red-300 ring-4 ring-red-50" : "border-gray-100 focus-within:ring-4 focus-within:ring-blue-100"} p-1.5 transition-all`}
+                >
                   <div className="pl-4 text-gray-400">
                     <Search className="h-5 w-5" />
                   </div>
                   <input
                     type="text"
+                    value={trackingId}
+                    onChange={(e) => {
+                      setTrackingId(e.target.value);
+                      if (error) setError(null);
+                    }}
                     placeholder="Enter Tracking ID (e.g. AWB123456)"
                     className="w-full px-4 py-3 bg-transparent border-none focus:ring-0 text-gray-900 placeholder-gray-400 text-base"
+                    disabled={isLoading}
                   />
-                  <button className="flex-shrink-0 bg-primary text-white px-6 py-3 rounded-full hover:bg-blue-700 font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
-                    Track <ArrowRight className="h-4 w-4" />
+                  <button
+                    type="submit"
+                    disabled={isLoading || !trackingId.trim()}
+                    className={`flex-shrink-0 bg-primary text-white px-8 py-3 rounded-full hover:bg-blue-700 font-bold tracking-wide transition-all shadow-md hover:shadow-lg flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed`}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Wait...
+                      </>
+                    ) : (
+                      <>
+                        Track <ArrowRight className="h-4 w-4" />
+                      </>
+                    )}
                   </button>
                 </div>
-              </div>
+              </form>
+
+              {error && (
+                <div className="mt-3 px-4 flex items-center gap-2 text-sm text-red-600 font-medium animate-in fade-in slide-in-from-top-1">
+                  <span className="flex h-1.5 w-1.5 rounded-full bg-red-600"></span>
+                  {error}
+                </div>
+              )}
+
               <div className="mt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <p className="text-sm text-gray-400">Try: AWB12345678</p>
                 <span className="hidden sm:inline text-gray-300">|</span>

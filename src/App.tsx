@@ -20,6 +20,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/form" element={<CourierForm />} />
+            <Route path="/form/:id" element={<CourierForm />} />
             <Route path="/shipments/:id" element={<ShipmentDetails />} />
           </Route>
         </Route>

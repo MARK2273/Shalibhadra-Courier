@@ -8,9 +8,11 @@ import {
   ChevronRight,
   Eye,
   Trash2,
+  Edit2,
 } from "lucide-react";
 import api, { deleteShipment } from "../api/api";
 import Modal from "../components/ui/Modal";
+import Tooltip from "../components/ui/Tooltip";
 import { format } from "date-fns";
 import type { Shipment } from "../types/shipment";
 
@@ -283,23 +285,35 @@ const Dashboard: React.FC = () => {
                       ₹{shipment.billing_amount}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <Link
-                          to={`/shipments/${shipment.id}`}
-                          className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          View
-                        </Link>
-                        <button
-                          onClick={() =>
-                            handleDeleteClick(shipment.id, shipment.awb_no)
-                          }
-                          className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          Delete
-                        </button>
+                      <div className="flex items-center justify-center gap-1">
+                        <Tooltip text="View Details">
+                          <Link
+                            to={`/shipments/${shipment.id}`}
+                            className="p-2 text-primary bg-blue-50 hover:bg-blue-100 rounded-xl transition-all active:scale-95"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Link>
+                        </Tooltip>
+
+                        <Tooltip text="Edit Shipment">
+                          <Link
+                            to={`/form/${shipment.id}`}
+                            className="p-2 text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-xl transition-all active:scale-95"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Link>
+                        </Tooltip>
+
+                        <Tooltip text="Delete Shipment">
+                          <button
+                            onClick={() =>
+                              handleDeleteClick(shipment.id, shipment.awb_no)
+                            }
+                            className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-all active:scale-95"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </Tooltip>
                       </div>
                     </td>
                   </tr>

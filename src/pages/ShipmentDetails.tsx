@@ -9,9 +9,13 @@ import {
   CreditCard,
   AlertCircle,
   ExternalLink,
+  Printer,
 } from "lucide-react";
 import api from "../api/api";
 import { format } from "date-fns";
+import { pdf } from "@react-pdf/renderer";
+import CourierPdf from "../components/CourierPdf";
+import bwipjs from "bwip-js";
 import type { ShipmentDetail, PackageItem } from "../types/shipment";
 
 /** Reusable info row inside detail cards */
@@ -79,6 +83,79 @@ const ShipmentDetails: React.FC = () => {
       return format(new Date(dateStr), "dd MMM yyyy");
     } catch {
       return dateStr;
+    }
+  };
+
+  const handlePrint = async () => {
+    if (!shipment) return;
+
+    try {
+      let barcodeBase64 = "";
+      try {
+        const canvas = document.createElement("canvas");
+        bwipjs.toCanvas(canvas, {
+          bcid: "code128",
+          text: shipment.awb_no || "12345678",
+          scale: 3,
+          height: 10,
+          includetext: false,
+          textxalign: "center",
+        });
+        barcodeBase64 = canvas.toDataURL("image/png");
+      } catch (e) {
+        console.error("Barcode Generation Error:", e);
+      }
+
+      // Map snake_case to camelCase for the PDF component
+      const pdfData = {
+        header: {
+          awbNo: shipment.awb_no || "",
+          origin: shipment.origin || "",
+          destination: shipment.destination || "",
+          date: shipment.shipment_date
+            ? new Date(shipment.shipment_date).toLocaleString()
+            : new Date().toLocaleString(),
+          invoiceNo: shipment.invoice_number || "",
+          invoiceDate: shipment.invoice_date || "",
+          boxNumber: (shipment.box_count || 1).toString(),
+          service: shipment.service || "Standard",
+          serviceDetails: shipment.service_details || "",
+        },
+        sender: {
+          name: shipment.sender_name || "",
+          address: shipment.sender_address || "",
+          adhaar: shipment.sender_adhaar || "",
+          contact: shipment.sender_contact || "",
+          email: shipment.sender_email || "",
+        },
+        receiver: {
+          name: shipment.receiver_name || "",
+          address: shipment.receiver_address || "",
+          contact: shipment.receiver_contact || "",
+          email: shipment.receiver_email || "",
+        },
+        routing: {
+          portOfLoading: shipment.port_of_loading || "",
+        },
+        items: shipment.packages || [],
+        other: {
+          pcs: shipment.pcs || 0,
+          weight: shipment.weight || "",
+          volumetricWeight: shipment.volumetric_weight || "",
+          currency: shipment.currency || "INR",
+          totalAmount: shipment.total_amount || 0,
+          amountInWords: shipment.amount_in_words || "",
+          billingAmount: shipment.billing_amount || 0,
+        },
+        barcodeBase64,
+      };
+
+      const blob = await pdf(<CourierPdf data={pdfData as any} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    } catch (err) {
+      console.error("PDF preview error:", err);
+      alert("Failed to generate PDF preview.");
     }
   };
 
@@ -177,6 +254,13 @@ const ShipmentDetails: React.FC = () => {
               Track Shipment
             </a>
           )}
+          <button
+            onClick={handlePrint}
+            className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            View PDF
+          </button>
         </div>
       </div>
 

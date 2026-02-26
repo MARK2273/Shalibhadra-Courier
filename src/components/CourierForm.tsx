@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import api, { getServices, type Service } from "../api/api";
+import api, {
+  getServices,
+  getShipmentById,
+  updateShipment,
+  type Service,
+} from "../api/api";
+import { useParams, useNavigate } from "react-router-dom";
 import { countryList, countryData } from "../constants/formOptions";
 import { numberToWords } from "../utils/numberToWords";
 import { pdf } from "@react-pdf/renderer";
@@ -19,6 +25,7 @@ import {
   Truck,
   Printer,
   Hash,
+  Save,
 } from "lucide-react";
 
 // Import Reusable Components
@@ -29,7 +36,7 @@ import FormTextArea from "./form/FormTextArea";
 import ShipmentItemsTable from "./form/ShipmentItemsTable";
 import SummaryCard from "./form/SummaryCard";
 
-interface LineItem {
+export interface LineItem {
   id: number;
   description: string;
   boxNo: string;
@@ -39,7 +46,7 @@ interface LineItem {
   amount: number;
 }
 
-interface CourierData {
+export interface CourierData {
   header: {
     awbNo: string;
     origin: string;
@@ -79,57 +86,111 @@ interface CourierData {
   };
 }
 
+const Skeleton = ({ className }: { className?: string }) => (
+  <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
+);
+
+const FormSkeleton = () => (
+  <div className="space-y-8 max-w-[1200px] mx-auto pb-12">
+    <div className="flex items-center gap-3">
+      <Skeleton className="h-14 w-14 rounded-2xl" />
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-4 w-48" />
+      </div>
+    </div>
+
+    <div className="bg-white p-8 rounded-3xl border border-gray-100 space-y-6">
+      <Skeleton className="h-6 w-48" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Skeleton className="h-12 w-full rounded-xl" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+      </div>
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="bg-white p-8 rounded-3xl border border-gray-100 space-y-6">
+        <Skeleton className="h-6 w-48" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+        <Skeleton className="h-24 w-full rounded-xl" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton className="h-12 w-full rounded-xl" />
+          <Skeleton className="h-12 w-full rounded-xl" />
+        </div>
+      </div>
+      <div className="bg-white p-8 rounded-3xl border border-gray-100 space-y-6">
+        <Skeleton className="h-6 w-48" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+        <Skeleton className="h-24 w-full rounded-xl" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton className="h-12 w-full rounded-xl" />
+          <Skeleton className="h-12 w-full rounded-xl" />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const initialFormData: CourierData = {
+  header: {
+    awbNo: "",
+    origin: "",
+    destination: "",
+    date: "",
+    invoiceNo: "",
+    invoiceDate: "",
+    boxNumber: "",
+    serviceDetails: "",
+  },
+  sender: {
+    name: "",
+    address: "",
+    adhaar: "",
+    contact: "",
+    email: "",
+  },
+  receiver: {
+    name: "",
+    address: "",
+    contact: "",
+    email: "",
+  },
+  routing: {
+    portOfLoading: "",
+  },
+  items: [
+    {
+      id: 1,
+      description: "",
+      boxNo: "1",
+      hsnCode: "",
+      quantity: 0,
+      rate: 0,
+      amount: 0,
+    },
+  ],
+  other: {
+    pcs: 0,
+    weight: "",
+    volumetricWeight: "",
+    currency: "INR",
+    totalAmount: 0,
+    amountInWords: "Zero Only",
+    billingAmount: 0,
+  },
+};
+
 const CourierForm: React.FC = () => {
-  const [formData, setFormData] = useState<CourierData>({
-    header: {
-      awbNo: "",
-      origin: "",
-      destination: "",
-      date: "",
-      invoiceNo: "",
-      invoiceDate: "",
-      boxNumber: "",
-      serviceDetails: "",
-    },
-    sender: {
-      name: "",
-      address: "",
-      adhaar: "",
-      contact: "",
-      email: "",
-    },
-    receiver: {
-      name: "",
-      address: "",
-      contact: "",
-      email: "",
-    },
-    routing: {
-      portOfLoading: "",
-    },
-    items: [
-      {
-        id: 1,
-        description: "",
-        boxNo: "1",
-        hsnCode: "",
-        quantity: 0,
-        rate: 0,
-        amount: 0,
-      },
-    ],
-    other: {
-      pcs: 0,
-      weight: "",
-      volumetricWeight: "",
-      currency: "INR",
-      totalAmount: 0,
-      amountInWords: "Zero Only",
-      billingAmount: 0,
-    },
-  });
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const isEditMode = !!id;
+
+  const [formData, setFormData] = useState<CourierData>(initialFormData);
 
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isFetching, setIsFetching] = useState(isEditMode);
   const [dbServices, setDbServices] = useState<Service[]>([]);
 
   useEffect(() => {
@@ -145,6 +206,71 @@ const CourierForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const fetchShipmentData = async () => {
+      if (!id) {
+        setFormData(initialFormData);
+        setIsFetching(false);
+        return;
+      }
+      setIsFetching(true);
+      try {
+        const data = await getShipmentById(id);
+        // Map backend snake_case to frontend camelCase
+        setFormData({
+          header: {
+            awbNo: data.awb_no || "",
+            origin: data.origin || "",
+            destination: data.destination || "",
+            date: data.shipment_date
+              ? new Date(data.shipment_date).toISOString().slice(0, 16)
+              : "",
+            invoiceNo: data.invoice_number || "",
+            invoiceDate: data.invoice_date
+              ? new Date(data.invoice_date).toISOString().split("T")[0]
+              : "",
+            boxNumber: data.box_count?.toString() || "",
+            serviceDetails: data.service_details || "",
+            serviceId: data.service_id,
+          },
+          sender: {
+            name: data.sender_name || "",
+            address: data.sender_address || "",
+            adhaar: data.sender_adhaar || "",
+            contact: data.sender_contact || "",
+            email: data.sender_email || "",
+          },
+          receiver: {
+            name: data.receiver_name || "",
+            address: data.receiver_address || "",
+            contact: data.receiver_contact || "",
+            email: data.receiver_email || "",
+          },
+          routing: {
+            portOfLoading: data.port_of_loading || "",
+          },
+          items: Array.isArray(data.packages) ? data.packages : [],
+          other: {
+            pcs: data.pcs || 0,
+            weight: data.weight || "",
+            volumetricWeight: data.volumetric_weight || "",
+            currency: data.currency || "INR",
+            totalAmount: data.total_amount || 0,
+            amountInWords: data.amount_in_words || "",
+            billingAmount: data.billing_amount || 0,
+          },
+        });
+      } catch (error) {
+        console.error("Error fetching shipment data:", error);
+        alert("Failed to load shipment data.");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+    fetchShipmentData();
+  }, [id]);
+
+  useEffect(() => {
+    if (isEditMode) return; // Don't set default date in edit mode
     const now = new Date();
     const localIso = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
       .toISOString()
@@ -154,7 +280,7 @@ const CourierForm: React.FC = () => {
       ...prev,
       header: { ...prev.header, date: localIso },
     }));
-  }, []);
+  }, [isEditMode]);
 
   useEffect(() => {
     const total = formData.items.reduce((sum, item) => sum + item.amount, 0);
@@ -238,9 +364,18 @@ const CourierForm: React.FC = () => {
 
     try {
       try {
-        // Send the nested formData structure directly to match the backend schema
-        await api.post("/form/create", formData);
-        console.log("Shipment saved to backend");
+        if (isEditMode && id) {
+          await updateShipment(id, formData);
+          console.log("Shipment updated in backend");
+          alert("Shipment updated successfully!");
+          navigate("/dashboard");
+          return; // Prevents PDF generation on update
+        } else {
+          // Send the nested formData structure directly to match the backend schema
+          await api.post("/form/create", formData);
+          console.log("Shipment saved to backend");
+          navigate("/dashboard");
+        }
       } catch (apiError) {
         console.error("Failed to save shipment:", apiError);
         alert("Failed to save shipment to database, but proceeding with PDF.");
@@ -287,6 +422,10 @@ const CourierForm: React.FC = () => {
     }
   };
 
+  if (isFetching) {
+    return <FormSkeleton />;
+  }
+
   return (
     <div className="max-w-[1200px] mx-auto pb-12">
       {/* Page Header */}
@@ -296,10 +435,12 @@ const CourierForm: React.FC = () => {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Create New Shipment
+            {isEditMode ? "Edit Shipment" : "Create New Shipment"}
           </h1>
           <p className="text-gray-500 text-sm">
-            Fill shipment, invoice and package details below
+            {isEditMode
+              ? "Update existing shipment details"
+              : "Fill shipment, invoice and package details below"}
           </p>
         </div>
       </div>
@@ -363,7 +504,6 @@ const CourierForm: React.FC = () => {
             />
           </div>
         </ShipmentSectionCard>
-
         {/* Invoice Info */}
         <ShipmentSectionCard title="Invoice Details" icon={FileText}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -399,7 +539,6 @@ const CourierForm: React.FC = () => {
             />
           </div>
         </ShipmentSectionCard>
-
         {/* Parties */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Sender */}
@@ -509,7 +648,6 @@ const CourierForm: React.FC = () => {
             </div>
           </ShipmentSectionCard>
         </div>
-
         {/* Routing */}
         <ShipmentSectionCard title="Routing Information" icon={Anchor}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -563,7 +701,6 @@ const CourierForm: React.FC = () => {
               )}
           </div>
         </ShipmentSectionCard>
-
         {/* Items Table */}
         <ShipmentItemsTable
           items={formData.items}
@@ -572,7 +709,6 @@ const CourierForm: React.FC = () => {
           onRemoveItem={removeItem}
           boxOptions={boxOptions}
         />
-
         {/* Summary */}
         <SummaryCard
           pcs={formData.other.pcs}
@@ -585,7 +721,6 @@ const CourierForm: React.FC = () => {
             handleNestedChange("other", field, value)
           }
         />
-
         {/* Actions */}
         <div className="flex justify-end pt-4">
           <button
@@ -600,12 +735,16 @@ const CourierForm: React.FC = () => {
               <>Processing...</>
             ) : (
               <>
-                <Printer className="h-6 w-6" />
-                Generate PDF & Print
+                {isEditMode ? (
+                  <Save className="h-6 w-6" />
+                ) : (
+                  <Printer className="h-6 w-6" />
+                )}
+                {isEditMode ? "Update" : "Generate PDF & Print"}
               </>
             )}
           </button>
-        </div>
+        </div>{" "}
       </form>
     </div>
   );

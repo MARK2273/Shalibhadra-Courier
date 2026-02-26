@@ -28,6 +28,15 @@ export const getServices = async (): Promise<Service[]> => {
   return response.data;
 };
 
+export const getShipmentById = async (id: string): Promise<any> => {
+  const response = await api.get(`/form/${id}`);
+  return response.data;
+};
+
+export const updateShipment = async (id: string, data: any): Promise<void> => {
+  await api.put(`/form/${id}`, data);
+};
+
 export const deleteShipment = async (id: string): Promise<void> => {
   await api.delete(`/form/${id}`);
 };

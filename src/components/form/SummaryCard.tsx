@@ -12,6 +12,7 @@ interface SummaryCardProps {
   amountInWords: string;
   currency: string;
   onFieldChange: (field: string, value: any) => void;
+  errors: Record<string, string>;
 }
 
 const SummaryCard: React.FC<SummaryCardProps> = ({
@@ -23,6 +24,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   amountInWords,
   currency,
   onFieldChange,
+  errors,
 }) => {
   // const isINR = currency === "INR";
 
@@ -109,6 +111,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
               onFieldChange("billingAmount", Number(e.target.value))
             }
             icon={IndianRupee}
+            error={errors["other.billingAmount"]}
             containerClassName="col-span-2"
             className="text-center font-bold text-lg bg-green-50 border-green-200 text-green-700"
           />

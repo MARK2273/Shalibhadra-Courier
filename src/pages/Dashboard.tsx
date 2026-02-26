@@ -38,6 +38,7 @@ const Dashboard: React.FC = () => {
     id: "",
   });
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Consolidated effect for fetching shipments
   React.useEffect(() => {
@@ -75,6 +76,7 @@ const Dashboard: React.FC = () => {
 
   const handleConfirmDelete = async () => {
     setIsDeleting(true);
+    setDeleteError(null);
     try {
       await deleteShipment(deleteModal.id);
       // Refresh the list
@@ -82,7 +84,7 @@ const Dashboard: React.FC = () => {
       setDeleteModal({ isOpen: false, id: "" });
     } catch (error) {
       console.error("Failed to delete shipment", error);
-      alert("Failed to delete shipment. Please try again.");
+      setDeleteError("Failed to delete shipment. Please try again.");
     } finally {
       setIsDeleting(false);
     }
@@ -353,13 +355,28 @@ const Dashboard: React.FC = () => {
       <Modal
         isOpen={deleteModal.isOpen}
         title="Delete Shipment?"
-        description="Are you sure you want to delete this shipment? This action cannot be undone."
+        description={
+          <div className="space-y-3">
+            <p>
+              Are you sure you want to delete this shipment? This action cannot
+              be undone.
+            </p>
+            {deleteError && (
+              <div className="p-2 bg-red-50 border border-red-100 text-red-600 font-bold rounded text-[11px] animate-pulse">
+                {deleteError}
+              </div>
+            )}
+          </div>
+        }
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variant="danger"
         icon={Trash2}
         isConfirmLoading={isDeleting}
-        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onClose={() => {
+          setDeleteModal({ ...deleteModal, isOpen: false });
+          setDeleteError(null);
+        }}
         onConfirm={handleConfirmDelete}
       />
     </div>

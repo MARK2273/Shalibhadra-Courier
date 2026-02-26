@@ -17,6 +17,7 @@ interface ShipmentItemsTableProps {
   onAddItem: () => void;
   onRemoveItem: (id: number) => void;
   boxOptions: number[];
+  errors: Record<string, string>;
 }
 
 const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
@@ -25,6 +26,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
   onAddItem,
   onRemoveItem,
   boxOptions,
+  errors,
 }) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -36,6 +38,11 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
           <h3 className="text-lg font-semibold text-gray-800">
             Shipment Items
           </h3>
+          {errors["items"] && (
+            <span className="text-xs text-red-500 font-bold bg-red-50 px-2 py-1 rounded-full animate-pulse border border-red-100">
+              {errors["items"]}
+            </span>
+          )}
         </div>
         <button
           type="button"
@@ -102,8 +109,19 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                     onChange={(e) =>
                       onItemChange(item.id, "description", e.target.value)
                     }
-                    className="block w-full px-3 py-2 text-sm border-gray-200 rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm placeholder-gray-400 font-medium"
+                    className={`block w-full px-3 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm placeholder:text-gray-400 font-medium ${
+                      errors[`items.${items.indexOf(item)}.description`]
+                        ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
+                        : "border-gray-200"
+                    }`}
                   />
+                  <div className="h-4">
+                    {errors[`items.${items.indexOf(item)}.description`] && (
+                      <span className="text-[10px] text-red-500 mt-0.5 ml-1 font-bold animate-in fade-in slide-in-from-top-1 leading-none block">
+                        {errors[`items.${items.indexOf(item)}.description`]}
+                      </span>
+                    )}
+                  </div>
                 </td>
 
                 <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">
@@ -132,8 +150,19 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                     onChange={(e) =>
                       onItemChange(item.id, "quantity", Number(e.target.value))
                     }
-                    className="block w-full px-3 py-2 text-sm border-gray-200 rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-bold text-gray-700"
+                    className={`block w-full px-3 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-bold text-gray-700 ${
+                      errors[`items.${items.indexOf(item)}.quantity`]
+                        ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
+                        : "border-gray-200"
+                    }`}
                   />
+                  <div className="h-4">
+                    {errors[`items.${items.indexOf(item)}.quantity`] && (
+                      <span className="text-[10px] text-red-500 mt-0.5 font-bold block text-center animate-in fade-in slide-in-from-top-1 leading-none">
+                        {errors[`items.${items.indexOf(item)}.quantity`]}
+                      </span>
+                    )}
+                  </div>
                 </td>
 
                 <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">
@@ -147,8 +176,19 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                     onChange={(e) =>
                       onItemChange(item.id, "rate", Number(e.target.value))
                     }
-                    className="block w-full px-3 py-2 text-sm border-gray-200 rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-medium"
+                    className={`block w-full px-3 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-medium ${
+                      errors[`items.${items.indexOf(item)}.rate`]
+                        ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
+                        : "border-gray-200"
+                    }`}
                   />
+                  <div className="h-4">
+                    {errors[`items.${items.indexOf(item)}.rate`] && (
+                      <span className="text-[10px] text-red-500 mt-0.5 font-bold block text-center animate-in fade-in slide-in-from-top-1 leading-none">
+                        {errors[`items.${items.indexOf(item)}.rate`]}
+                      </span>
+                    )}
+                  </div>
                 </td>
 
                 <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">

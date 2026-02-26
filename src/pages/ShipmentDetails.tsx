@@ -155,7 +155,7 @@ const ShipmentDetails: React.FC = () => {
       window.open(url, "_blank");
     } catch (err) {
       console.error("PDF preview error:", err);
-      alert("Failed to generate PDF preview.");
+      setError("Failed to generate PDF preview.");
     }
   };
 

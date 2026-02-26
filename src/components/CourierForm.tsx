@@ -192,6 +192,79 @@ const CourierForm: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isFetching, setIsFetching] = useState(isEditMode);
   const [dbServices, setDbServices] = useState<Service[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    // Header Validation
+    if (!formData.header.origin || formData.header.origin === "Select Origin")
+      newErrors["header.origin"] = "Origin is required";
+    if (
+      !formData.header.destination ||
+      formData.header.destination === "Select Destination"
+    )
+      newErrors["header.destination"] = "Destination is required";
+    if (!formData.header.awbNo)
+      newErrors["header.awbNo"] = "AWB Number is required";
+    if (!formData.header.date)
+      newErrors["header.date"] = "Shipment Date is required";
+    if (!formData.header.serviceId)
+      newErrors["header.serviceId"] = "Service Provider is required";
+
+    // Sender Validation
+    if (!formData.sender.name)
+      newErrors["sender.name"] = "Sender name is required";
+    if (!formData.sender.address)
+      newErrors["sender.address"] = "Sender address is required";
+    if (!formData.sender.contact)
+      newErrors["sender.contact"] = "Sender contact is required";
+    if (
+      formData.sender.email &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.sender.email)
+    ) {
+      newErrors["sender.email"] = "Invalid email format";
+    }
+
+    // Receiver Validation
+    if (!formData.receiver.name)
+      newErrors["receiver.name"] = "Receiver name is required";
+    if (!formData.receiver.address)
+      newErrors["receiver.address"] = "Receiver address is required";
+    if (!formData.receiver.contact)
+      newErrors["receiver.contact"] = "Receiver contact is required";
+    if (
+      formData.receiver.email &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.receiver.email)
+    ) {
+      newErrors["receiver.email"] = "Invalid email format";
+    }
+
+    // Items Validation
+    if (formData.items.length === 0) {
+      newErrors["items"] = "At least one item is required";
+    } else {
+      formData.items.forEach((item, index) => {
+        if (!item.description)
+          newErrors[`items.${index}.description`] = "Description required";
+        if (item.quantity <= 0)
+          newErrors[`items.${index}.quantity`] = "Qty > 0";
+        if (item.rate <= 0) newErrors[`items.${index}.rate`] = "Rate > 0";
+      });
+    }
+
+    // Summary Validation
+    if (formData.other.billingAmount <= 0) {
+      newErrors["other.billingAmount"] = "Billing amount required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -308,6 +381,16 @@ const CourierForm: React.FC = () => {
         [field]: value,
       },
     }));
+
+    // Clear error for this field
+    const errorKey = `${section}.${field}`;
+    if (errors[errorKey]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[errorKey];
+        return next;
+      });
+    }
   };
 
   const handleItemChange = (id: number, field: keyof LineItem, value: any) => {
@@ -323,6 +406,16 @@ const CourierForm: React.FC = () => {
         return item;
       });
       return { ...prev, items: newItems };
+    });
+
+    // Clear item errors
+    setErrors((prev) => {
+      const next = { ...prev };
+      const itemIndex = formData.items.findIndex((i) => i.id === id);
+      const errorKey = `items.${itemIndex}.${field}`;
+      if (next[errorKey]) delete next[errorKey];
+      if (next["items"]) delete next["items"];
+      return next;
     });
   };
 
@@ -360,25 +453,44 @@ const CourierForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      setSubmitStatus({
+        type: "error",
+        message: "Please fix the validation errors before submitting.",
+      });
+      // Scroll to error (optional improvement)
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    setSubmitStatus(null);
     setIsGenerating(true);
 
     try {
       try {
         if (isEditMode && id) {
           await updateShipment(id, formData);
-          console.log("Shipment updated in backend");
-          alert("Shipment updated successfully!");
-          navigate("/dashboard");
-          return; // Prevents PDF generation on update
+          setSubmitStatus({
+            type: "success",
+            message: "Shipment updated successfully!",
+          });
+          setTimeout(() => navigate("/dashboard"), 1500);
+          return;
         } else {
-          // Send the nested formData structure directly to match the backend schema
           await api.post("/form/create", formData);
-          console.log("Shipment saved to backend");
-          navigate("/dashboard");
+          setSubmitStatus({
+            type: "success",
+            message: "Shipment created successfully!",
+          });
         }
       } catch (apiError) {
         console.error("Failed to save shipment:", apiError);
-        alert("Failed to save shipment to database, but proceeding with PDF.");
+        setSubmitStatus({
+          type: "error",
+          message:
+            "Failed to save to database. Proceeding with PDF generation...",
+        });
       }
 
       let barcodeBase64 = "";
@@ -414,9 +526,15 @@ const CourierForm: React.FC = () => {
       const blob = await pdf(<CourierPdf data={pdfData} />).toBlob();
       const url = URL.createObjectURL(blob);
       window.open(url, "_blank");
+      if (!isEditMode) {
+        setTimeout(() => navigate("/dashboard"), 2000);
+      }
     } catch (error) {
       console.error("Error generating PDF:", error);
-      alert("Error generating PDF. Please check console for details.");
+      setSubmitStatus({
+        type: "error",
+        message: "Error generating PDF. Check console for details.",
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -454,6 +572,7 @@ const CourierForm: React.FC = () => {
               icon={MapPin}
               options={["Select Origin", ...countryList]}
               value={formData.header.origin}
+              error={errors["header.origin"]}
               onChange={(e) => {
                 const val = e.target.value;
                 const country = countryData.find((c) => c.name === val);
@@ -464,6 +583,15 @@ const CourierForm: React.FC = () => {
                     ? { ...prev.sender, contact: country.prefix + " " }
                     : prev.sender,
                 }));
+
+                // Clear error
+                if (errors["header.origin"]) {
+                  setErrors((prev) => {
+                    const next = { ...prev };
+                    delete next["header.origin"];
+                    return next;
+                  });
+                }
               }}
             />
             <FormSelect
@@ -471,6 +599,7 @@ const CourierForm: React.FC = () => {
               icon={MapPin}
               options={["Select Destination", ...countryList]}
               value={formData.header.destination}
+              error={errors["header.destination"]}
               onChange={(e) => {
                 const val = e.target.value;
                 const country = countryData.find((c) => c.name === val);
@@ -481,12 +610,22 @@ const CourierForm: React.FC = () => {
                     ? { ...prev.receiver, contact: country.prefix + " " }
                     : prev.receiver,
                 }));
+
+                // Clear error
+                if (errors["header.destination"]) {
+                  setErrors((prev) => {
+                    const next = { ...prev };
+                    delete next["header.destination"];
+                    return next;
+                  });
+                }
               }}
             />
             <FormInput
               label="AWB Number"
               icon={FileText} // Barcode icon not available in default set, using FileText
               value={formData.header.awbNo}
+              error={errors["header.awbNo"]}
               onChange={(e) =>
                 handleNestedChange("header", "awbNo", e.target.value)
               }
@@ -498,6 +637,7 @@ const CourierForm: React.FC = () => {
               type="datetime-local"
               icon={Calendar}
               value={formData.header.date}
+              error={errors["header.date"]}
               onChange={(e) =>
                 handleNestedChange("header", "date", e.target.value)
               }
@@ -552,6 +692,7 @@ const CourierForm: React.FC = () => {
                 label="Sender Name"
                 icon={User}
                 value={formData.sender.name}
+                error={errors["sender.name"]}
                 onChange={(e) =>
                   handleNestedChange("sender", "name", e.target.value)
                 }
@@ -561,6 +702,7 @@ const CourierForm: React.FC = () => {
                 label="Address"
                 rows={3}
                 value={formData.sender.address}
+                error={errors["sender.address"]}
                 onChange={(e) =>
                   handleNestedChange("sender", "address", e.target.value)
                 }
@@ -580,6 +722,7 @@ const CourierForm: React.FC = () => {
                   label="Contact No"
                   icon={Phone}
                   value={formData.sender.contact}
+                  error={errors["sender.contact"]}
                   onChange={(e) =>
                     handleNestedChange("sender", "contact", e.target.value)
                   }
@@ -591,6 +734,7 @@ const CourierForm: React.FC = () => {
                 type="email"
                 icon={Mail}
                 value={formData.sender.email}
+                error={errors["sender.email"]}
                 onChange={(e) =>
                   handleNestedChange("sender", "email", e.target.value)
                 }
@@ -610,6 +754,7 @@ const CourierForm: React.FC = () => {
                 label="Receiver Name"
                 icon={User}
                 value={formData.receiver.name}
+                error={errors["receiver.name"]}
                 onChange={(e) =>
                   handleNestedChange("receiver", "name", e.target.value)
                 }
@@ -619,6 +764,7 @@ const CourierForm: React.FC = () => {
                 label="Address"
                 rows={3}
                 value={formData.receiver.address}
+                error={errors["receiver.address"]}
                 onChange={(e) =>
                   handleNestedChange("receiver", "address", e.target.value)
                 }
@@ -629,6 +775,7 @@ const CourierForm: React.FC = () => {
                   label="Contact No"
                   icon={Phone}
                   value={formData.receiver.contact}
+                  error={errors["receiver.contact"]}
                   onChange={(e) =>
                     handleNestedChange("receiver", "contact", e.target.value)
                   }
@@ -639,6 +786,7 @@ const CourierForm: React.FC = () => {
                   type="email"
                   icon={Mail}
                   value={formData.receiver.email}
+                  error={errors["receiver.email"]}
                   onChange={(e) =>
                     handleNestedChange("receiver", "email", e.target.value)
                   }
@@ -668,6 +816,7 @@ const CourierForm: React.FC = () => {
                 dbServices.find((s) => s.id === formData.header.serviceId)
                   ?.name || ""
               }
+              error={errors["header.serviceId"]}
               onChange={(e) => {
                 const selectedName = e.target.value;
                 const selectedService = dbServices.find(
@@ -680,6 +829,15 @@ const CourierForm: React.FC = () => {
                     serviceId: selectedService?.id,
                   },
                 }));
+
+                // Clear error
+                if (errors["header.serviceId"]) {
+                  setErrors((prev) => {
+                    const next = { ...prev };
+                    delete next["header.serviceId"];
+                    return next;
+                  });
+                }
               }}
             />
             {formData.header.serviceId &&
@@ -708,6 +866,7 @@ const CourierForm: React.FC = () => {
           onAddItem={addItem}
           onRemoveItem={removeItem}
           boxOptions={boxOptions}
+          errors={errors}
         />
         {/* Summary */}
         <SummaryCard
@@ -718,10 +877,32 @@ const CourierForm: React.FC = () => {
           billingAmount={formData.other.billingAmount}
           amountInWords={formData.other.amountInWords}
           currency={formData.other.currency}
+          errors={errors}
           onFieldChange={(field, value) =>
             handleNestedChange("other", field, value)
           }
         />
+        {/* Status Message */}
+        {submitStatus && (
+          <div
+            className={`p-4 rounded-xl border flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
+              submitStatus.type === "success"
+                ? "bg-green-50 border-green-200 text-green-700"
+                : "bg-red-50 border-red-200 text-red-700"
+            }`}
+          >
+            <div
+              className={`p-1.5 rounded-full ${submitStatus.type === "success" ? "bg-green-100" : "bg-red-100"}`}
+            >
+              {submitStatus.type === "success" ? (
+                <Save className="h-4 w-4" />
+              ) : (
+                <Hash className="h-4 w-4" />
+              )}
+            </div>
+            <p className="font-bold text-sm">{submitStatus.message}</p>
+          </div>
+        )}
         {/* Actions */}
         <div className="flex justify-end pt-4">
           <button

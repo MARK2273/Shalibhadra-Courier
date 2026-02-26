@@ -819,7 +819,9 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
 
           {/* Footer */}
           <View style={styles.labelFooter}>
-            <Text style={{ fontSize: 12 }}>{currentConfig.footerText}</Text>
+            <Text style={{ fontSize: 12 }}>
+              {currentConfig.footerText} ({data.header.service})
+            </Text>
           </View>
         </View>
       </Page>
@@ -1179,14 +1181,14 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
           <View style={[styles.hannyRow, { height: 80 }]}>
             <View style={styles.hannyHeaderLeft}>
               <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-                Shalibhadra
+                {currentConfig.name}
               </Text>
-              <Text style={{ fontSize: 22, fontWeight: "bold" }}>Couriers</Text>
+              <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                {currentConfig.subName}
+              </Text>
               <Text style={{ fontSize: 7, marginTop: 4 }}>
-                UG-418 TURNING POINT COMPLEX NEAR MAAKHAN BHOG
+                {currentConfig.address}
               </Text>
-              <Text style={{ fontSize: 7 }}>GHOD DOD SURAT-395007 /</Text>
-              <Text style={{ fontSize: 7 }}>9909408678</Text>
             </View>
             <View style={styles.hannyHeaderMiddle}>
               <View style={styles.hannyGridBox}>
@@ -1217,7 +1219,7 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                 (AWB No): {data.header.awbNo}
               </Text>
               <Text style={{ fontSize: 9, fontWeight: "bold" }}>
-                www.shalibhadracourier.com
+                {currentConfig.website}
               </Text>
             </View>
           </View>

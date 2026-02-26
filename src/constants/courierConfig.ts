@@ -19,7 +19,7 @@ export const courierConfigs: Record<string, CourierConfig> = {
     website: "https://shalibhadra-courier.vercel.app",
     address:
       "UG-418 TURNING POINT COMPLEX NEAR MAAKHAN BHOG GHOD DOD SURAT-395007",
-      footerText: "Shalibhadra Couriers , Surat (PXC-SELF)"
+      footerText: "Shalibhadra Couriers , Surat"
   },
   navkar: {
     name: "Navkar",
@@ -27,7 +27,7 @@ export const courierConfigs: Record<string, CourierConfig> = {
     displayName: "Navkar Couriers",
     website: "www.navkar-courier.vercel.app", // Placeholder, user can update
     address: "SHOP NO 12, NAKSHATRA HEIGHTS, NEAR MADHUVAN CIRCLE, ADAJAN, SURAT-395009", // Placeholder
-    footerText: "Navkar Couriers , Surat (PXC-SELF)"
+    footerText: "Navkar Couriers , Surat"
   },
 };
 

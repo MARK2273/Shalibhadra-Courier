@@ -544,17 +544,23 @@ const CourierForm: React.FC = () => {
                 }));
               }}
             />
-            {formData.header.serviceId && (
-              <FormInput
-                label="Tracking No / Info"
-                icon={FileText}
-                value={formData.header.serviceDetails || ""}
-                onChange={(e) =>
-                  handleNestedChange("header", "serviceDetails", e.target.value)
-                }
-                placeholder="Additional Tracking Info"
-              />
-            )}
+            {formData.header.serviceId &&
+              dbServices.find((s) => s.id === formData.header.serviceId)
+                ?.name !== "Self" && (
+                <FormInput
+                  label="Tracking No / Info"
+                  icon={FileText}
+                  value={formData.header.serviceDetails || ""}
+                  onChange={(e) =>
+                    handleNestedChange(
+                      "header",
+                      "serviceDetails",
+                      e.target.value,
+                    )
+                  }
+                  placeholder="Additional Tracking Info"
+                />
+              )}
           </div>
         </ShipmentSectionCard>
 

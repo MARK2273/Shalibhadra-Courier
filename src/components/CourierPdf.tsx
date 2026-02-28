@@ -8,9 +8,14 @@ import {
 } from "@react-pdf/renderer";
 import { numberToWords } from "../utils/numberToWords";
 import { currentConfig } from "../constants/courierConfig";
+import { type CourierData } from "./CourierForm";
 
 // Register fonts if needed, otherwise use default Helvetica
 // Font.register({ family: 'Roboto', src: 'https://fonts.gstatic.com/s/roboto/v20/KFOmCnqEu92Fr1Mu4mxK.woff2' });
+
+interface CourierPdfProps {
+  data: CourierData;
+}
 
 const styles = StyleSheet.create({
   page: {
@@ -382,19 +387,7 @@ const styles = StyleSheet.create({
   },
 });
 
-interface CourierData {
-  header: any;
-  sender: any;
-  receiver: any;
-  items: any[];
-  other: any;
-  routing: any;
-  barcodeBase64?: string;
-  // qrCodeBase64?: string;
-  // // billingAmount removed as it is inside 'other'
-}
-
-const CourierPdf = ({ data }: { data: CourierData }) => {
+const CourierPdf = ({ data }: CourierPdfProps) => {
   const safeTotalAmount = data.other.totalAmount || 0;
   const safePcs = data.other.pcs || 0;
   const safeWeight = data.other.weight || 0;
@@ -439,12 +432,12 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               </View>
             </View>
             <View style={styles.barcodeSection}>
-              {data.barcodeBase64 && (
+              {data.barcodeBase64 ? (
                 <Image
                   src={data.barcodeBase64}
                   style={{ width: 140, height: 40 }}
                 />
-              )}
+              ) : null}
               <Text style={{ marginTop: 2, fontSize: 9 }}>
                 (AWB No): {data.header.awbNo}
               </Text>
@@ -657,15 +650,17 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               </Text>
             </View>
             <View style={styles.qrSection}>
-              {/* {data.qrCodeBase64 && (
+              {data.qrCodeBase64 ? (
                 <Image
                   src={data.qrCodeBase64}
                   style={{ width: 80, height: 80 }}
                 />
-              )}
-              <Text style={{ fontSize: 8, marginTop: 4 }}>
-                Scan For Payment
-              </Text> */}
+              ) : null}
+              {data.qrCodeBase64 ? (
+                <Text style={{ fontSize: 8, marginTop: 4 }}>
+                  Scan to Pay via UPI
+                </Text>
+              ) : null}
             </View>
           </View>
 
@@ -886,12 +881,12 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
                 </View>
               </View>
               <View style={styles.invHeaderRightBottom}>
-                {data.barcodeBase64 && (
+                {data.barcodeBase64 ? (
                   <Image
                     src={data.barcodeBase64}
-                    style={{ width: 140, height: 30 }}
+                    style={{ width: 110, height: 35 }}
                   />
-                )}
+                ) : null}
                 <Text style={{ fontSize: 9, marginTop: 2 }}>
                   (AWB No): {data.header.awbNo}
                 </Text>

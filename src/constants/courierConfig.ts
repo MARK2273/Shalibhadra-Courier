@@ -9,6 +9,8 @@ export interface CourierConfig {
   logoText?: string; // If Logo is text based
   logoImage?: string; // If we want to support image logos later
   footerText?: string;
+  upiId?: string;
+  payeeName?: string;
 }
 
 export const courierConfigs: Record<string, CourierConfig> = {
@@ -19,15 +21,19 @@ export const courierConfigs: Record<string, CourierConfig> = {
     website: "https://shalibhadra-courier.vercel.app",
     address:
       "UG-418 TURNING POINT COMPLEX NEAR MAAKHAN BHOG GHOD DOD SURAT-395007",
-      footerText: "Shalibhadra Couriers , Surat"
+      footerText: "Shalibhadra Couriers , Surat",
+      upiId: "bszaverizaveri-1@okhdfcbank",
+      payeeName: "Shalibhadra Couriers",
   },
   navkar: {
     name: "Navkar",
     subName: "Couriers", // Assuming similarity
     displayName: "Navkar Couriers",
-    website: "www.navkar-courier.vercel.app", // Placeholder, user can update
+    website: "https://navkar-courier.vercel.app", // Placeholder, user can update
     address: "SHOP NO 12, NAKSHATRA HEIGHTS, NEAR MADHUVAN CIRCLE, ADAJAN, SURAT-395009", // Placeholder
-    footerText: "Navkar Couriers , Surat"
+    footerText: "Navkar Couriers , Surat",
+    upiId: "bszaverizaveri-1@okhdfcbank", // Placeholder
+    payeeName: "Navkar Couriers",
   },
 };
 

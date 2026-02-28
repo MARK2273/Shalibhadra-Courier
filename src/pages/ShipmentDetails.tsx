@@ -16,7 +16,9 @@ import { format } from "date-fns";
 import { pdf } from "@react-pdf/renderer";
 import CourierPdf from "../components/CourierPdf";
 import bwipjs from "bwip-js";
+import QRCode from "qrcode";
 import type { ShipmentDetail, PackageItem } from "../types/shipment";
+import { currentConfig } from "../constants/courierConfig";
 
 /** Reusable info row inside detail cards */
 const InfoRow: React.FC<{ label: string; value: React.ReactNode }> = ({
@@ -106,6 +108,22 @@ const ShipmentDetails: React.FC = () => {
         console.error("Barcode Generation Error:", e);
       }
 
+      let qrCodeBase64 = "";
+      try {
+        const upiId = currentConfig.upiId || "";
+        const payeeName = currentConfig.payeeName || "";
+
+        // Use billing amount or fallback to total amount
+        const amount = shipment.billing_amount || shipment.total_amount || 0;
+
+        // Construct standard UPI payment link format
+        const qrData = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
+
+        qrCodeBase64 = await QRCode.toDataURL(qrData);
+      } catch (e) {
+        console.error("QR Generation Error:", e);
+      }
+
       // Map snake_case to camelCase for the PDF component
       const pdfData = {
         header: {
@@ -148,6 +166,7 @@ const ShipmentDetails: React.FC = () => {
           billingAmount: shipment.billing_amount || 0,
         },
         barcodeBase64,
+        qrCodeBase64,
       };
 
       const blob = await pdf(<CourierPdf data={pdfData as any} />).toBlob();

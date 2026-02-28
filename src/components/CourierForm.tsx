@@ -11,6 +11,8 @@ import { numberToWords } from "../utils/numberToWords";
 import { pdf } from "@react-pdf/renderer";
 import CourierPdf from "./CourierPdf";
 import bwipjs from "bwip-js";
+import QRCode from "qrcode";
+import { currentConfig } from "../constants/courierConfig";
 import {
   MapPin,
   Calendar,
@@ -84,6 +86,8 @@ export interface CourierData {
     amountInWords: string;
     billingAmount: number;
   };
+  barcodeBase64?: string;
+  qrCodeBase64?: string;
 }
 
 const Skeleton = ({ className }: { className?: string }) => (
@@ -509,18 +513,27 @@ const CourierForm: React.FC = () => {
         console.error("Barcode Generation Error:", e);
       }
 
-      // let qrCodeBase64 = "";
-      // try {
-      //   const qrData = `AWB: ${formData.header.awbNo}\nAmount: ${formData.other.totalAmount}`;
-      //   qrCodeBase64 = await QRCode.toDataURL(qrData);
-      // } catch (e) {
-      //   console.error("QR Generation Error:", e);
-      // }
+      let qrCodeBase64 = "";
+      try {
+        const upiId = currentConfig.upiId || "";
+        const payeeName = currentConfig.payeeName || "";
+
+        // Use billing amount or fallback to total amount
+        const amount =
+          formData.other.billingAmount || formData.other.totalAmount || 0;
+
+        // Construct standard UPI payment link format
+        const qrData = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
+
+        qrCodeBase64 = await QRCode.toDataURL(qrData);
+      } catch (e) {
+        console.error("QR Generation Error:", e);
+      }
 
       const pdfData = {
         ...formData,
         barcodeBase64,
-        // qrCodeBase64,
+        qrCodeBase64,
       };
 
       const blob = await pdf(<CourierPdf data={pdfData} />).toBlob();

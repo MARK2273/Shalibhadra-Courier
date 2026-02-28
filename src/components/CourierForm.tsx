@@ -563,7 +563,18 @@ const CourierForm: React.FC = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form
+        onSubmit={handleSubmit}
+        onKeyDown={(e) => {
+          if (
+            e.key === "Enter" &&
+            (e.target as HTMLElement).tagName !== "TEXTAREA"
+          ) {
+            e.preventDefault();
+          }
+        }}
+        className="space-y-8"
+      >
         {/* Header Section */}
         <ShipmentSectionCard title="Shipment Information" icon={Globe}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

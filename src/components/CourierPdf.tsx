@@ -692,7 +692,16 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               }}
             >
               <Text style={{ fontWeight: "bold" }}>
-                {data.header.date || new Date().toLocaleString()}
+                {data.header.date
+                  ? new Date(data.header.date).toLocaleString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })
+                  : new Date().toLocaleString()}
               </Text>
             </View>
             <View
@@ -1000,9 +1009,10 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
 
           {/* Table Header */}
           <View style={styles.invTableHead}>
-            <Text style={{ width: "50%", borderRightWidth: 1 }}>
+            <Text style={{ width: "40%", borderRightWidth: 1 }}>
               Description
             </Text>
+            <Text style={{ width: "10%", borderRightWidth: 1 }}>Box</Text>
             <Text style={{ width: "15%", borderRightWidth: 1 }}>
               Quantity (Pcs)
             </Text>
@@ -1018,13 +1028,23 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               <View key={index} style={styles.invTableRow}>
                 <Text
                   style={{
-                    width: "50%",
+                    width: "40%",
                     borderRightWidth: 1,
                     paddingLeft: 4,
                     fontSize: 9,
                   }}
                 >
                   {item.description}
+                </Text>
+                <Text
+                  style={{
+                    width: "10%",
+                    borderRightWidth: 1,
+                    textAlign: "center",
+                    fontSize: 9,
+                  }}
+                >
+                  {item.boxNo || "1"}
                 </Text>
                 <Text
                   style={{
@@ -1407,7 +1427,16 @@ const CourierPdf = ({ data }: { data: CourierData }) => {
               }}
             >
               <Text style={{ fontWeight: "bold", fontSize: 9 }}>
-                {data.header.date || new Date().toLocaleString()}
+                {data.header.date
+                  ? new Date(data.header.date).toLocaleString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })
+                  : new Date().toLocaleString()}
               </Text>
             </View>
             <View

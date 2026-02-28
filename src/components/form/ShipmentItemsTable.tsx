@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Trash2, Plus, Box, ClipboardList, IndianRupee } from "lucide-react";
 import { getHsCodes } from "../../api/api";
 
@@ -30,6 +30,18 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
   errors,
 }) => {
   const [hsCodes, setHsCodes] = useState<any[]>([]);
+
+  const prevItemsLength = useRef(items.length);
+  const newRowDescriptionRef = useRef<HTMLSelectElement>(null);
+
+  useEffect(() => {
+    if (items.length > prevItemsLength.current) {
+      if (newRowDescriptionRef.current) {
+        newRowDescriptionRef.current.focus();
+      }
+    }
+    prevItemsLength.current = items.length;
+  }, [items.length]);
 
   useEffect(() => {
     const fetchHsCodes = async () => {
@@ -82,33 +94,45 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50/50 text-gray-500 text-xs uppercase tracking-wider font-semibold border-b border-gray-100 hidden md:table-row">
-              <th className="px-6 py-4 w-20">Box</th>
-              <th className="px-6 py-4">Description</th>
-              <th className="px-6 py-4 w-32">HS Code</th>
-              <th className="px-6 py-4 w-24">Qty</th>
-              <th className="px-6 py-4 w-32">Rate</th>
-              <th className="px-6 py-4 w-32">Amount</th>
-              <th className="px-6 py-4 w-16 text-right">Action</th>
+              <th className="px-4 py-4 w-24">Box</th>
+              <th className="px-4 py-4 w-[28%]">Description</th>
+              <th className="px-4 py-4 w-28">HS Code</th>
+              <th className="px-4 py-4 w-28">Qty</th>
+              <th className="px-4 py-4 w-28">Rate</th>
+              <th className="px-4 py-4 w-32">Amount</th>
+              <th className="px-4 py-4 w-12 text-right">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {items.map((item) => (
               <tr
                 key={item.id}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (
+                      item.description &&
+                      item.quantity > 0 &&
+                      item.rate > 0
+                    ) {
+                      onAddItem();
+                    }
+                  }
+                }}
                 className="group hover:bg-blue-50/30 transition-colors flex flex-col md:table-row p-4 md:p-0 border-b md:border-none relative"
               >
                 {/* Mobile Label */}
-                <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">
+                <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
                   <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
                     Box No
                   </span>
-                  <div className="relative">
+                  <div className="relative w-full md:w-24">
                     <select
                       value={item.boxNo}
                       onChange={(e) =>
                         onItemChange(item.id, "boxNo", e.target.value)
                       }
-                      className="block w-full md:w-20 pl-3 pr-8 py-2 text-sm border-gray-200 rounded-lg bg-white focus:border-primary focus:ring-primary/20 outline-none appearance-none font-medium shadow-sm transition-all"
+                      className="block w-full pl-3 pr-8 py-2 text-sm border-gray-200 rounded-lg bg-white focus:border-primary focus:ring-primary/20 outline-none appearance-none font-medium shadow-sm transition-all"
                     >
                       {boxOptions.map((num) => (
                         <option key={num} value={num}>
@@ -123,12 +147,17 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                   <div className="h-4"></div>
                 </td>
 
-                <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">
+                <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
                   <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
                     Description
                   </span>
                   <div className="relative">
                     <select
+                      ref={
+                        items.indexOf(item) === items.length - 1
+                          ? newRowDescriptionRef
+                          : null
+                      }
                       value={item.description}
                       onChange={(e) =>
                         handleDescriptionChange(item.id, e.target.value)
@@ -193,7 +222,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                   </div>
                 </td>
 
-                <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">
+                <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
                   <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
                     HS
                   </span>
@@ -207,7 +236,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                   <div className="h-4"></div>
                 </td>
 
-                <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">
+                <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
                   <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
                     Quantity
                   </span>
@@ -218,7 +247,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                     onChange={(e) =>
                       onItemChange(item.id, "quantity", Number(e.target.value))
                     }
-                    className={`block w-full px-3 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-bold text-gray-700 ${
+                    className={`block w-full px-2 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-bold text-gray-700 ${
                       errors[`items.${items.indexOf(item)}.quantity`]
                         ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
                         : "border-gray-200"
@@ -233,7 +262,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                   </div>
                 </td>
 
-                <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">
+                <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
                   <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
                     Rate
                   </span>
@@ -259,7 +288,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                   </div>
                 </td>
 
-                <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">
+                <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
                   <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
                     Amount
                   </span>

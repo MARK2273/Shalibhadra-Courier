@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Trash2, Plus, Box, ClipboardList, IndianRupee } from "lucide-react";
+import { getHsCodes } from "../../api/api";
 
 interface LineItem {
   id: number;
@@ -28,6 +29,29 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
   boxOptions,
   errors,
 }) => {
+  const [hsCodes, setHsCodes] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchHsCodes = async () => {
+      try {
+        const data = await getHsCodes();
+        setHsCodes(data || []);
+      } catch (error) {
+        console.error("Failed to fetch HS codes", error);
+      }
+    };
+    fetchHsCodes();
+  }, []);
+
+  const handleDescriptionChange = (id: number, value: string) => {
+    onItemChange(id, "description", value);
+    // Find matching code
+    const matchedCode = hsCodes.find((item) => item.name === value);
+    if (matchedCode) {
+      onItemChange(id, "hsnCode", matchedCode.hs_code || "");
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
@@ -60,7 +84,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
             <tr className="bg-gray-50/50 text-gray-500 text-xs uppercase tracking-wider font-semibold border-b border-gray-100 hidden md:table-row">
               <th className="px-6 py-4 w-20">Box</th>
               <th className="px-6 py-4">Description</th>
-              <th className="px-6 py-4 w-32">HSN Code</th>
+              <th className="px-6 py-4 w-32">HS Code</th>
               <th className="px-6 py-4 w-24">Qty</th>
               <th className="px-6 py-4 w-32">Rate</th>
               <th className="px-6 py-4 w-32">Amount</th>
@@ -96,25 +120,70 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                       <Box className="h-3 w-3" />
                     </div>
                   </div>
+                  <div className="h-4"></div>
                 </td>
 
                 <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">
                   <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
                     Description
                   </span>
-                  <input
-                    type="text"
-                    value={item.description}
-                    placeholder="Item Description"
-                    onChange={(e) =>
-                      onItemChange(item.id, "description", e.target.value)
-                    }
-                    className={`block w-full px-3 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm placeholder:text-gray-400 font-medium ${
-                      errors[`items.${items.indexOf(item)}.description`]
-                        ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
-                        : "border-gray-200"
-                    }`}
-                  />
+                  <div className="relative">
+                    <select
+                      value={item.description}
+                      onChange={(e) =>
+                        handleDescriptionChange(item.id, e.target.value)
+                      }
+                      className={`block w-full pl-3 pr-8 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none appearance-none transition-all shadow-sm font-medium ${
+                        item.description ? "text-gray-900" : "text-gray-400"
+                      } ${
+                        errors[`items.${items.indexOf(item)}.description`]
+                          ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
+                          : "border-gray-200"
+                      }`}
+                    >
+                      <option value="" disabled className="text-gray-400">
+                        Select Item Description
+                      </option>
+                      {/* 
+                          Fallback for legacy items where the description in DB 
+                          does not match any of the dynamically loaded hsCodes 
+                      */}
+                      {item.description &&
+                        !hsCodes.find((c) => c.name === item.description) && (
+                          <option
+                            value={item.description}
+                            className="text-gray-900 bg-yellow-50"
+                          >
+                            {item.description}
+                          </option>
+                        )}
+
+                      {hsCodes.map((code) => (
+                        <option
+                          key={code.id}
+                          value={code.name}
+                          className="text-gray-900"
+                        >
+                          {code.name}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none text-gray-400">
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                  </div>
                   <div className="h-4">
                     {errors[`items.${items.indexOf(item)}.description`] && (
                       <span className="text-[10px] text-red-500 mt-0.5 ml-1 font-bold animate-in fade-in slide-in-from-top-1 leading-none block">
@@ -126,17 +195,16 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
 
                 <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">
                   <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
-                    HSN
+                    HS
                   </span>
                   <input
                     type="text"
                     value={item.hsnCode}
-                    placeholder="HSN"
-                    onChange={(e) =>
-                      onItemChange(item.id, "hsnCode", e.target.value)
-                    }
-                    className="block w-full px-3 py-2 text-sm border-gray-200 rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm placeholder-gray-400 text-center font-medium"
+                    placeholder="HS"
+                    readOnly
+                    className="block w-full px-3 py-2 text-sm border-transparent rounded-lg bg-gray-50 text-gray-500 text-center font-bold shadow-inner cursor-not-allowed outline-none"
                   />
+                  <div className="h-4"></div>
                 </td>
 
                 <td className="px-6 py-3 md:py-4 flex flex-col md:table-cell">
@@ -206,6 +274,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                       className="block w-full pl-6 pr-3 py-2 text-sm border-transparent rounded-lg bg-gray-50 text-gray-500 font-bold text-right shadow-inner"
                     />
                   </div>
+                  <div className="h-4"></div>
                 </td>
 
                 <td className="px-6 py-3 md:py-4 text-right md:flex justify-end items-center absolute md:static top-2 right-2">

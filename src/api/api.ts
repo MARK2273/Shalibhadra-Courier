@@ -46,4 +46,9 @@ export const trackShipment = async (awb: string, tenant?: string): Promise<any> 
   return response.data;
 };
 
+export const getHsCodes = async (): Promise<any[]> => {
+  const response = await api.get('/public/hs-codes');
+  return response.data;
+};
+
 export default api;

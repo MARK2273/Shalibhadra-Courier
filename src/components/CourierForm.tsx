@@ -59,6 +59,7 @@ export interface CourierData {
     boxNumber: string;
     serviceDetails: string;
     serviceId?: string;
+    service?: string;
   };
   sender: {
     name: string;
@@ -75,6 +76,7 @@ export interface CourierData {
   };
   routing: {
     portOfLoading: string;
+    finalDestination?: string;
   };
   items: LineItem[];
   other: {
@@ -147,6 +149,7 @@ const initialFormData: CourierData = {
     invoiceDate: "",
     boxNumber: "",
     serviceDetails: "",
+    service: "",
   },
   sender: {
     name: "",
@@ -163,6 +166,7 @@ const initialFormData: CourierData = {
   },
   routing: {
     portOfLoading: "",
+    finalDestination: "",
   },
   items: [
     {
@@ -308,6 +312,7 @@ const CourierForm: React.FC = () => {
             boxNumber: data.box_count?.toString() || "",
             serviceDetails: data.service_details || "",
             serviceId: data.service_id,
+            service: (data as any).service || "Standard",
           },
           sender: {
             name: data.sender_name || "",
@@ -324,6 +329,7 @@ const CourierForm: React.FC = () => {
           },
           routing: {
             portOfLoading: data.port_of_loading || "",
+            finalDestination: data.destination || "",
           },
           items: Array.isArray(data.packages) ? data.packages : [],
           other: {
@@ -532,6 +538,17 @@ const CourierForm: React.FC = () => {
 
       const pdfData = {
         ...formData,
+        header: {
+          ...formData.header,
+          service:
+            dbServices.find((s) => s.id === formData.header.serviceId)?.name ||
+            formData.header.service ||
+            "Standard",
+        },
+        routing: {
+          ...formData.routing,
+          finalDestination: formData.header.destination,
+        },
         barcodeBase64,
         qrCodeBase64,
       };

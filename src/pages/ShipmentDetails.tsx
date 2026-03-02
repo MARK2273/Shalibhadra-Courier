@@ -426,7 +426,7 @@ const ShipmentDetails: React.FC = () => {
                     <td className="px-6 py-3 font-medium text-gray-900">
                       {pkg.description || "—"}
                     </td>
-                    <td className="px-6 py-3">{pkg.hsCode || "—"}</td>
+                    <td className="px-6 py-3">{pkg.hsnCode || "—"}</td>
                     <td className="px-6 py-3">{pkg.boxNo || "—"}</td>
                     <td className="px-6 py-3 text-right">
                       {pkg.quantity ?? "—"}

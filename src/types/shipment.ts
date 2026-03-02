@@ -13,7 +13,7 @@ export interface Shipment {
 /** Package item stored in the JSONB `packages` column */
 export interface PackageItem {
   description: string;
-  hsCode: string;
+  hsnCode: string;
   quantity: number;
   rate: number;
   amount: number;

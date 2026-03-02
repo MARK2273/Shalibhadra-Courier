@@ -21,6 +21,120 @@ interface ShipmentItemsTableProps {
   errors: Record<string, string>;
 }
 
+const ItemDescriptionCombobox = React.forwardRef<
+  HTMLInputElement,
+  {
+    value: string;
+    onChange: (value: string) => void;
+    options: any[];
+    error?: string;
+    placeholder?: string;
+  }
+>(
+  (
+    {
+      value,
+      onChange,
+      options,
+      error,
+      placeholder = "Search Item Description",
+    },
+    ref,
+  ) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState(value);
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      setSearchTerm(value);
+    }, [value]);
+
+    useEffect(() => {
+      function handleClickOutside(event: MouseEvent) {
+        if (
+          wrapperRef.current &&
+          !wrapperRef.current.contains(event.target as Node)
+        ) {
+          setIsOpen(false);
+        }
+      }
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const filteredOptions = options.filter((opt) =>
+      (opt.name || "").toLowerCase().includes((searchTerm || "").toLowerCase()),
+    );
+
+    return (
+      <div className="relative w-full" ref={wrapperRef}>
+        <input
+          ref={ref}
+          type="text"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            onChange(e.target.value);
+            setIsOpen(true);
+          }}
+          onFocus={() => setIsOpen(true)}
+          placeholder={placeholder}
+          className={`block w-full pl-3 pr-8 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm font-medium ${
+            searchTerm ? "text-gray-900" : "text-gray-400"
+          } ${
+            error
+              ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
+              : "border-gray-200"
+          }`}
+        />
+        <div
+          className="absolute inset-y-0 right-0 pr-2 flex items-center cursor-pointer text-gray-400 hover:text-gray-600"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <svg
+            className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </div>
+        {isOpen && (
+          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto overflow-x-hidden">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((opt) => (
+                <div
+                  key={opt.id}
+                  className="px-3 py-2 cursor-pointer hover:bg-blue-50 text-sm text-gray-900 whitespace-normal break-words"
+                  onClick={() => {
+                    setSearchTerm(opt.name);
+                    onChange(opt.name);
+                    setIsOpen(false);
+                  }}
+                >
+                  {opt.name}
+                </div>
+              ))
+            ) : (
+              <div className="px-3 py-2 text-sm text-gray-500">
+                No items found
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  },
+);
+ItemDescriptionCombobox.displayName = "ItemDescriptionCombobox";
+
 const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
   items,
   onItemChange,
@@ -32,7 +146,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
   const [hsCodes, setHsCodes] = useState<any[]>([]);
 
   const prevItemsLength = useRef(items.length);
-  const newRowDescriptionRef = useRef<HTMLSelectElement>(null);
+  const newRowDescriptionRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (items.length > prevItemsLength.current) {
@@ -65,8 +179,8 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-visible">
+      <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center rounded-t-2xl">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-blue-100 rounded-lg text-primary">
             <ClipboardList className="h-5 w-5" />
@@ -90,7 +204,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
         </button>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-visible">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50/50 text-gray-500 text-xs uppercase tracking-wider font-semibold border-b border-gray-100 hidden md:table-row">
@@ -152,66 +266,17 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                     Description
                   </span>
                   <div className="relative">
-                    <select
+                    <ItemDescriptionCombobox
                       ref={
                         items.indexOf(item) === items.length - 1
                           ? newRowDescriptionRef
                           : null
                       }
                       value={item.description}
-                      onChange={(e) =>
-                        handleDescriptionChange(item.id, e.target.value)
-                      }
-                      className={`block w-full pl-3 pr-8 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none appearance-none transition-all shadow-sm font-medium ${
-                        item.description ? "text-gray-900" : "text-gray-400"
-                      } ${
-                        errors[`items.${items.indexOf(item)}.description`]
-                          ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
-                          : "border-gray-200"
-                      }`}
-                    >
-                      <option value="" disabled className="text-gray-400">
-                        Select Item Description
-                      </option>
-                      {/* 
-                          Fallback for legacy items where the description in DB 
-                          does not match any of the dynamically loaded hsCodes 
-                      */}
-                      {item.description &&
-                        !hsCodes.find((c) => c.name === item.description) && (
-                          <option
-                            value={item.description}
-                            className="text-gray-900 bg-yellow-50"
-                          >
-                            {item.description}
-                          </option>
-                        )}
-
-                      {hsCodes.map((code) => (
-                        <option
-                          key={code.id}
-                          value={code.name}
-                          className="text-gray-900"
-                        >
-                          {code.name}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none text-gray-400">
-                      <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </div>
+                      onChange={(val) => handleDescriptionChange(item.id, val)}
+                      options={hsCodes}
+                      error={errors[`items.${items.indexOf(item)}.description`]}
+                    />
                   </div>
                   <div className="h-4">
                     {errors[`items.${items.indexOf(item)}.description`] && (

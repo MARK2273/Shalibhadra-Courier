@@ -294,11 +294,23 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                   <input
                     type="text"
                     value={item.hsnCode}
+                    onChange={(e) =>
+                      onItemChange(item.id, "hsnCode", e.target.value)
+                    }
                     placeholder="HS"
-                    readOnly
-                    className="block w-full px-3 py-2 text-sm border-transparent rounded-lg bg-gray-50 text-gray-500 text-center font-bold shadow-inner cursor-not-allowed outline-none"
+                    className={`block w-full px-3 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-medium ${
+                      errors[`items.${items.indexOf(item)}.hsnCode`]
+                        ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
+                        : "border-gray-200"
+                    }`}
                   />
-                  <div className="h-4"></div>
+                  <div className="h-4">
+                    {errors[`items.${items.indexOf(item)}.hsnCode`] && (
+                      <span className="text-[10px] text-red-500 mt-0.5 font-bold block text-center animate-in fade-in slide-in-from-top-1 leading-none">
+                        {errors[`items.${items.indexOf(item)}.hsnCode`]}
+                      </span>
+                    )}
+                  </div>
                 </td>
 
                 <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">

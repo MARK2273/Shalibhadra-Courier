@@ -20,17 +20,17 @@ export const courierConfigs: Record<string, CourierConfig> = {
     displayName: "Shalibhadra Couriers",
     website: "https://shalibhadra-courier.vercel.app",
     address:
-      "UG-418 TURNING POINT COMPLEX NEAR MAAKHAN BHOG GHOD DOD SURAT-395007",
-      footerText: "Shalibhadra Couriers , Surat",
-      upiId: "bszaverizaveri-1@okhdfcbank",
-      payeeName: "Shalibhadra Couriers",
+      "LOWER GROUND, SHOP NO LG-136, TURNING POINT COMPLEX,, OPP MAAKHAN BHOG, GHOD DOD ROAD, SURAT, Surat, Gujarat, 395007",
+    footerText: "Shalibhadra Couriers , Surat",
+    upiId: "bszaverizaveri-1@okhdfcbank",
+    payeeName: "Shalibhadra Couriers",
   },
   navkar: {
     name: "Navkar",
     subName: "Couriers", // Assuming similarity
     displayName: "Navkar Couriers",
     website: "https://navkar-courier.vercel.app", // Placeholder, user can update
-    address: "SHOP NO 12, NAKSHATRA HEIGHTS, NEAR MADHUVAN CIRCLE, ADAJAN, SURAT-395009", // Placeholder
+    address: "PLOT NO-118, THAKOR DWAR SOCIETY-3, HONEY PARK ROAD, ADAJAN, PALANPUR, SURAT, Surat, Gujarat, 395009", // Placeholder
     footerText: "Navkar Couriers , Surat",
     upiId: "bszaverizaveri-1@okhdfcbank", // Placeholder
     payeeName: "Navkar Couriers",

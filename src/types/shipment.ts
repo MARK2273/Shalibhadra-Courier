@@ -7,6 +7,7 @@ export interface Shipment {
   destination: string;
   billing_amount: number;
   awb_no: string;
+  sender_contact?: string | null;
   tracking_url?: string | null;
 }
 

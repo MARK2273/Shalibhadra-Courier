@@ -189,6 +189,7 @@ const Dashboard: React.FC = () => {
                 <tr>
                   <th className="px-6 py-3">AWB No.</th>
                   <th className="px-6 py-3">Date</th>
+                  <th className="px-6 py-3">Phone Number</th>
                   <th className="px-6 py-3">Sender</th>
                   <th className="px-6 py-3">Receiver</th>
                   <th className="px-6 py-3">Destination</th>
@@ -206,6 +207,9 @@ const Dashboard: React.FC = () => {
                       </td>
                       <td className="px-6 py-4">
                         <Skeleton className="h-4 w-24" />
+                      </td>
+                      <td className="px-6 py-4">
+                        <Skeleton className="h-4 w-32" />
                       </td>
                       <td className="px-6 py-4">
                         <Skeleton className="h-4 w-32" />
@@ -256,6 +260,7 @@ const Dashboard: React.FC = () => {
                 <tr>
                   <th className="px-6 py-3">AWB No.</th>
                   <th className="px-6 py-3">Date</th>
+                  <th className="px-6 py-3">Phone Number</th>
                   <th className="px-6 py-3">Sender</th>
                   <th className="px-6 py-3">Receiver</th>
                   <th className="px-6 py-3">Destination</th>
@@ -279,6 +284,9 @@ const Dashboard: React.FC = () => {
                             "dd MMM yyyy",
                           )
                         : "N/A"}
+                    </td>
+                    <td className="px-6 py-4">
+                      {shipment.sender_contact || "N/A"}
                     </td>
                     <td className="px-6 py-4">{shipment.sender_name}</td>
                     <td className="px-6 py-4">{shipment.receiver_name}</td>

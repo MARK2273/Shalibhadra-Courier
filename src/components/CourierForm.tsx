@@ -7,7 +7,7 @@ import api, {
   type Service,
   type UpiConfig,
 } from "../api/api";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { countryList, countryData } from "../constants/formOptions";
 import { numberToWords } from "../utils/numberToWords";
 import { pdf } from "@react-pdf/renderer";
@@ -199,6 +199,7 @@ const initialFormData: CourierData = {
 const CourierForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const isEditMode = !!id;
 
   const [formData, setFormData] = useState<CourierData>(initialFormData);
@@ -314,6 +315,15 @@ const CourierForm: React.FC = () => {
 
   useEffect(() => {
     const fetchShipmentData = async () => {
+      // If we are navigating to /form but have cloned data in state, use it
+      if (!id && location.state?.clonedData) {
+        setFormData(location.state.clonedData);
+        setIsFetching(false);
+        // Clear the state so it doesn't persist on subsequent refreshes
+        window.history.replaceState({}, document.title);
+        return;
+      }
+
       if (!id) {
         setFormData(initialFormData);
         setIsFetching(false);
@@ -408,10 +418,10 @@ const CourierForm: React.FC = () => {
   }, [formData.items]);
   const handleClone = () => {
     // Reset unique/temporary fields
-    setFormData((prev) => ({
-      ...prev,
+    const clonedData: CourierData = {
+      ...formData,
       header: {
-        ...prev.header,
+        ...formData.header,
         awbNo: "",
         invoiceNo: "",
         invoiceDate: "",
@@ -421,10 +431,11 @@ const CourierForm: React.FC = () => {
           .slice(0, 16),
       },
       // Keep sender, receiver, items as they are
-    }));
+    };
 
-    // Step 2: Change to create mode by clearing the ID and navigating
-    navigate("/form");
+    // Step 2: Change to create mode by navigating with the cloned data in state
+    navigate("/form", { state: { clonedData } });
+
     setSubmitStatus({
       type: "success",
       message: "Shipment details cloned! You are now creating a new shipment.",

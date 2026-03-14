@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#000",
-    height: 100,
+    minHeight: 100,
   },
   invRoutingRow: {
     flexDirection: "row",
@@ -384,6 +384,13 @@ const styles = StyleSheet.create({
   hannyAddressBox: {
     padding: 4,
     height: 80,
+  },
+  computerGeneratedNote: {
+    fontSize: 7,
+    fontStyle: "italic",
+    textAlign: "center",
+    color: "#444",
+    marginTop: 2,
   },
 });
 
@@ -711,6 +718,10 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text>Sign</Text>
             </View>
           </View>
+          <Text style={styles.computerGeneratedNote}>
+            This is a system-generated document and does not require a
+            physical signature or stamp.
+          </Text>
         </View>
       </Page>
 
@@ -848,7 +859,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
             </Text>
           </View>
           {/* Header */}
-          <View style={[styles.invRow, { height: 80 }]}>
+          <View style={[styles.invRow, { minHeight: 80 }]}>
             <View style={styles.invHeaderLeft}>
               <Text style={{ fontWeight: "bold" }}>Exporter,</Text>
               <Text>{data.sender.name}</Text>
@@ -1445,6 +1456,10 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={{ fontSize: 8 }}>Sign</Text>
             </View>
           </View>
+          <Text style={[styles.computerGeneratedNote, { marginTop: 4 }]}>
+            This is a system-generated document and does not require a
+            physical signature or stamp.
+          </Text>
         </View>
       </Page>
     </Document>

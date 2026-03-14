@@ -1395,7 +1395,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               If any issue then first contact our OPS team
             </Text>
             <Text style={{ fontSize: 10, fontWeight: "bold", marginTop: 10 }}>
-              ShalibhadraCouriers@gmail.com - 9909408678
+              {currentConfig.email} - {currentConfig.contact}
             </Text>
           </View>
 

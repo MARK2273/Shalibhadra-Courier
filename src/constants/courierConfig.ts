@@ -26,6 +26,8 @@ export const courierConfigs: Record<string, CourierConfig> = {
     upiId: "bszaverizaveri-1@okhdfcbank",
     payeeName: "Shalibhadra Couriers",
     tagline: "Courier & Cargo",
+    email: "ShalibhadraCouriers@gmail.com",
+    contact: "9909408678",
   },
   navkar: {
     name: "NAVKAR",
@@ -37,6 +39,8 @@ export const courierConfigs: Record<string, CourierConfig> = {
     upiId: "bszaverizaveri-1@okhdfcbank", // Placeholder
     payeeName: "NAVKAR ENTERPRISE",
     tagline: "",
+    email: "NAVKARENTERPRISE@gmail.com", // Placeholder
+    contact: "9909408678", // Placeholder
   },
 };
 

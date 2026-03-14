@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
   container: {
     border: "2px solid black",
-    height: "100%",
+    flex: 1,
     width: "100%",
   },
   row: {
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   },
   invoiceContainer: {
     border: "2px solid black",
-    height: "100%",
+    flex: 1,
     flexDirection: "column",
   },
   invRow: {
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#000",
-    minHeight: 100,
+    height: 100,
   },
   invRoutingRow: {
     flexDirection: "row",
@@ -386,11 +386,10 @@ const styles = StyleSheet.create({
     height: 80,
   },
   computerGeneratedNote: {
-    fontSize: 7,
-    fontStyle: "italic",
+    fontSize: 8,
     textAlign: "center",
-    color: "#444",
-    marginTop: 2,
+    color: "#666",
+    marginTop: 8,
   },
 });
 
@@ -718,11 +717,12 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text>Sign</Text>
             </View>
           </View>
-          <Text style={styles.computerGeneratedNote}>
-            This is a system-generated document and does not require a
-            physical signature or stamp.
-          </Text>
         </View>
+        <Text style={styles.computerGeneratedNote}>
+          This is a system-generated document and does not require a physical
+          signature or stamp.
+        </Text>
+        {/* </View> */}
       </Page>
 
       {/* Second Page: Label Layout (Duplicate) */}
@@ -859,7 +859,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
             </Text>
           </View>
           {/* Header */}
-          <View style={[styles.invRow, { minHeight: 80 }]}>
+          <View style={[styles.invRow, { height: 80 }]}>
             <View style={styles.invHeaderLeft}>
               <Text style={{ fontWeight: "bold" }}>Exporter,</Text>
               <Text>{data.sender.name}</Text>
@@ -1203,6 +1203,10 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
             </View>
           </View>
         </View>
+        <Text style={styles.computerGeneratedNote}>
+          This is a system-generated document and does not require a physical
+          signature or stamp.
+        </Text>
       </Page>
 
       {/* Fourth Page: Hanny Logistics (Duplicate Labels) */}
@@ -1456,13 +1460,13 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={{ fontSize: 8 }}>Sign</Text>
             </View>
           </View>
-          <Text style={[styles.computerGeneratedNote, { marginTop: 4 }]}>
-            This is a system-generated document and does not require a
-            physical signature or stamp.
-          </Text>
         </View>
+        <Text style={styles.computerGeneratedNote}>
+          This is a system-generated document and does not require a physical
+          signature or stamp.
+        </Text>
       </Page>
-    </Document>
+    </Document >
   );
 };
 

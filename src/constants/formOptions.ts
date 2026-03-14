@@ -92,6 +92,7 @@ export const countryData: CountryOption[] = [
   { name: "Kazakhstan", prefix: "+7" },
   { name: "Kenya", prefix: "+254" },
   { name: "Kiribati", prefix: "+686" },
+  { name: "Kosovo", prefix: "+383" },
   { name: "Kuwait", prefix: "+965" },
   { name: "Kyrgyzstan", prefix: "+996" },
   { name: "Laos", prefix: "+856" },

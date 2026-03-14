@@ -157,7 +157,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                 label: config.display_name,
               }))}
               icon={CreditCard}
-              containerClassName="col-span-2 bg-purple-50 rounded-lg p-1 border border-purple-100"
+              containerClassName="col-span-2"
             />
           )}
 

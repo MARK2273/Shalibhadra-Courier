@@ -29,6 +29,7 @@ import {
   Printer,
   Hash,
   Save,
+  Copy,
 } from "lucide-react";
 
 // Import Reusable Components
@@ -405,6 +406,30 @@ const CourierForm: React.FC = () => {
       },
     }));
   }, [formData.items]);
+  const handleClone = () => {
+    // Reset unique/temporary fields
+    setFormData((prev) => ({
+      ...prev,
+      header: {
+        ...prev.header,
+        awbNo: "",
+        invoiceNo: "",
+        invoiceDate: "",
+        // Keep origin, destination, serviceId, etc.
+        date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+          .toISOString()
+          .slice(0, 16),
+      },
+      // Keep sender, receiver, items as they are
+    }));
+
+    // Step 2: Change to create mode by clearing the ID and navigating
+    navigate("/create");
+    setSubmitStatus({
+      type: "success",
+      message: "Shipment details cloned! You are now creating a new shipment.",
+    });
+  };
 
   const handleNestedChange = (
     section: keyof CourierData,
@@ -633,6 +658,17 @@ const CourierForm: React.FC = () => {
               : "Fill shipment, invoice and package details below"}
           </p>
         </div>
+
+        {isEditMode && (
+          <button
+            type="button"
+            onClick={handleClone}
+            className="ml-auto flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 transition-colors border border-indigo-100 font-medium"
+          >
+            <Copy className="h-4 w-4" />
+            Clone Shipment
+          </button>
+        )}
       </div>
 
       <form

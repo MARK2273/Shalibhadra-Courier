@@ -424,7 +424,7 @@ const CourierForm: React.FC = () => {
     }));
 
     // Step 2: Change to create mode by clearing the ID and navigating
-    navigate("/create");
+    navigate("/form");
     setSubmitStatus({
       type: "success",
       message: "Shipment details cloned! You are now creating a new shipment.",
@@ -994,11 +994,10 @@ const CourierForm: React.FC = () => {
         {/* Status Message */}
         {submitStatus && (
           <div
-            className={`p-4 rounded-xl border flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
-              submitStatus.type === "success"
+            className={`p-4 rounded-xl border flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${submitStatus.type === "success"
                 ? "bg-green-50 border-green-200 text-green-700"
                 : "bg-red-50 border-red-200 text-red-700"
-            }`}
+              }`}
           >
             <div
               className={`p-1.5 rounded-full ${submitStatus.type === "success" ? "bg-green-100" : "bg-red-100"}`}

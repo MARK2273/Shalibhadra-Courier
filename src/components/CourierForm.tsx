@@ -217,8 +217,6 @@ const CourierForm: React.FC = () => {
       formData.header.destination === "Select Destination"
     )
       newErrors["header.destination"] = "Destination is required";
-    if (!formData.header.awbNo)
-      newErrors["header.awbNo"] = "AWB Number is required";
     if (!formData.header.date)
       newErrors["header.date"] = "Shipment Date is required";
     if (!formData.header.serviceId)
@@ -477,23 +475,32 @@ const CourierForm: React.FC = () => {
     setSubmitStatus(null);
     setIsGenerating(true);
 
+    let updatedFormData = formData;
     try {
       try {
+        let generatedAwb = formData.header.awbNo;
         if (isEditMode && id) {
           await updateShipment(id, formData);
           setSubmitStatus({
             type: "success",
             message: "Shipment updated successfully!",
           });
-          setTimeout(() => navigate("/dashboard"), 1500);
-          return;
+          // setTimeout(() => navigate("/dashboard"), 1500);
+          // return;
         } else {
-          await api.post("/form/create", formData);
+          const response = await api.post("/form/create", formData);
+          generatedAwb = response.data.awb_no;
           setSubmitStatus({
             type: "success",
             message: "Shipment created successfully!",
           });
         }
+
+        // Update formData with the generated AWB for PDF generation
+        updatedFormData = {
+          ...formData,
+          header: { ...formData.header, awbNo: generatedAwb },
+        };
       } catch (apiError) {
         console.error("Failed to save shipment:", apiError);
         setSubmitStatus({
@@ -508,7 +515,7 @@ const CourierForm: React.FC = () => {
         const canvas = document.createElement("canvas");
         bwipjs.toCanvas(canvas, {
           bcid: "code128",
-          text: formData.header.awbNo || "12345678",
+          text: updatedFormData.header.awbNo || "12345678",
           scale: 3,
           height: 10,
           includetext: false,
@@ -537,9 +544,9 @@ const CourierForm: React.FC = () => {
       }
 
       const pdfData = {
-        ...formData,
+        ...updatedFormData,
         header: {
-          ...formData.header,
+          ...updatedFormData.header,
           service:
             dbServices.find((s) => s.id === formData.header.serviceId)?.name ||
             formData.header.service ||
@@ -661,17 +668,6 @@ const CourierForm: React.FC = () => {
                   });
                 }
               }}
-            />
-            <FormInput
-              label="AWB Number"
-              icon={FileText} // Barcode icon not available in default set, using FileText
-              value={formData.header.awbNo}
-              error={errors["header.awbNo"]}
-              onChange={(e) =>
-                handleNestedChange("header", "awbNo", e.target.value)
-              }
-              placeholder="Enter AWB No"
-              className="font-bold text-primary tracking-wide"
             />
             <FormInput
               label="Date"

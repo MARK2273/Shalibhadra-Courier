@@ -2,7 +2,7 @@ import axios from 'axios';
 import { type UpiConfig } from '../types/shipment';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://courier-backend-psi.vercel.app/api',
 });
 
 // Add a request interceptor to include the JWT token

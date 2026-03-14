@@ -300,7 +300,8 @@ const CourierForm: React.FC = () => {
       try {
         const { configs, defaultUpiId } = await getUpiConfigs();
         setUpiConfigs(configs);
-        if (!isEditMode && defaultUpiId) {
+        // Only set default if one isn't already selected (important for cloning/editing)
+        if (!isEditMode && defaultUpiId && !formData.other.selectedUpiId) {
           setFormData((prev) => ({
             ...prev,
             other: { ...prev.other, selectedUpiId: defaultUpiId },

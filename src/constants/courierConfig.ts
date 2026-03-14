@@ -11,6 +11,7 @@ export interface CourierConfig {
   footerText?: string;
   upiId?: string;
   payeeName?: string;
+  tagline?: string;
 }
 
 export const courierConfigs: Record<string, CourierConfig> = {
@@ -24,16 +25,18 @@ export const courierConfigs: Record<string, CourierConfig> = {
     footerText: "Shalibhadra Couriers , Surat",
     upiId: "bszaverizaveri-1@okhdfcbank",
     payeeName: "Shalibhadra Couriers",
+    tagline: "Courier & Cargo",
   },
   navkar: {
-    name: "Navkar",
-    subName: "Couriers", // Assuming similarity
-    displayName: "Navkar Couriers",
+    name: "NAVKAR",
+    subName: "ENTERPRISE",
+    displayName: "NAVKAR ENTERPRISE",
     website: "https://navkar-courier.vercel.app", // Placeholder, user can update
     address: "PLOT NO-118, THAKOR DWAR SOCIETY-3, HONEY PARK ROAD, ADAJAN, PALANPUR, SURAT, Surat, Gujarat, 395009", // Placeholder
-    footerText: "Navkar Couriers , Surat",
+    footerText: "NAVKAR ENTERPRISE , Surat",
     upiId: "bszaverizaveri-1@okhdfcbank", // Placeholder
-    payeeName: "Navkar Couriers",
+    payeeName: "NAVKAR ENTERPRISE",
+    tagline: "",
   },
 };
 

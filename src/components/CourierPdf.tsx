@@ -411,7 +411,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={{ fontSize: 24, fontWeight: "bold" }}>
                 {currentConfig.subName}
               </Text>
-              <Text style={{ fontSize: 10 }}>Courier & Cargo</Text>
+              <Text style={{ fontSize: 10 }}>{currentConfig.tagline}</Text>
             </View>
             <View style={styles.originDestSection}>
               <View style={styles.odBox}>
@@ -646,7 +646,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               </Text>
               <Text style={{ marginTop: 2, fontWeight: "bold" }}>
                 IN CASE OF LOST SHIPMENT, {currentConfig.name.toUpperCase()}{" "}
-                COURIERS NOT LIABILITY ANY RISK CHARGE
+                {currentConfig.subName.toUpperCase()} NOT LIABILITY ANY RISK CHARGE
               </Text>
             </View>
             <View style={styles.qrSection}>
@@ -689,13 +689,13 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={{ fontWeight: "bold" }}>
                 {data.header.date
                   ? new Date(data.header.date).toLocaleString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    })
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  })
                   : new Date().toLocaleString()}
               </Text>
             </View>
@@ -727,7 +727,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                 {currentConfig.subName}
               </Text>
               <Text style={{ fontSize: 10, marginTop: 4, textAlign: "center" }}>
-                Courier & Cargo
+                {currentConfig.tagline}
               </Text>
             </View>
             <View style={styles.hannyHeaderMiddle}>
@@ -1424,13 +1424,13 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={{ fontWeight: "bold", fontSize: 9 }}>
                 {data.header.date
                   ? new Date(data.header.date).toLocaleString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    })
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  })
                   : new Date().toLocaleString()}
               </Text>
             </View>

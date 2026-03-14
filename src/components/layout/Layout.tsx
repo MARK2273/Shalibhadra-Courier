@@ -66,7 +66,7 @@ const Layout: React.FC = () => {
               {currentConfig.displayName}
             </h1>
             <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
-              Courier & Cargo
+              {currentConfig.tagline}
             </p>
           </div>
         </div>

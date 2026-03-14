@@ -9,7 +9,18 @@ export interface Shipment {
   awb_no: string;
   sender_contact?: string | null;
   payment_type: 'Cash' | 'Online';
+  selected_upi_id?: string | null;
   tracking_url?: string | null;
+}
+
+export interface UpiConfig {
+  id: string;
+  tenant_id: string;
+  display_name: string;
+  upi_id: string;
+  payee_name: string;
+  is_active: boolean;
+  created_at: string;
 }
 
 /** Package item stored in the JSONB `packages` column */
@@ -68,6 +79,12 @@ export interface ShipmentDetail {
   amount_in_words: string | null;
   billing_amount: number | null;
   payment_type: 'Cash' | 'Online';
+  selected_upi_id: string | null;
+  upi_details?: {
+    upi_id: string;
+    payee_name: string;
+    display_name: string;
+  } | null;
   tracking_url?: string | null;
 
   created_at: string;

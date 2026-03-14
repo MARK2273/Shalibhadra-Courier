@@ -2,6 +2,7 @@ import React from "react";
 import { IndianRupee, Scale, Box, CreditCard } from "lucide-react";
 import FormInput from "./FormInput";
 import FormSelect from "./FormSelect";
+import { type UpiConfig } from "../../types/shipment";
 
 interface SummaryCardProps {
   pcs: number;
@@ -12,7 +13,10 @@ interface SummaryCardProps {
   amountInWords: string;
   currency: string;
   paymentType: string;
-  onFieldChange: (field: string, value: any) => void;
+  selectedUpiId?: string | null;
+  upiConfigs?: UpiConfig[];
+  onFieldChange?: (field: string, value: any) => void;
+  onNestedChange?: (section: any, field: string, value: any) => void;
   errors: Record<string, string>;
 }
 
@@ -25,9 +29,19 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   amountInWords,
   currency,
   paymentType,
+  selectedUpiId,
+  upiConfigs,
   onFieldChange,
+  onNestedChange,
   errors,
 }) => {
+  const handleInternalChange = (field: string, value: any) => {
+    if (onNestedChange) {
+      onNestedChange("other", field, value);
+    } else if (onFieldChange) {
+      onFieldChange(field, value);
+    }
+  };
   // const isINR = currency === "INR";
 
   const currencyOptions = [
@@ -66,7 +80,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             type="number"
             min="0"
             value={pcs || ""}
-            onChange={(e) => onFieldChange("pcs", Number(e.target.value))}
+            onChange={(e) => handleInternalChange("pcs", Number(e.target.value))}
             icon={Box}
             containerClassName="col-span-1"
             className="text-center font-bold"
@@ -77,7 +91,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             min="0"
             step="any"
             value={volumetricWeight}
-            onChange={(e) => onFieldChange("volumetricWeight", e.target.value)}
+            onChange={(e) => handleInternalChange("volumetricWeight", e.target.value)}
             icon={Scale}
             containerClassName="col-span-1"
             className="text-center font-bold"
@@ -89,7 +103,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             min="0"
             step="any"
             value={weight}
-            onChange={(e) => onFieldChange("weight", e.target.value)}
+            onChange={(e) => handleInternalChange("weight", e.target.value)}
             icon={Scale}
             containerClassName="col-span-2"
             className="text-center font-bold text-lg"
@@ -98,7 +112,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
           <FormSelect
             label="Currency"
             value={currency}
-            onChange={(e) => onFieldChange("currency", e.target.value)}
+            onChange={(e) => handleInternalChange("currency", e.target.value)}
             options={currencyOptions}
             icon={CreditCard}
             containerClassName="col-span-2"
@@ -110,7 +124,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             min="0"
             value={billingAmount || ""}
             onChange={(e) =>
-              onFieldChange("billingAmount", Number(e.target.value))
+              handleInternalChange("billingAmount", Number(e.target.value))
             }
             icon={IndianRupee}
             error={errors["other.billingAmount"]}
@@ -121,7 +135,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
           <FormSelect
             label="Payment Type"
             value={paymentType}
-            onChange={(e) => onFieldChange("paymentType", e.target.value)}
+            onChange={(e) => handleInternalChange("paymentType", e.target.value)}
             options={[
               { value: "Cash", label: "Cash" },
               { value: "Online", label: "Online" },
@@ -130,6 +144,22 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             error={errors["other.paymentType"]}
             containerClassName="col-span-2"
           />
+
+          {paymentType === "Online" && upiConfigs && upiConfigs.length > 0 && (
+            <FormSelect
+              label="Select QR/UPI for Payment"
+              value={selectedUpiId || ""}
+              onChange={(e) =>
+                handleInternalChange("selectedUpiId", e.target.value)
+              }
+              options={upiConfigs.map((config) => ({
+                value: config.id,
+                label: config.display_name,
+              }))}
+              icon={CreditCard}
+              containerClassName="col-span-2 bg-purple-50 rounded-lg p-1 border border-purple-100"
+            />
+          )}
 
           <div className="col-span-2 mt-4 pt-4 border-t border-gray-100 flex items-center justify-between bg-blue-50/50 p-4 rounded-xl border border-blue-100">
             <span className="text-gray-600 font-bold text-lg">

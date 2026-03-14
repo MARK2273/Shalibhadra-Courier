@@ -3,7 +3,9 @@ import api, {
   getServices,
   getShipmentById,
   updateShipment,
+  getUpiConfigs,
   type Service,
+  type UpiConfig,
 } from "../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { countryList, countryData } from "../constants/formOptions";
@@ -12,7 +14,6 @@ import { pdf } from "@react-pdf/renderer";
 import CourierPdf from "./CourierPdf";
 import bwipjs from "bwip-js";
 import QRCode from "qrcode";
-import { currentConfig } from "../constants/courierConfig";
 import {
   MapPin,
   Calendar,
@@ -87,7 +88,8 @@ export interface CourierData {
     totalAmount: number;
     amountInWords: string;
     billingAmount: number;
-    paymentType: 'Cash' | 'Online';
+    paymentType: "Cash" | "Online";
+    selectedUpiId?: string | null;
   };
   barcodeBase64?: string;
   qrCodeBase64?: string;
@@ -189,6 +191,7 @@ const initialFormData: CourierData = {
     amountInWords: "Zero Only",
     billingAmount: 0,
     paymentType: "Cash",
+    selectedUpiId: null,
   },
 };
 
@@ -202,6 +205,7 @@ const CourierForm: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isFetching, setIsFetching] = useState(isEditMode);
   const [dbServices, setDbServices] = useState<Service[]>([]);
+  const [upiConfigs, setUpiConfigs] = useState<UpiConfig[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitStatus, setSubmitStatus] = useState<{
     type: "success" | "error";
@@ -290,6 +294,24 @@ const CourierForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const fetchUpiConfigs = async () => {
+      try {
+        const { configs, defaultUpiId } = await getUpiConfigs();
+        setUpiConfigs(configs);
+        if (!isEditMode && defaultUpiId) {
+          setFormData((prev) => ({
+            ...prev,
+            other: { ...prev.other, selectedUpiId: defaultUpiId },
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching UPI configs:", error);
+      }
+    };
+    fetchUpiConfigs();
+  }, [isEditMode]);
+
+  useEffect(() => {
     const fetchShipmentData = async () => {
       if (!id) {
         setFormData(initialFormData);
@@ -344,6 +366,7 @@ const CourierForm: React.FC = () => {
             amountInWords: data.amount_in_words || "",
             billingAmount: data.billing_amount || 0,
             paymentType: data.payment_type || "Cash",
+            selectedUpiId: data.selected_upi_id || null,
           },
         });
       } catch (error) {
@@ -534,15 +557,21 @@ const CourierForm: React.FC = () => {
 
       let qrCodeBase64 = "";
       try {
-        const upiId = currentConfig.upiId || "";
-        const payeeName = currentConfig.payeeName || "";
-
         // Use billing amount or fallback to total amount
         const amount =
           formData.other.billingAmount || formData.other.totalAmount || 0;
 
+        // Get selected UPI details from state
+        const selectedUpi = upiConfigs.find(
+          (c) => c.id === formData.other.selectedUpiId,
+        );
+        const upiId = selectedUpi?.upi_id || "";
+        const payeeName = selectedUpi?.payee_name || "";
+
         // Construct standard UPI payment link format
-        const qrData = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
+        const qrData = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(
+          payeeName,
+        )}&am=${amount}&cu=INR`;
 
         qrCodeBase64 = await QRCode.toDataURL(qrData);
       } catch (e) {
@@ -921,10 +950,10 @@ const CourierForm: React.FC = () => {
           amountInWords={formData.other.amountInWords}
           currency={formData.other.currency}
           paymentType={formData.other.paymentType}
+          selectedUpiId={formData.other.selectedUpiId}
+          upiConfigs={upiConfigs}
+          onNestedChange={handleNestedChange}
           errors={errors}
-          onFieldChange={(field, value) =>
-            handleNestedChange("other", field, value)
-          }
         />
         {/* Status Message */}
         {submitStatus && (

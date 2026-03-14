@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { type UpiConfig } from '../types/shipment';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
@@ -22,6 +23,8 @@ export interface Service {
   id: string;
   name: string;
 }
+
+export type { UpiConfig };
 
 export const getServices = async (): Promise<Service[]> => {
   const response = await api.get('/services');
@@ -48,6 +51,11 @@ export const trackShipment = async (awb: string, tenant?: string): Promise<any> 
 
 export const getHsCodes = async (): Promise<any[]> => {
   const response = await api.get('/public/hs-codes');
+  return response.data;
+};
+
+export const getUpiConfigs = async (): Promise<{ configs: any[], defaultUpiId: string | null }> => {
+  const response = await api.get('/form/upi-configs');
   return response.data;
 };
 

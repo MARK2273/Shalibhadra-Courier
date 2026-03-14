@@ -11,6 +11,7 @@ interface SummaryCardProps {
   billingAmount: number;
   amountInWords: string;
   currency: string;
+  paymentType: string;
   onFieldChange: (field: string, value: any) => void;
   errors: Record<string, string>;
 }
@@ -23,6 +24,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   billingAmount,
   amountInWords,
   currency,
+  paymentType,
   onFieldChange,
   errors,
 }) => {
@@ -114,6 +116,19 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             error={errors["other.billingAmount"]}
             containerClassName="col-span-2"
             className="text-center font-bold text-lg bg-green-50 border-green-200 text-green-700"
+          />
+
+          <FormSelect
+            label="Payment Type"
+            value={paymentType}
+            onChange={(e) => onFieldChange("paymentType", e.target.value)}
+            options={[
+              { value: "Cash", label: "Cash" },
+              { value: "Online", label: "Online" },
+            ]}
+            icon={CreditCard}
+            error={errors["other.paymentType"]}
+            containerClassName="col-span-2"
           />
 
           <div className="col-span-2 mt-4 pt-4 border-t border-gray-100 flex items-center justify-between bg-blue-50/50 p-4 rounded-xl border border-blue-100">

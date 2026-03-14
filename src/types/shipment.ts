@@ -8,6 +8,7 @@ export interface Shipment {
   billing_amount: number;
   awb_no: string;
   sender_contact?: string | null;
+  payment_type: 'Cash' | 'Online';
   tracking_url?: string | null;
 }
 
@@ -66,6 +67,7 @@ export interface ShipmentDetail {
   total_amount: number | null;
   amount_in_words: string | null;
   billing_amount: number | null;
+  payment_type: 'Cash' | 'Online';
   tracking_url?: string | null;
 
   created_at: string;

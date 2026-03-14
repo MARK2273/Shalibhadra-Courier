@@ -164,6 +164,7 @@ const ShipmentDetails: React.FC = () => {
           totalAmount: shipment.total_amount || 0,
           amountInWords: shipment.amount_in_words || "",
           billingAmount: shipment.billing_amount || 0,
+          paymentType: shipment.payment_type || "Cash",
         },
         barcodeBase64,
         qrCodeBase64,
@@ -397,6 +398,7 @@ const ShipmentDetails: React.FC = () => {
             }
           />
           <InfoRow label="Amount in Words" value={shipment.amount_in_words} />
+          <InfoRow label="Payment Type" value={shipment.payment_type} />
         </SectionCard>
       </div>
 

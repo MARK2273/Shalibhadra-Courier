@@ -650,16 +650,16 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               </Text>
             </View>
             <View style={styles.qrSection}>
-              {data.qrCodeBase64 ? (
-                <Image
-                  src={data.qrCodeBase64}
-                  style={{ width: 80, height: 80 }}
-                />
-              ) : null}
-              {data.qrCodeBase64 ? (
-                <Text style={{ fontSize: 8, marginTop: 4 }}>
-                  Scan to Pay via UPI
-                </Text>
+              {data.other.paymentType === "Online" && data.qrCodeBase64 ? (
+                <>
+                  <Image
+                    src={data.qrCodeBase64}
+                    style={{ width: 80, height: 80 }}
+                  />
+                  <Text style={{ fontSize: 8, marginTop: 4 }}>
+                    Scan to Pay via UPI
+                  </Text>
+                </>
               ) : null}
             </View>
           </View>

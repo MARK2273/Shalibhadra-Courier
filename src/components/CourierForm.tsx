@@ -87,6 +87,7 @@ export interface CourierData {
     totalAmount: number;
     amountInWords: string;
     billingAmount: number;
+    paymentType: 'Cash' | 'Online';
   };
   barcodeBase64?: string;
   qrCodeBase64?: string;
@@ -187,6 +188,7 @@ const initialFormData: CourierData = {
     totalAmount: 0,
     amountInWords: "Zero Only",
     billingAmount: 0,
+    paymentType: "Cash",
   },
 };
 
@@ -267,6 +269,9 @@ const CourierForm: React.FC = () => {
     if (formData.other.billingAmount <= 0) {
       newErrors["other.billingAmount"] = "Billing amount required";
     }
+    if (!formData.other.paymentType) {
+      newErrors["other.paymentType"] = "Payment Type is required";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -338,6 +343,7 @@ const CourierForm: React.FC = () => {
             totalAmount: data.total_amount || 0,
             amountInWords: data.amount_in_words || "",
             billingAmount: data.billing_amount || 0,
+            paymentType: data.payment_type || "Cash",
           },
         });
       } catch (error) {
@@ -914,6 +920,7 @@ const CourierForm: React.FC = () => {
           billingAmount={formData.other.billingAmount}
           amountInWords={formData.other.amountInWords}
           currency={formData.other.currency}
+          paymentType={formData.other.paymentType}
           errors={errors}
           onFieldChange={(field, value) =>
             handleNestedChange("other", field, value)

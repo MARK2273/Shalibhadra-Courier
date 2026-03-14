@@ -193,6 +193,7 @@ const Dashboard: React.FC = () => {
                   <th className="px-6 py-3">Sender</th>
                   <th className="px-6 py-3">Receiver</th>
                   <th className="px-6 py-3">Destination</th>
+                  <th className="px-6 py-3">Payment</th>
                   <th className="px-6 py-3 text-right">Amount</th>
                   <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
@@ -216,6 +217,9 @@ const Dashboard: React.FC = () => {
                       </td>
                       <td className="px-6 py-4">
                         <Skeleton className="h-4 w-32" />
+                      </td>
+                      <td className="px-6 py-4">
+                        <Skeleton className="h-4 w-20" />
                       </td>
                       <td className="px-6 py-4">
                         <Skeleton className="h-4 w-20" />
@@ -264,6 +268,7 @@ const Dashboard: React.FC = () => {
                   <th className="px-6 py-3">Sender</th>
                   <th className="px-6 py-3">Receiver</th>
                   <th className="px-6 py-3">Destination</th>
+                  <th className="px-6 py-3">Payment</th>
                   <th className="px-6 py-3 text-right">Amount</th>
                   <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
@@ -291,6 +296,15 @@ const Dashboard: React.FC = () => {
                     <td className="px-6 py-4">{shipment.sender_name}</td>
                     <td className="px-6 py-4">{shipment.receiver_name}</td>
                     <td className="px-6 py-4">{shipment.destination}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        shipment.payment_type === 'Online' 
+                          ? 'bg-purple-50 text-purple-700 border border-purple-100' 
+                          : 'bg-orange-50 text-orange-700 border border-orange-100'
+                      }`}>
+                        {shipment.payment_type || 'Cash'}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 text-right font-medium text-gray-900">
                       ₹{shipment.billing_amount}
                     </td>

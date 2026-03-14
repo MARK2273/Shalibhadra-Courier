@@ -39,6 +39,6 @@ export const courierConfigs: Record<string, CourierConfig> = {
 };
 
 // Get the brand from environment variable, default to 'shalibhadra'
-export const brandKey = import.meta.env.VITE_APP_BRAND || "navkar";
+export const brandKey = import.meta.env.VITE_APP_BRAND || "shalibhadra";
 
 export const currentConfig = courierConfigs[brandKey] || courierConfigs["shalibhadra"];

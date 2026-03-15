@@ -11,6 +11,7 @@ export interface Shipment {
   payment_type: 'Cash' | 'Online';
   selected_upi_id?: string | null;
   tracking_url?: string | null;
+  owner_cost?: number;
 }
 
 export interface UpiConfig {
@@ -87,5 +88,6 @@ export interface ShipmentDetail {
   } | null;
   tracking_url?: string | null;
 
+  owner_cost?: number;
   created_at: string;
 }

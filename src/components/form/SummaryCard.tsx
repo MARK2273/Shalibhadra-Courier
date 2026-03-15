@@ -15,6 +15,8 @@ interface SummaryCardProps {
   paymentType: string;
   selectedUpiId?: string | null;
   upiConfigs?: UpiConfig[];
+  ownerCost?: number;
+  isOwnerMode?: boolean;
   onFieldChange?: (field: string, value: any) => void;
   onNestedChange?: (section: any, field: string, value: any) => void;
   errors: Record<string, string>;
@@ -31,6 +33,8 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   paymentType,
   selectedUpiId,
   upiConfigs,
+  ownerCost,
+  isOwnerMode,
   onFieldChange,
   onNestedChange,
   errors,
@@ -144,6 +148,21 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             error={errors["other.paymentType"]}
             containerClassName="col-span-2"
           />
+
+          {isOwnerMode && (
+            <FormInput
+              label="Owner Cost (Shipment Cost)"
+              type="number"
+              min="0"
+              value={ownerCost || ""}
+              onChange={(e) =>
+                handleInternalChange("ownerCost", Number(e.target.value))
+              }
+              icon={IndianRupee}
+              containerClassName="col-span-2"
+              className="text-center font-bold text-lg bg-orange-50 border-orange-200 text-orange-700"
+            />
+          )}
 
           {paymentType === "Online" && upiConfigs && upiConfigs.length > 0 && (
             <FormSelect

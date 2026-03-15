@@ -9,10 +9,13 @@ import {
   Eye,
   Trash2,
   Edit2,
+  Lock,
+  Unlock,
 } from "lucide-react";
 import api, { deleteShipment } from "../api/api";
 import Modal from "../components/ui/Modal";
 import Tooltip from "../components/ui/Tooltip";
+import { useOwnerMode } from "../context/OwnerModeContext";
 import { format } from "date-fns";
 import type { Shipment } from "../types/shipment";
 
@@ -39,6 +42,12 @@ const Dashboard: React.FC = () => {
   });
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const { isOwnerMode, setOwnerMode } = useOwnerMode();
+  const [ownerModal, setOwnerModal] = useState(false);
+  const [ownerPassword, setOwnerPassword] = useState("");
+  const [ownerError, setOwnerError] = useState<string | null>(null);
+  const [isVerifyingOwner, setIsVerifyingOwner] = useState(false);
 
   // Consolidated effect for fetching shipments
   React.useEffect(() => {
@@ -100,7 +109,35 @@ const Dashboard: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+          <button
+            onClick={() => {
+              if (isOwnerMode) {
+                setOwnerMode(false);
+              } else {
+                setOwnerModal(true);
+              }
+            }}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              isOwnerMode
+                ? "bg-green-100 text-green-700 border border-green-200"
+                : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
+            }`}
+          >
+            {isOwnerMode ? (
+              <>
+                <Unlock className="w-4 h-4" />
+                Owner Mode ON
+              </>
+            ) : (
+              <>
+                <Lock className="w-4 h-4" />
+                Owner Mode OFF
+              </>
+            )}
+          </button>
+        </div>
         {shipments.length > 0 && (
           <Link
             to="/form"
@@ -173,6 +210,9 @@ const Dashboard: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <input
               type="text"
+              id="dashboard-search"
+              name="dashboard-search"
+              autoComplete="off"
               placeholder="Search shipments..."
               className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-full sm:w-64"
               value={search}
@@ -194,6 +234,7 @@ const Dashboard: React.FC = () => {
                   <th className="px-6 py-3">Receiver</th>
                   <th className="px-6 py-3">Destination</th>
                   <th className="px-6 py-3">Payment</th>
+                  {isOwnerMode && <th className="px-6 py-3 text-right">Cost</th>}
                   <th className="px-6 py-3 text-right">Amount</th>
                   <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
@@ -269,6 +310,7 @@ const Dashboard: React.FC = () => {
                   <th className="px-6 py-3">Receiver</th>
                   <th className="px-6 py-3">Destination</th>
                   <th className="px-6 py-3">Payment</th>
+                  {isOwnerMode && <th className="px-6 py-3 text-right">Cost</th>}
                   <th className="px-6 py-3 text-right">Amount</th>
                   <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
@@ -308,6 +350,11 @@ const Dashboard: React.FC = () => {
                     <td className="px-6 py-4 text-right font-medium text-gray-900">
                       ₹{shipment.billing_amount}
                     </td>
+                    {isOwnerMode && (
+                      <td className="px-6 py-4 text-right font-medium text-green-600 bg-green-50/50">
+                        ₹{shipment.owner_cost || 0}
+                      </td>
+                    )}
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center justify-center gap-1">
                         <Tooltip text="View Details">
@@ -401,8 +448,72 @@ const Dashboard: React.FC = () => {
         }}
         onConfirm={handleConfirmDelete}
       />
+
+      {/* Owner Mode Password Modal */}
+      <Modal
+        isOpen={ownerModal}
+        title="Enter Owner Password"
+        description={
+          <div className="space-y-4">
+            <p className="text-gray-500">
+              Please enter the secondary owner password to access cost details.
+            </p>
+            <div>
+              <input
+                type="password"
+                id="owner-mode-password"
+                name="owner-mode-password"
+                autoComplete="new-password"
+                placeholder="Owner Password"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                value={ownerPassword}
+                onChange={(e) => setOwnerPassword(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleVerifyOwner();
+                }}
+                autoFocus
+              />
+              {ownerError && (
+                <p className="mt-2 text-xs text-red-600 font-medium animate-shake">
+                  {ownerError}
+                </p>
+              )}
+            </div>
+          </div>
+        }
+        confirmLabel="Verify"
+        cancelLabel="Cancel"
+        isConfirmLoading={isVerifyingOwner}
+        onClose={() => {
+          setOwnerModal(false);
+          setOwnerPassword("");
+          setOwnerError(null);
+        }}
+        onConfirm={handleVerifyOwner}
+      />
     </div>
   );
+
+  async function handleVerifyOwner() {
+    setIsVerifyingOwner(true);
+    setOwnerError(null);
+    try {
+      const response = await api.post("/auth/verify-owner", {
+        password: ownerPassword,
+      });
+      if (response.data.success) {
+        setOwnerMode(true);
+        setOwnerModal(false);
+        setOwnerPassword("");
+      } else {
+        setOwnerError("Invalid password. Please try again.");
+      }
+    } catch (err) {
+      setOwnerError("Verification failed. Please check your password.");
+    } finally {
+      setIsVerifyingOwner(false);
+    }
+  }
 };
 
 export default Dashboard;

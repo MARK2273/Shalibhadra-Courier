@@ -12,6 +12,7 @@ import {
   Printer,
 } from "lucide-react";
 import api from "../api/api";
+import { useOwnerMode } from "../context/OwnerModeContext";
 import { format } from "date-fns";
 import { pdf } from "@react-pdf/renderer";
 import CourierPdf from "../components/CourierPdf";
@@ -53,6 +54,7 @@ const ShipmentDetails: React.FC = () => {
   const [shipment, setShipment] = useState<ShipmentDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isOwnerMode } = useOwnerMode();
 
   useEffect(() => {
     const fetchShipment = async () => {
@@ -400,6 +402,12 @@ const ShipmentDetails: React.FC = () => {
           />
           <InfoRow label="Amount in Words" value={shipment.amount_in_words} />
           <InfoRow label="Payment Type" value={shipment.payment_type} />
+          {isOwnerMode && (
+            <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-100 flex justify-between items-center">
+              <span className="text-sm font-semibold text-green-700">Cost to Owner</span>
+              <span className="text-lg font-bold text-green-700">₹{shipment.owner_cost || 0}</span>
+            </div>
+          )}
         </SectionCard>
       </div>
 

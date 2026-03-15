@@ -30,7 +30,9 @@ import {
   Hash,
   Save,
   Copy,
+  Lock,
 } from "lucide-react";
+import { useOwnerMode } from "../context/OwnerModeContext";
 
 // Import Reusable Components
 import ShipmentSectionCard from "./form/ShipmentSectionCard";
@@ -91,6 +93,7 @@ export interface CourierData {
     billingAmount: number;
     paymentType: "Cash" | "Online";
     selectedUpiId?: string | null;
+    ownerCost?: number;
   };
   barcodeBase64?: string;
   qrCodeBase64?: string;
@@ -193,6 +196,7 @@ const initialFormData: CourierData = {
     billingAmount: 0,
     paymentType: "Cash",
     selectedUpiId: null,
+    ownerCost: 0,
   },
 };
 
@@ -200,6 +204,7 @@ const CourierForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const { isOwnerMode } = useOwnerMode();
   const isEditMode = !!id;
 
   const [formData, setFormData] = useState<CourierData>(initialFormData);
@@ -379,6 +384,7 @@ const CourierForm: React.FC = () => {
             billingAmount: data.billing_amount || 0,
             paymentType: data.payment_type || "Cash",
             selectedUpiId: data.selected_upi_id || null,
+            ownerCost: data.owner_cost || 0,
           },
         });
       } catch (error) {
@@ -989,20 +995,30 @@ const CourierForm: React.FC = () => {
           errors={errors}
         />
         {/* Summary */}
-        <SummaryCard
-          pcs={formData.other.pcs}
-          weight={formData.other.weight}
-          volumetricWeight={formData.other.volumetricWeight}
-          totalAmount={formData.other.totalAmount}
-          billingAmount={formData.other.billingAmount}
-          amountInWords={formData.other.amountInWords}
-          currency={formData.other.currency}
-          paymentType={formData.other.paymentType}
-          selectedUpiId={formData.other.selectedUpiId}
-          upiConfigs={upiConfigs}
-          onNestedChange={handleNestedChange}
-          errors={errors}
-        />
+        <div className="relative">
+          {isOwnerMode && (
+            <div className="absolute -top-4 -right-2 z-10 bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-bold border border-orange-200 flex items-center gap-1 shadow-sm">
+              <Lock className="h-3 w-3" />
+              Owner Mode
+            </div>
+          )}
+          <SummaryCard
+            pcs={formData.other.pcs}
+            weight={formData.other.weight}
+            volumetricWeight={formData.other.volumetricWeight}
+            totalAmount={formData.other.totalAmount}
+            billingAmount={formData.other.billingAmount}
+            ownerCost={formData.other.ownerCost}
+            isOwnerMode={isOwnerMode}
+            amountInWords={formData.other.amountInWords}
+            currency={formData.other.currency}
+            paymentType={formData.other.paymentType}
+            selectedUpiId={formData.other.selectedUpiId}
+            upiConfigs={upiConfigs}
+            onNestedChange={handleNestedChange}
+            errors={errors}
+          />
+        </div>
         {/* Status Message */}
         {submitStatus && (
           <div

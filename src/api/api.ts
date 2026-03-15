@@ -78,7 +78,7 @@ export const uploadPdf = async (id: string, pdfBlob: Blob): Promise<string> => {
       'Content-Type': 'multipart/form-data',
     },
   });
-  return response.data.url;
+  return response.data.redirectUrl;
 };
 
 export default api;

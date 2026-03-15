@@ -649,15 +649,27 @@ const CourierForm: React.FC = () => {
       const shipmentId = (updatedFormData as any)._shipmentId;
       if (shipmentId) {
         try {
-          await uploadPdf(shipmentId, blob);
+          const redirectUrl = await uploadPdf(shipmentId, blob);
+          if (redirectUrl) {
+            window.open(redirectUrl, "_blank");
+          } else {
+            // Fallback to blob URL if upload didn't return a redirect link
+            const url = URL.createObjectURL(blob);
+            window.open(url, "_blank");
+          }
           console.log("PDF uploaded successfully to storage");
         } catch (uploadError) {
           console.error("Failed to upload PDF reference:", uploadError);
+          // Fallback to local preview if upload fails
+          const url = URL.createObjectURL(blob);
+          window.open(url, "_blank");
         }
+      } else {
+        // Fallback for cases where no shipment ID exists (shouldn't happen here)
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
       }
 
-      const url = URL.createObjectURL(blob);
-      window.open(url, "_blank");
       if (!isEditMode) {
         setTimeout(() => navigate("/dashboard"), 2000);
       }

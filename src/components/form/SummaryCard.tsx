@@ -61,150 +61,172 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
     { value: "SGD", label: "Singapore Dollar (SGD)" },
   ];
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-        {/* Left: Amount in Words & Info */}
-        <div className="space-y-4">
-          <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">
-              Amount In Words
-            </p>
-            <p className="text-gray-900 font-medium italic text-lg leading-relaxed">
-              {amountInWords}
-            </p>
+    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-2">
+
+        {/* Left Side: Physical Measurements & Weight */}
+        <div className="p-8 md:p-10 bg-gray-50/50 border-r border-gray-100">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="bg-primary/10 p-2.5 rounded-xl">
+              <Box className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 text-lg">Shipment Volume</h3>
+              <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Physical Parameters</p>
+            </div>
           </div>
-          <p className="text-xs text-gray-400 italic border-l-2 border-gray-300 pl-3">
-            We declare that this invoice shows the actual price of the good
-            described and that all particulars are true and correct.
-          </p>
-        </div>
 
-        {/* Right: Totals Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          <FormInput
-            label="Total Pieces"
-            type="number"
-            min="0"
-            value={pcs || ""}
-            onChange={(e) => handleInternalChange("pcs", Number(e.target.value))}
-            icon={Box}
-            containerClassName="col-span-1"
-            className="text-center font-bold"
-          />
-          <FormInput
-            label="Volumetric Wt."
-            type="number"
-            min="0"
-            step="any"
-            value={volumetricWeight}
-            onChange={(e) => handleInternalChange("volumetricWeight", e.target.value)}
-            icon={Scale}
-            containerClassName="col-span-1"
-            className="text-center font-bold"
-          />
-
-          <FormInput
-            label="Total Weight (Kg)"
-            type="number"
-            min="0"
-            step="any"
-            value={weight}
-            onChange={(e) => handleInternalChange("weight", e.target.value)}
-            icon={Scale}
-            containerClassName="col-span-2"
-            className="text-center font-bold text-lg"
-          />
-
-          <FormSelect
-            label="Currency"
-            value={currency}
-            onChange={(e) => handleInternalChange("currency", e.target.value)}
-            options={currencyOptions}
-            icon={CreditCard}
-            containerClassName="col-span-2"
-          />
-
-          <FormInput
-            label="Billable Amount"
-            type="number"
-            min="0"
-            value={billingAmount || ""}
-            onChange={(e) =>
-              handleInternalChange("billingAmount", Number(e.target.value))
-            }
-            icon={IndianRupee}
-            error={errors["other.billingAmount"]}
-            containerClassName="col-span-2"
-            className="text-center font-bold text-lg bg-green-50 border-green-200 text-green-700"
-          />
-
-          <FormSelect
-            label="Payment Type"
-            value={paymentType}
-            onChange={(e) => handleInternalChange("paymentType", e.target.value)}
-            options={[
-              { value: "Cash", label: "Cash" },
-              { value: "Online", label: "Online" },
-            ]}
-            icon={CreditCard}
-            error={errors["other.paymentType"]}
-            containerClassName="col-span-2"
-          />
-          
-          <FormSelect
-            label="Payment Status"
-            value={paymentStatus}
-            onChange={(e) => handleInternalChange("paymentStatus", e.target.value)}
-            options={[
-              { value: "Paid", label: "Paid" },
-              { value: "Pending", label: "Pending" },
-            ]}
-            icon={CreditCard}
-            containerClassName="col-span-2"
-            className={paymentStatus === 'Paid' ? 'text-green-700 font-bold bg-green-50' : 'text-amber-700 font-bold bg-amber-50'}
-          />
-
-          {isOwnerMode && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <FormInput
-              label="Owner Cost (Shipment Cost)"
+              label="Total Pieces"
               type="number"
               min="0"
-              value={ownerCost || ""}
-              onChange={(e) =>
-                handleInternalChange("ownerCost", Number(e.target.value))
-              }
-              icon={IndianRupee}
-              containerClassName="col-span-2"
-              className="text-center font-bold text-lg bg-orange-50 border-orange-200 text-orange-700"
+              value={pcs || ""}
+              onChange={(e) => handleInternalChange("pcs", Number(e.target.value))}
+              icon={Box}
+              className="font-bold border-gray-200 focus:border-primary transition-all"
             />
-          )}
-
-          {paymentType === "Online" && upiConfigs && upiConfigs.length > 0 && (
-            <FormSelect
-              label="Select QR/UPI for Payment"
-              value={selectedUpiId || ""}
-              onChange={(e) =>
-                handleInternalChange("selectedUpiId", e.target.value)
-              }
-              options={upiConfigs.map((config) => ({
-                value: config.id,
-                label: config.display_name,
-              }))}
-              icon={CreditCard}
-              containerClassName="col-span-2"
+            <FormInput
+              label="Volumetric Wt. (kg)"
+              type="number"
+              min="0"
+              step="any"
+              value={volumetricWeight}
+              onChange={(e) => handleInternalChange("volumetricWeight", e.target.value)}
+              icon={Scale}
+              className="font-bold border-gray-200 focus:border-primary transition-all"
             />
-          )}
-
-          <div className="col-span-2 mt-4 pt-4 border-t border-gray-100 flex items-center justify-between bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-            <span className="text-gray-600 font-bold text-lg">
-              Product Value
-            </span>
-            <div className="flex items-center text-primary">
-              <IndianRupee className="h-6 w-6" />
-              <span className="text-3xl font-extrabold">
-                {totalAmount.toLocaleString("en-IN")}
-              </span>
+            <div className="sm:col-span-2">
+              <FormInput
+                label="Total Weight (Kg)"
+                type="number"
+                min="0"
+                step="any"
+                value={weight}
+                onChange={(e) => handleInternalChange("weight", e.target.value)}
+                icon={Scale}
+                className="font-black text-xl text-center border-gray-200 focus:border-primary transition-all bg-white"
+              />
             </div>
+          </div>
+
+          <div className="mt-8 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-black mb-1">
+                  Product Value
+                </p>
+                <div className="flex items-center text-primary">
+                  <IndianRupee className="h-5 w-5 mr-1" />
+                  <span className="text-3xl font-black">{totalAmount.toLocaleString("en-IN")}</span>
+                </div>
+              </div>
+              <div className="h-12 w-12 bg-blue-50 rounded-full flex items-center justify-center">
+                <Box className="h-6 w-6 text-primary opacity-40" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side: Financials & Payment */}
+        <div className="p-8 md:p-10 bg-white">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="bg-green-100 p-2.5 rounded-xl">
+              <CreditCard className="h-6 w-6 text-green-600" />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 text-lg">Billing & Payment</h3>
+              <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Financial Details</p>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <FormInput
+              label="Billable Amount"
+              type="number"
+              min="0"
+              value={billingAmount || ""}
+              onChange={(e) => handleInternalChange("billingAmount", Number(e.target.value))}
+              icon={IndianRupee}
+              error={errors["other.billingAmount"]}
+              className="text-center font-black text-2xl bg-green-50/50 border-green-200 text-green-700 h-16 rounded-2xl transition-all hover:bg-green-50"
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <FormSelect
+                label="Currency"
+                value={currency}
+                onChange={(e) => handleInternalChange("currency", e.target.value)}
+                options={currencyOptions}
+                icon={CreditCard}
+              />
+              <FormSelect
+                label="Payment Type"
+                value={paymentType}
+                onChange={(e) => handleInternalChange("paymentType", e.target.value)}
+                options={[
+                  { value: "Cash", label: "Cash" },
+                  { value: "Online", label: "Online" },
+                ]}
+                icon={CreditCard}
+                error={errors["other.paymentType"]}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <FormSelect
+                label="Payment Status"
+                value={paymentStatus}
+                onChange={(e) => handleInternalChange("paymentStatus", e.target.value)}
+                options={[
+                  { value: "Paid", label: "Paid" },
+                  { value: "Pending", label: "Pending" },
+                ]}
+                icon={CreditCard}
+                className={`font-bold rounded-xl transition-all ${paymentStatus === 'Paid'
+                  ? 'text-green-700 bg-green-50 border-green-100 hover:bg-green-100'
+                  : 'text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100'
+                  }`}
+              />
+              {paymentType === "Online" && upiConfigs && upiConfigs.length > 0 && (
+                <FormSelect
+                  label="Select QR/UPI"
+                  value={selectedUpiId || ""}
+                  onChange={(e) => handleInternalChange("selectedUpiId", e.target.value)}
+                  options={upiConfigs.map((config) => ({
+                    value: config.id,
+                    label: config.display_name,
+                  }))}
+                  icon={CreditCard}
+                />
+              )}
+            </div>
+
+            {isOwnerMode && (
+              <FormInput
+                label="Owner Cost (Reference)"
+                type="number"
+                min="0"
+                value={ownerCost || ""}
+                onChange={(e) => handleInternalChange("ownerCost", Number(e.target.value))}
+                icon={IndianRupee}
+                className="text-center font-semibold bg-orange-50 border-orange-100 text-orange-700"
+              />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer: Words & Declaration */}
+      <div className="bg-gray-50/80 border-t border-gray-100 p-8 md:p-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+          <div className="relative">
+            <div className="absolute -top-4 -left-2 bg-primary text-white text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest">
+              Amount In Words
+            </div>
+            <p className="text-gray-900 font-extrabold italic text-xl leading-tight pt-2">
+              {amountInWords}
+            </p>
           </div>
         </div>
       </div>

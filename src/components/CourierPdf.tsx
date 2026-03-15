@@ -449,7 +449,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                 (AWB No): {data.header.awbNo}
               </Text>
               <Link
-                src={`https://${currentConfig.website}`}
+                src={currentConfig.website}
                 style={{ fontSize: 8, textDecoration: "none", color: "black" }}
               >
                 {currentConfig.website}
@@ -776,7 +776,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                 (AWB No): {data.header.awbNo}
               </Text>
               <Link
-                src={`https://${currentConfig.website}`}
+                src={currentConfig.website}
                 style={{ fontSize: 9, fontWeight: "bold", textDecoration: "none", color: "black" }}
               >
                 {currentConfig.website}
@@ -1263,7 +1263,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                 (AWB No): {data.header.awbNo}
               </Text>
               <Link
-                src={`https://${currentConfig.website}`}
+                src={currentConfig.website}
                 style={{ fontSize: 9, fontWeight: "bold", textDecoration: "none", color: "black" }}
               >
                 {currentConfig.website}

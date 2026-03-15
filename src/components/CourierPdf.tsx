@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#000",
-    height: 100,
+    height: 130,
   },
   invRoutingRow: {
     flexDirection: "row",
@@ -859,7 +859,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
             </Text>
           </View>
           {/* Header */}
-          <View style={[styles.invRow, { height: 80 }]}>
+          <View style={[styles.invRow, { height: 130 }]}>
             <View style={styles.invHeaderLeft}>
               <Text style={{ fontWeight: "bold" }}>Exporter,</Text>
               <Text>{data.sender.name}</Text>

@@ -20,7 +20,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 || error.response?.status === 403) {
       // Clear storage and redirect to login
       localStorage.removeItem('token');
       localStorage.removeItem('user');

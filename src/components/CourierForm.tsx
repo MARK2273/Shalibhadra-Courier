@@ -4,6 +4,7 @@ import api, {
   getShipmentById,
   updateShipment,
   getUpiConfigs,
+  uploadPdf,
   type Service,
   type UpiConfig,
 } from "../api/api";
@@ -551,17 +552,18 @@ const CourierForm: React.FC = () => {
     try {
       try {
         let generatedAwb = formData.header.awbNo;
+        let shipmentId = id;
+
         if (isEditMode && id) {
           await updateShipment(id, formData);
           setSubmitStatus({
             type: "success",
             message: "Shipment updated successfully!",
           });
-          // setTimeout(() => navigate("/dashboard"), 1500);
-          // return;
         } else {
           const response = await api.post("/form/create", formData);
           generatedAwb = response.data.awb_no;
+          shipmentId = response.data.id;
           setSubmitStatus({
             type: "success",
             message: "Shipment created successfully!",
@@ -573,6 +575,9 @@ const CourierForm: React.FC = () => {
           ...formData,
           header: { ...formData.header, awbNo: generatedAwb },
         };
+
+        // We'll upload the PDF after generating it below
+        (updatedFormData as any)._shipmentId = shipmentId;
       } catch (apiError) {
         console.error("Failed to save shipment:", apiError);
         setSubmitStatus({
@@ -639,6 +644,18 @@ const CourierForm: React.FC = () => {
       };
 
       const blob = await pdf(<CourierPdf data={pdfData} />).toBlob();
+      
+      // Upload PDF to Supabase
+      const shipmentId = (updatedFormData as any)._shipmentId;
+      if (shipmentId) {
+        try {
+          await uploadPdf(shipmentId, blob);
+          console.log("PDF uploaded successfully to storage");
+        } catch (uploadError) {
+          console.error("Failed to upload PDF reference:", uploadError);
+        }
+      }
+
       const url = URL.createObjectURL(blob);
       window.open(url, "_blank");
       if (!isEditMode) {

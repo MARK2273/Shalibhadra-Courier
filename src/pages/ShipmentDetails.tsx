@@ -92,6 +92,12 @@ const ShipmentDetails: React.FC = () => {
   const handlePrint = async () => {
     if (!shipment) return;
 
+    // Use stored PDF URL if available
+    if ((shipment as any).pdf_url) {
+      window.open((shipment as any).pdf_url, "_blank");
+      return;
+    }
+
     try {
       let barcodeBase64 = "";
       try {

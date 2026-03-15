@@ -70,4 +70,15 @@ export const getUpiConfigs = async (): Promise<{ configs: any[], defaultUpiId: s
   return response.data;
 };
 
+export const uploadPdf = async (id: string, pdfBlob: Blob): Promise<string> => {
+  const formData = new FormData();
+  formData.append('pdf', pdfBlob, `shipment_${id}.pdf`);
+  const response = await api.post(`/form/upload-pdf/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data.url;
+};
+
 export default api;

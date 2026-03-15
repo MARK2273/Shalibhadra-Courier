@@ -1,22 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Package,
-  Plus,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  Eye,
-  Trash2,
-  Edit2,
-  Lock,
-  Unlock,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  CreditCard,
-} from "lucide-react";
-import api, { deleteShipment } from "../api/api";
+import { Plus, Search, ChevronLeft, ChevronRight, Edit2, Trash2, Eye, Package, Lock, Unlock, TrendingUp, TrendingDown, Minus, CreditCard, Loader2 } from "lucide-react";
+import api, { deleteShipment, updatePaymentStatus } from "../api/api";
 import Modal from "../components/ui/Modal";
 import Tooltip from "../components/ui/Tooltip";
 import { useOwnerMode } from "../context/OwnerModeContext";
@@ -33,6 +18,7 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [initialLoad, setInitialLoad] = useState(true); // Track initial load
   const [search, setSearch] = useState("");
+  const [togglingId, setTogglingId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -135,6 +121,26 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleStatusToggle = async (id: string, currentStatus: Shipment['payment_status']) => {
+    const newStatus = currentStatus === 'Paid' ? 'Pending' : 'Paid';
+    setTogglingId(id);
+
+    // Optimistic Update
+    setShipments(prev => prev.map(s => s.id === id ? { ...s, payment_status: newStatus as 'Paid' | 'Pending' } : s));
+
+    try {
+      await updatePaymentStatus(id, newStatus as 'Paid' | 'Pending');
+      // Update financial breakdown after status change
+      fetchShipments();
+    } catch (error) {
+      console.error("Failed to update status", error);
+      // Revert on error
+      setShipments(prev => prev.map(s => s.id === id ? { ...s, payment_status: currentStatus } : s));
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   // Handle search input change - reset page to 1
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -156,8 +162,8 @@ const Dashboard: React.FC = () => {
               }
             }}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${isOwnerMode
-                ? "bg-green-100 text-green-700 border border-green-200"
-                : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
+              ? "bg-green-100 text-green-700 border border-green-200"
+              : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
               }`}
           >
             {isOwnerMode ? (
@@ -298,7 +304,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-bold text-gray-900 text-lg">Financial Overview</h3>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Global metrics</p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest">Global metrics</p>
                 </div>
               </div>
               <div className="flex gap-12">
@@ -315,14 +321,14 @@ const Dashboard: React.FC = () => {
 
             <div className="p-8">
               <div className="grid grid-cols-1 lg:grid-cols-2">
-                
+
                 {/* Collected Side */}
                 <div className="space-y-6 lg:pr-12 lg:border-r lg:border-gray-100">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Collection Breakdown</span>
                   </div>
-                  
+
                   <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 bg-orange-50/10 rounded-2xl border border-orange-100/50 group transition-all hover:border-orange-200/50 hover:bg-orange-50/20">
                       <div className="flex items-center gap-3">
@@ -427,7 +433,7 @@ const Dashboard: React.FC = () => {
         {loading ? (
           // Table Row Skeletons
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-600">
+            <table className="w-full text-left text-gray-600">
               <thead className="bg-gray-50 text-xs uppercase font-medium text-gray-500">
                 <tr>
                   <th className="px-6 py-3">AWB No.</th>
@@ -436,10 +442,10 @@ const Dashboard: React.FC = () => {
                   <th className="px-6 py-3">Sender</th>
                   <th className="px-6 py-3">Receiver</th>
                   <th className="px-6 py-3">Destination</th>
-                  <th className="px-6 py-3">Payment</th>
+                  <th className="px-6 py-3">Payment Method</th>
+                  <th className="px-6 py-3 text-right">Amount</th>
                   <th className="px-6 py-3">Status</th>
                   {isOwnerMode && <th className="px-6 py-3 text-right">Cost</th>}
-                  <th className="px-6 py-3 text-right">Amount</th>
                   <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
               </thead>
@@ -467,21 +473,21 @@ const Dashboard: React.FC = () => {
                         <Skeleton className="h-4 w-20" />
                       </td>
                       <td className="px-6 py-4">
-                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-4 w-24" /> {/* Payment Method */}
                       </td>
                       <td className="px-6 py-4 text-right font-medium">
-                        <Skeleton className="h-4 w-16 ml-auto" />
+                        <Skeleton className="h-4 w-20 ml-auto" /> {/* Amount */}
                       </td>
                       <td className="px-6 py-4">
-                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-4 w-16 mx-auto" /> {/* Status */}
                       </td>
                       {isOwnerMode && (
                         <td className="px-6 py-4 text-right font-medium">
-                          <Skeleton className="h-4 w-16 ml-auto" />
+                          <Skeleton className="h-4 w-16 ml-auto" /> {/* Cost */}
                         </td>
                       )}
                       <td className="px-6 py-4 text-center">
-                        <Skeleton className="h-4 w-16 mx-auto" />
+                        <Skeleton className="h-4 w-12 mx-auto" /> {/* Actions */}
                       </td>
                     </tr>
                   ))}
@@ -563,12 +569,26 @@ const Dashboard: React.FC = () => {
                       ₹{shipment.billing_amount?.toLocaleString()}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${shipment.payment_status === 'Paid'
-                        ? 'bg-green-50 text-green-700 border-green-200'
-                        : 'bg-amber-50 text-amber-700 border-amber-200'
-                        }`}>
-                        {shipment.payment_status || 'Pending'}
-                      </span>
+                      <button
+                        onClick={() => handleStatusToggle(shipment.id, shipment.payment_status as 'Paid' | 'Pending')}
+                        disabled={togglingId === shipment.id}
+                        className={`group relative px-2.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all active:scale-95 disabled:opacity-70 disabled:active:scale-100 ${shipment.payment_status === 'Paid'
+                          ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
+                          : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
+                          }`}
+                      >
+                        {togglingId === shipment.id ? (
+                          <div className="flex items-center gap-1">
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            <span>Updating...</span>
+                          </div>
+                        ) : (
+                          shipment.payment_status || 'Pending'
+                        )}
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[9px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                          Click to toggle status
+                        </div>
+                      </button>
                     </td>
                     {isOwnerMode && (
                       <td className="px-6 py-4 text-right font-medium text-gray-500 italic">

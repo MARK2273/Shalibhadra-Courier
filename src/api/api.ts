@@ -55,6 +55,11 @@ export const deleteShipment = async (id: string): Promise<void> => {
   await api.delete(`/form/${id}`);
 };
 
+export const updatePaymentStatus = async (id: string, status: 'Paid' | 'Pending'): Promise<void> => {
+  await api.patch(`/form/${id}/status`, { status });
+};
+
+
 export const trackShipment = async (awb: string, tenant?: string): Promise<any> => {
   const response = await api.get(`/public/track/${awb}${tenant ? `?tenant=${tenant}` : ''}`);
   return response.data;

@@ -336,7 +336,7 @@ const Dashboard: React.FC = () => {
                         <Skeleton className="h-4 w-20" />
                       </td>
                       {isOwnerMode && (
-                        <td className="px-6 py-4 text-right font-medium text-green-600 bg-green-50/50">
+                        <td className="px-6 py-4 text-right font-medium text-gray-900">
                           <Skeleton className="h-4 w-16 ml-auto" />
                         </td>
                       )}
@@ -423,7 +423,7 @@ const Dashboard: React.FC = () => {
                       </span>
                     </td>
                     {isOwnerMode && (
-                      <td className="px-6 py-4 text-right font-medium text-green-600 bg-green-50/50">
+                      <td className="px-6 py-4 text-right font-medium text-gray-900">
                         ₹{shipment.owner_cost || 0}
                       </td>
                     )}

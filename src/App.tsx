@@ -3,6 +3,7 @@ import CourierForm from "./components/CourierForm";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
+import DocumentErrorPage from "./pages/DocumentErrorPage";
 import Dashboard from "./pages/Dashboard";
 import ShipmentDetails from "./pages/ShipmentDetails";
 import Layout from "./components/layout/Layout";
@@ -24,6 +25,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/document-error" element={<DocumentErrorPage />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>

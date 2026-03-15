@@ -469,14 +469,28 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={{ fontWeight: "bold" }}>{data.sender.name}</Text>
               <Text>{data.sender.address}</Text>
               <Text style={{ marginTop: 4 }}>Adhaar: {data.sender.adhaar}</Text>
-              <Text>Contact: {data.sender.contact}</Text>
+              <Text>
+                Contact:{" "}
+                <Link
+                  src={`tel:${data.sender.contact}`}
+                  style={{ textDecoration: "none", color: "black" }}
+                >
+                  {data.sender.contact}
+                </Link>
+              </Text>
             </View>
             <View style={styles.receiverBox}>
               <Text style={styles.sectionTitle}>TO (RECEIVER)</Text>
               <Text style={{ fontWeight: "bold" }}>{data.receiver.name}</Text>
               <Text>{data.receiver.address}</Text>
               <Text style={{ marginTop: 4 }}>
-                Contact: {data.receiver.contact}
+                Contact:{" "}
+                <Link
+                  src={`tel:${data.receiver.contact}`}
+                  style={{ textDecoration: "none", color: "black" }}
+                >
+                  {data.receiver.contact}
+                </Link>
               </Text>
             </View>
           </View>
@@ -804,7 +818,13 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                   {data.receiver.address.toUpperCase()}
                 </Text>
                 <Text style={{ fontSize: 10, marginTop: 5 }}>
-                  MOB NO.: {data.receiver.contact}
+                  MOB NO.:{" "}
+                  <Link
+                    src={`tel:${data.receiver.contact}`}
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    {data.receiver.contact}
+                  </Link>
                 </Text>
               </View>
 
@@ -920,7 +940,15 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={{ fontWeight: "bold" }}>Consignee,</Text>
               <Text>{data.receiver.name}</Text>
               <Text>{data.receiver.address.toUpperCase()}</Text>
-              <Text>MOB NO.: {data.receiver.contact}</Text>
+              <Text>
+                MOB NO.:{" "}
+                <Link
+                  src={`tel:${data.receiver.contact}`}
+                  style={{ textDecoration: "none", color: "black" }}
+                >
+                  {data.receiver.contact}
+                </Link>
+              </Text>
             </View>
             <View style={{ width: "50%", flexDirection: "column" }}>
               {/* PCS / Weight Header */}
@@ -1291,7 +1319,15 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <View style={styles.hannyAddressBox}>
                 <Text style={{ fontWeight: "bold" }}>{data.receiver.name}</Text>
                 <Text>{data.receiver.address.toUpperCase()}</Text>
-                <Text>MOB NO.: {data.receiver.contact}</Text>
+                <Text>
+                  MOB NO.:{" "}
+                  <Link
+                    src={`tel:${data.receiver.contact}`}
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    {data.receiver.contact}
+                  </Link>
+                </Text>
               </View>
             </View>
           </View>
@@ -1428,7 +1464,13 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               >
                 {currentConfig.email}
               </Link>{" "}
-              - {currentConfig.contact}
+              -{" "}
+              <Link
+                src={`tel:${currentConfig.contact}`}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                {currentConfig.contact}
+              </Link>
             </Text>
           </View>
 

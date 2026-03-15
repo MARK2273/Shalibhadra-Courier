@@ -27,14 +27,14 @@ export const courierConfigs: Record<string, CourierConfig> = {
     contact: "9909408678",
   },
   navkar: {
-    name: "NAVKAR",
-    subName: "COURIER AND CARGO",
+    name: "Navkar",
+    subName: "Couriers",
     companyName: "(Navkar Enterprise)",
-    displayName: "NAVKAR COURIER AND CARGO (Navkar Enterprise)",
+    displayName: "Navkar Couriers",
     website: "https://navkar-courier.vercel.app", // Placeholder, user can update
     address: "PLOT NO-118, THAKOR DWAR SOCIETY-3, HONEY PARK ROAD, ADAJAN, PALANPUR, SURAT, Surat, Gujarat, 395009", // Placeholder
-    footerText: "NAVKAR ENTERPRISE , Surat",
-    tagline: "",
+    footerText: "Navkar Couriers , Surat",
+    tagline: "Courier & Cargo",
     email: "navakrenterprise1812@gmail.com",
     contact: "9909408678", // Placeholder
   },

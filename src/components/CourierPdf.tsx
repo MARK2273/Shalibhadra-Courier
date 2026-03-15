@@ -5,6 +5,7 @@ import {
   Document,
   StyleSheet,
   Image,
+  Link,
 } from "@react-pdf/renderer";
 import { numberToWords } from "../utils/numberToWords";
 import { currentConfig } from "../constants/courierConfig";
@@ -447,7 +448,12 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={{ marginTop: 2, fontSize: 9 }}>
                 (AWB No): {data.header.awbNo}
               </Text>
-              <Text style={{ fontSize: 8 }}>{currentConfig.website}</Text>
+              <Link
+                src={`https://${currentConfig.website}`}
+                style={{ fontSize: 8, textDecoration: "none", color: "black" }}
+              >
+                {currentConfig.website}
+              </Link>
             </View>
           </View>
 
@@ -769,9 +775,12 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={{ fontSize: 9, marginTop: 2 }}>
                 (AWB No): {data.header.awbNo}
               </Text>
-              <Text style={{ fontSize: 9, fontWeight: "bold" }}>
+              <Link
+                src={`https://${currentConfig.website}`}
+                style={{ fontSize: 9, fontWeight: "bold", textDecoration: "none", color: "black" }}
+              >
                 {currentConfig.website}
-              </Text>
+              </Link>
             </View>
           </View>
 
@@ -1253,9 +1262,12 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={{ fontSize: 9, marginTop: 2 }}>
                 (AWB No): {data.header.awbNo}
               </Text>
-              <Text style={{ fontSize: 9, fontWeight: "bold" }}>
+              <Link
+                src={`https://${currentConfig.website}`}
+                style={{ fontSize: 9, fontWeight: "bold", textDecoration: "none", color: "black" }}
+              >
                 {currentConfig.website}
-              </Text>
+              </Link>
             </View>
           </View>
 
@@ -1410,7 +1422,13 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               If any issue then first contact our OPS team
             </Text>
             <Text style={{ fontSize: 10, fontWeight: "bold", marginTop: 10 }}>
-              {currentConfig.email} - {currentConfig.contact}
+              <Link
+                src={`mailto:${currentConfig.email}`}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                {currentConfig.email}
+              </Link>{" "}
+              - {currentConfig.contact}
             </Text>
           </View>
 

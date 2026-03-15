@@ -412,12 +412,19 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
           {/* Header */}
           <View style={styles.row}>
             <View style={styles.logoSection}>
-              <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 22, fontWeight: "bold" }}>
                 {currentConfig.name}
               </Text>
-              <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                 {currentConfig.subName}
               </Text>
+              {currentConfig.companyName && (
+                <Text
+                  style={{ fontSize: 10, fontWeight: "bold", marginTop: 2 }}
+                >
+                  {currentConfig.companyName}
+                </Text>
+              )}
               <Text style={{ fontSize: 10 }}>{currentConfig.tagline}</Text>
             </View>
             <View style={styles.originDestSection}>
@@ -751,12 +758,19 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
           {/* Header: Shalibhadra Specific Layout */}
           <View style={[styles.hannyRow, { height: 80 }]}>
             <View style={styles.hannyHeaderLeft}>
-              <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                 {currentConfig.name}
               </Text>
-              <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
                 {currentConfig.subName}
               </Text>
+              {currentConfig.companyName && (
+                <Text
+                  style={{ fontSize: 10, fontWeight: "bold", marginTop: 2 }}
+                >
+                  {currentConfig.companyName}
+                </Text>
+              )}
               <Text style={{ fontSize: 10, marginTop: 4, textAlign: "center" }}>
                 {currentConfig.tagline}
               </Text>
@@ -1252,12 +1266,19 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
           {/* Header */}
           <View style={[styles.hannyRow, { height: 80 }]}>
             <View style={styles.hannyHeaderLeft}>
-              <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                 {currentConfig.name}
               </Text>
-              <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
                 {currentConfig.subName}
               </Text>
+              {currentConfig.companyName && (
+                <Text
+                  style={{ fontSize: 10, fontWeight: "bold", marginTop: 2 }}
+                >
+                  {currentConfig.companyName}
+                </Text>
+              )}
               <Text style={{ fontSize: 7, marginTop: 4 }}>
                 {currentConfig.address}
               </Text>

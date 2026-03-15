@@ -1,6 +1,7 @@
 export interface CourierConfig {
   name: string;
   subName: string;
+  companyName?: string;
   displayName: string;
   website: string;
   address: string; // The fixed address from the PDF
@@ -27,8 +28,9 @@ export const courierConfigs: Record<string, CourierConfig> = {
   },
   navkar: {
     name: "NAVKAR",
-    subName: "ENTERPRISE",
-    displayName: "NAVKAR ENTERPRISE",
+    subName: "COURIER AND CARGO",
+    companyName: "(Navkar Enterprise)",
+    displayName: "NAVKAR COURIER AND CARGO (Navkar Enterprise)",
     website: "https://navkar-courier.vercel.app", // Placeholder, user can update
     address: "PLOT NO-118, THAKOR DWAR SOCIETY-3, HONEY PARK ROAD, ADAJAN, PALANPUR, SURAT, Surat, Gujarat, 395009", // Placeholder
     footerText: "NAVKAR ENTERPRISE , Surat",

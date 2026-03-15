@@ -33,6 +33,7 @@ const Dashboard: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalOwnerCost, setTotalOwnerCost] = useState(0);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     id: string;
@@ -71,6 +72,7 @@ const Dashboard: React.FC = () => {
       setTotalPages(response.data.meta.totalPages);
       setTotalCount(response.data.meta.total);
       setTotalRevenue(response.data.meta.totalRevenue);
+      setTotalOwnerCost(response.data.meta.totalOwnerCost || 0);
       setInitialLoad(false);
     } catch (error) {
       console.error("Failed to fetch shipments", error);
@@ -157,7 +159,7 @@ const Dashboard: React.FC = () => {
           I will keep stats cards but with 0 values to reflect empty state.
       */}
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${isOwnerMode ? 'lg:grid-cols-4' : 'lg:grid-cols-2'} gap-4`}>
         {loading && initialLoad
           ? // Skeleton for Stats
             Array(4)
@@ -185,6 +187,25 @@ const Dashboard: React.FC = () => {
                 color: "bg-green-50",
                 text: "text-green-600",
               },
+              ...(isOwnerMode
+                ? [
+                    {
+                      label: "Total Owner Cost",
+                      value: `₹${totalOwnerCost.toLocaleString()}`,
+                      color: "bg-orange-50",
+                      text: "text-orange-600",
+                    },
+                    {
+                      label: "Total Profit",
+                      value: `₹${(totalRevenue - totalOwnerCost).toLocaleString()}`,
+                      color: "bg-blue-50",
+                      text:
+                        totalRevenue - totalOwnerCost >= 0
+                          ? "text-blue-600"
+                          : "text-red-600",
+                    },
+                  ]
+                : []),
             ].map((stat, idx) => (
               <div
                 key={idx}

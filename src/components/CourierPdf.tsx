@@ -898,7 +898,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
             }}
           >
             <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-              COMMERCIAL INVOICE
+              PROFORMA INVOICE
             </Text>
           </View>
           {/* Header */}

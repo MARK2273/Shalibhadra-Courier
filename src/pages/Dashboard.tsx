@@ -469,19 +469,19 @@ const Dashboard: React.FC = () => {
                       <td className="px-6 py-4">
                         <Skeleton className="h-4 w-20" />
                       </td>
-                      {isOwnerMode && (
-                        <td className="px-6 py-4 text-right font-medium text-gray-900">
-                          <Skeleton className="h-4 w-16 ml-auto" />
-                        </td>
-                      )}
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-6 py-4 text-right font-medium">
                         <Skeleton className="h-4 w-16 ml-auto" />
                       </td>
                       <td className="px-6 py-4">
-                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-4 w-20" />
                       </td>
+                      {isOwnerMode && (
+                        <td className="px-6 py-4 text-right font-medium">
+                          <Skeleton className="h-4 w-16 ml-auto" />
+                        </td>
+                      )}
                       <td className="px-6 py-4 text-center">
-                        <Skeleton className="h-4 w-8 mx-auto" />
+                        <Skeleton className="h-4 w-16 mx-auto" />
                       </td>
                     </tr>
                   ))}
@@ -521,10 +521,10 @@ const Dashboard: React.FC = () => {
                   <th className="px-6 py-3">Sender</th>
                   <th className="px-6 py-3">Receiver</th>
                   <th className="px-6 py-3">Destination</th>
-                  <th className="px-6 py-3">Payment</th>
+                  <th className="px-6 py-3">Payment Method</th>
+                  <th className="px-6 py-3 text-right">Amount</th>
                   <th className="px-6 py-3">Status</th>
                   {isOwnerMode && <th className="px-6 py-3 text-right">Cost</th>}
-                  <th className="px-6 py-3 text-right">Amount</th>
                   <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
               </thead>
@@ -552,29 +552,29 @@ const Dashboard: React.FC = () => {
                     <td className="px-6 py-4">{shipment.receiver_name}</td>
                     <td className="px-6 py-4">{shipment.destination}</td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${shipment.payment_type === 'Online'
-                          ? 'bg-purple-50 text-purple-700 border border-purple-100'
-                          : 'bg-orange-50 text-orange-700 border border-orange-100'
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${shipment.payment_type === 'Online'
+                        ? 'bg-blue-50 text-blue-700 border border-blue-100'
+                        : 'bg-orange-50 text-orange-700 border border-orange-100'
                         }`}>
                         {shipment.payment_type || 'Cash'}
                       </span>
                     </td>
-                    {isOwnerMode && (
-                      <td className="px-6 py-4 text-right font-medium text-gray-900">
-                        ₹{shipment.owner_cost || 0}
-                      </td>
-                    )}
-                    <td className="px-6 py-4 text-right font-medium text-gray-900">
-                      ₹{shipment.billing_amount}
+                    <td className="px-6 py-4 text-right font-bold text-gray-900">
+                      ₹{shipment.billing_amount?.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-bold border ${shipment.payment_status === 'Paid'
-                          ? 'bg-green-50 text-green-700 border-green-100'
-                          : 'bg-amber-50 text-amber-700 border-amber-100'
+                    <td className="px-6 py-4 text-center">
+                      <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${shipment.payment_status === 'Paid'
+                        ? 'bg-green-50 text-green-700 border-green-200'
+                        : 'bg-amber-50 text-amber-700 border-amber-200'
                         }`}>
                         {shipment.payment_status || 'Pending'}
                       </span>
                     </td>
+                    {isOwnerMode && (
+                      <td className="px-6 py-4 text-right font-medium text-gray-500 italic">
+                        ₹{shipment.owner_cost?.toLocaleString() || 0}
+                      </td>
+                    )}
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center justify-center gap-1">
                         <Tooltip text="View Details">

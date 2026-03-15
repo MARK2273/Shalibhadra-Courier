@@ -9,14 +9,12 @@ import ShipmentDetails from "./pages/ShipmentDetails";
 import Layout from "./components/layout/Layout";
 import { OwnerModeProvider } from "./context/OwnerModeContext";
 
-import { useEffect } from "react";
-import { currentConfig } from "./constants/courierConfig";
 
 function App() {
-  useEffect(() => {
-    // Update Title
-    document.title = currentConfig.displayName;
-  }, []);
+  // useEffect(() => {
+  //   // Update Title
+  //   document.title = currentConfig.displayName;
+  // }, []);
 
   return (
     <OwnerModeProvider>

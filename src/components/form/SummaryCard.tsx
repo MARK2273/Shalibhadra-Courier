@@ -65,18 +65,15 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2">
 
         {/* Left Side: Physical Measurements & Weight */}
-        <div className="p-8 md:p-10 bg-gray-50/50 border-r border-gray-100">
+        <div className="p-8 border-r border-gray-100 bg-gray-50/30">
           <div className="flex items-center gap-3 mb-8">
-            <div className="bg-primary/10 p-2.5 rounded-xl">
-              <Box className="h-6 w-6 text-primary" />
+            <div className="bg-primary/5 p-2 rounded-lg">
+              <Box className="h-5 w-5 text-primary" />
             </div>
-            <div>
-              <h3 className="font-bold text-gray-900 text-lg">Shipment Volume</h3>
-              <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Physical Parameters</p>
-            </div>
+            <h3 className="font-bold text-gray-900">Shipment Volume</h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormInput
               label="Total Pieces"
               type="number"
@@ -84,7 +81,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
               value={pcs || ""}
               onChange={(e) => handleInternalChange("pcs", Number(e.target.value))}
               icon={Box}
-              className="font-bold border-gray-200 focus:border-primary transition-all"
+              className="font-semibold border-gray-200 focus:border-primary"
             />
             <FormInput
               label="Volumetric Wt. (kg)"
@@ -94,7 +91,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
               value={volumetricWeight}
               onChange={(e) => handleInternalChange("volumetricWeight", e.target.value)}
               icon={Scale}
-              className="font-bold border-gray-200 focus:border-primary transition-all"
+              className="font-semibold border-gray-200 focus:border-primary"
             />
             <div className="sm:col-span-2">
               <FormInput
@@ -105,39 +102,34 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                 value={weight}
                 onChange={(e) => handleInternalChange("weight", e.target.value)}
                 icon={Scale}
-                className="font-black text-xl text-center border-gray-200 focus:border-primary transition-all bg-white"
+                className="font-bold text-lg text-center border-gray-200 focus:border-primary bg-white"
               />
             </div>
           </div>
 
-          <div className="mt-8 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
+          <div className="mt-8 p-6 bg-white rounded-2xl border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-black mb-1">
+                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">
                   Product Value
                 </p>
                 <div className="flex items-center text-primary">
-                  <IndianRupee className="h-5 w-5 mr-1" />
-                  <span className="text-3xl font-black">{totalAmount.toLocaleString("en-IN")}</span>
+                  <IndianRupee className="h-4 w-4 mr-1" />
+                  <span className="text-2xl font-black">{totalAmount.toLocaleString("en-IN")}</span>
                 </div>
               </div>
-              <div className="h-12 w-12 bg-blue-50 rounded-full flex items-center justify-center">
-                <Box className="h-6 w-6 text-primary opacity-40" />
-              </div>
+              <Box className="h-8 w-8 text-gray-100" />
             </div>
           </div>
         </div>
 
         {/* Right Side: Financials & Payment */}
-        <div className="p-8 md:p-10 bg-white">
+        <div className="p-8 bg-white">
           <div className="flex items-center gap-3 mb-8">
-            <div className="bg-green-100 p-2.5 rounded-xl">
-              <CreditCard className="h-6 w-6 text-green-600" />
+            <div className="bg-green-50 p-2 rounded-lg">
+              <CreditCard className="h-5 w-5 text-green-600" />
             </div>
-            <div>
-              <h3 className="font-bold text-gray-900 text-lg">Billing & Payment</h3>
-              <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Financial Details</p>
-            </div>
+            <h3 className="font-bold text-gray-900">Billing & Payment</h3>
           </div>
 
           <div className="space-y-6">
@@ -149,10 +141,10 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
               onChange={(e) => handleInternalChange("billingAmount", Number(e.target.value))}
               icon={IndianRupee}
               error={errors["other.billingAmount"]}
-              className="text-center font-black text-2xl bg-green-50/50 border-green-200 text-green-700 h-16 rounded-2xl transition-all hover:bg-green-50"
+              className="text-center font-bold text-xl bg-gray-50/50 border-gray-200 text-gray-900 h-14 rounded-xl focus:border-green-500"
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <FormSelect
                 label="Currency"
                 value={currency}
@@ -173,7 +165,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <FormSelect
                 label="Payment Status"
                 value={paymentStatus}
@@ -183,14 +175,14 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                   { value: "Pending", label: "Pending" },
                 ]}
                 icon={CreditCard}
-                className={`font-bold rounded-xl transition-all ${paymentStatus === 'Paid'
-                  ? 'text-green-700 bg-green-50 border-green-100 hover:bg-green-100'
-                  : 'text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100'
+                className={`font-semibold rounded-xl transition-all ${paymentStatus === 'Paid'
+                  ? 'text-green-600 bg-green-50/50 border-green-100'
+                  : 'text-amber-600 bg-amber-50/50 border-amber-100'
                   }`}
               />
               {paymentType === "Online" && upiConfigs && upiConfigs.length > 0 && (
                 <FormSelect
-                  label="Select QR/UPI"
+                  label="Select Account"
                   value={selectedUpiId || ""}
                   onChange={(e) => handleInternalChange("selectedUpiId", e.target.value)}
                   options={upiConfigs.map((config) => ({
@@ -198,36 +190,35 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                     label: config.display_name,
                   }))}
                   icon={CreditCard}
+                  error={errors["other.selectedUpiId"]}
                 />
               )}
             </div>
 
             {isOwnerMode && (
               <FormInput
-                label="Owner Cost (Reference)"
+                label="Owner Cost"
                 type="number"
                 min="0"
                 value={ownerCost || ""}
                 onChange={(e) => handleInternalChange("ownerCost", Number(e.target.value))}
                 icon={IndianRupee}
-                className="text-center font-semibold bg-orange-50 border-orange-100 text-orange-700"
+                className="text-center font-medium bg-gray-50 border-gray-200 text-gray-600 h-10"
               />
             )}
           </div>
         </div>
       </div>
 
-      {/* Footer: Words & Declaration */}
-      <div className="bg-gray-50/80 border-t border-gray-100 p-8 md:p-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-          <div className="relative">
-            <div className="absolute -top-4 -left-2 bg-primary text-white text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest">
-              Amount In Words
-            </div>
-            <p className="text-gray-900 font-extrabold italic text-xl leading-tight pt-2">
-              {amountInWords}
-            </p>
-          </div>
+      {/* Footer: Words */}
+      <div className="bg-gray-50/50 border-t border-gray-100 p-6 px-8">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">
+            Amount In Words
+          </span>
+          <p className="text-gray-700 font-bold text-lg">
+            {amountInWords}
+          </p>
         </div>
       </div>
     </div>

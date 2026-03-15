@@ -14,6 +14,7 @@ import {
   TrendingUp,
   TrendingDown,
   Minus,
+  CreditCard,
 } from "lucide-react";
 import api, { deleteShipment } from "../api/api";
 import Modal from "../components/ui/Modal";
@@ -42,6 +43,20 @@ const Dashboard: React.FC = () => {
     thisMonthCost: 0,
     lastMonthRevenue: 0,
     lastMonthCost: 0,
+  });
+  const [financialBreakdown, setFinancialBreakdown] = useState({
+    collected: {
+      cash: 0,
+      upi: 0,
+      upiBreakdown: [] as { amount: number; name: string }[],
+      total: 0
+    },
+    pending: {
+      cash: 0,
+      upi: 0,
+      upiBreakdown: [] as { amount: number; name: string }[],
+      total: 0
+    }
   });
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -87,6 +102,10 @@ const Dashboard: React.FC = () => {
         thisMonthCost: response.data.meta.thisMonthCost || 0,
         lastMonthRevenue: response.data.meta.lastMonthRevenue || 0,
         lastMonthCost: response.data.meta.lastMonthCost || 0,
+      });
+      setFinancialBreakdown({
+        collected: response.data.meta.collected || { cash: 0, upi: 0, upiBreakdown: [], total: 0 },
+        pending: response.data.meta.pending || { cash: 0, upi: 0, upiBreakdown: [], total: 0 },
       });
       setInitialLoad(false);
     } catch (error) {
@@ -136,11 +155,10 @@ const Dashboard: React.FC = () => {
                 setOwnerModal(true);
               }
             }}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-              isOwnerMode
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${isOwnerMode
                 ? "bg-green-100 text-green-700 border border-green-200"
                 : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
-            }`}
+              }`}
           >
             {isOwnerMode ? (
               <>
@@ -177,98 +195,213 @@ const Dashboard: React.FC = () => {
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${isOwnerMode ? 'lg:grid-cols-4' : 'lg:grid-cols-2'} gap-4`}>
         {loading && initialLoad
           ? // Skeleton for Stats
-            Array(4)
-              .fill(0)
-              .map((_, idx) => (
-                <div
-                  key={idx}
-                  className="p-6 rounded-xl shadow-sm border border-gray-100 bg-white"
-                >
-                  <Skeleton className="h-4 w-24 mb-2" />
-                  <Skeleton className="h-8 w-16" />
-                </div>
-              ))
+          Array(4)
+            .fill(0)
+            .map((_, idx) => (
+              <div
+                key={idx}
+                className="p-6 rounded-xl shadow-sm border border-gray-100 bg-white"
+              >
+                <Skeleton className="h-4 w-24 mb-2" />
+                <Skeleton className="h-8 w-16" />
+              </div>
+            ))
           : // Actual Stats
-            [
-              {
-                label: "Total Shipments",
-                value: totalCount.toString(),
-                color: "bg-white",
-                text: "text-primary",
-              },
-              {
-                label: "Total Revenue",
-                value: `₹${totalRevenue.toLocaleString()}`,
-                color: "bg-green-50",
-                text: "text-green-600",
-              },
-              ...(isOwnerMode
-                ? [
-                    {
-                      label: "Total Owner Cost",
-                      value: `₹${totalOwnerCost.toLocaleString()}`,
-                      color: "bg-orange-50",
-                      text: "text-orange-600",
-                    },
-                    {
-                      label: "Total Profit",
-                      value: `₹${(totalRevenue - totalOwnerCost).toLocaleString()}`,
-                      color: "bg-blue-50",
-                      text:
-                        totalRevenue - totalOwnerCost >= 0
-                          ? "text-blue-600"
-                          : "text-red-600",
-                    },
-                  ]
-                : []),
-            ].map((stat, idx) => {
-              const renderTrend = (current: number, prev: number, isBadWhenUp = false) => {
-                if (prev === 0) return null;
-                const diff = ((current - prev) / prev) * 100;
-                const isPositive = diff >= 0;
-                const isFavorable = isBadWhenUp ? !isPositive : isPositive;
-                
-                return (
-                  <div className={`flex items-center gap-1 text-xs font-bold mt-2 ${isFavorable ? 'text-green-600' : 'text-red-600'}`}>
-                    {diff === 0 ? (
-                      <Minus className="w-3 h-3" />
-                    ) : isPositive ? (
-                      <TrendingUp className="w-3 h-3" />
-                    ) : (
-                      <TrendingDown className="w-3 h-3" />
-                    )}
-                    {Math.abs(diff).toFixed(1)}% vs last month
-                  </div>
-                );
-              };
+          [
+            {
+              label: "Total Shipments",
+              value: totalCount.toString(),
+              color: "bg-white",
+              text: "text-primary",
+            },
+            {
+              label: "Total Revenue",
+              value: `₹${totalRevenue.toLocaleString()}`,
+              color: "bg-green-50",
+              text: "text-green-600",
+            },
+            ...(isOwnerMode
+              ? [
+                {
+                  label: "Total Owner Cost",
+                  value: `₹${totalOwnerCost.toLocaleString()}`,
+                  color: "bg-orange-50",
+                  text: "text-orange-600",
+                },
+                {
+                  label: "Total Profit",
+                  value: `₹${(totalRevenue - totalOwnerCost).toLocaleString()}`,
+                  color: "bg-blue-50",
+                  text:
+                    totalRevenue - totalOwnerCost >= 0
+                      ? "text-blue-600"
+                      : "text-red-600",
+                },
+              ]
+              : []),
+          ].map((stat, idx) => {
+            const renderTrend = (current: number, prev: number, isBadWhenUp = false) => {
+              if (prev === 0) return null;
+              const diff = ((current - prev) / prev) * 100;
+              const isPositive = diff >= 0;
+              const isFavorable = isBadWhenUp ? !isPositive : isPositive;
 
               return (
-                <div
-                  key={idx}
-                  className={`p-6 rounded-xl shadow-sm border border-gray-100 ${stat.color} flex flex-col justify-between`}
-                >
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">
-                      {stat.label}
-                    </p>
-                    <p className={`mt-2 text-3xl font-bold ${stat.text}`}>
-                      {stat.value}
-                    </p>
-                  </div>
-                  {isOwnerMode && stat.label !== "Total Shipments" && (
-                    <>
-                      {stat.label === "Total Revenue" && renderTrend(monthlyStats.thisMonthRevenue, monthlyStats.lastMonthRevenue)}
-                      {stat.label === "Total Owner Cost" && renderTrend(monthlyStats.thisMonthCost, monthlyStats.lastMonthCost, true)}
-                      {stat.label === "Total Profit" && renderTrend(
-                        monthlyStats.thisMonthRevenue - monthlyStats.thisMonthCost,
-                        monthlyStats.lastMonthRevenue - monthlyStats.lastMonthCost
-                      )}
-                    </>
+                <div className={`flex items-center gap-1 text-xs font-bold mt-2 ${isFavorable ? 'text-green-600' : 'text-red-600'}`}>
+                  {diff === 0 ? (
+                    <Minus className="w-3 h-3" />
+                  ) : isPositive ? (
+                    <TrendingUp className="w-3 h-3" />
+                  ) : (
+                    <TrendingDown className="w-3 h-3" />
                   )}
+                  {Math.abs(diff).toFixed(1)}% vs last month
                 </div>
               );
-            })}
+            };
+
+            return (
+              <div
+                key={idx}
+                className={`p-6 rounded-xl shadow-sm border border-gray-100 ${stat.color} flex flex-col justify-between`}
+              >
+                <div>
+                  <p className="text-sm font-medium text-gray-500">
+                    {stat.label}
+                  </p>
+                  <p className={`mt-2 text-3xl font-bold ${stat.text}`}>
+                    {stat.value}
+                  </p>
+                </div>
+                {isOwnerMode && stat.label !== "Total Shipments" && (
+                  <>
+                    {stat.label === "Total Revenue" && renderTrend(monthlyStats.thisMonthRevenue, monthlyStats.lastMonthRevenue)}
+                    {stat.label === "Total Owner Cost" && renderTrend(monthlyStats.thisMonthCost, monthlyStats.lastMonthCost, true)}
+                    {stat.label === "Total Profit" && renderTrend(
+                      monthlyStats.thisMonthRevenue - monthlyStats.thisMonthCost,
+                      monthlyStats.lastMonthRevenue - monthlyStats.lastMonthCost
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })}
       </div>
+      {/* Owner Financial Insights Breakdown */}
+      {isOwnerMode && (
+        <div className="animate-in fade-in slide-in-from-top-4 duration-500 mb-8 mt-2">
+          <div className="bg-white rounded-[2rem] border border-gray-200 shadow-xl shadow-gray-900/5 overflow-hidden">
+            <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/30">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-xl">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-lg">Financial Overview</h3>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Global metrics</p>
+                </div>
+              </div>
+              <div className="flex gap-12">
+                <div className="text-right">
+                  <p className="text-xs font-bold text-green-600 uppercase tracking-tighter">Total Collected</p>
+                  <p className="text-xl font-black text-gray-900">₹{financialBreakdown.collected.total.toLocaleString()}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-bold text-amber-600 uppercase tracking-tighter">Total Pending</p>
+                  <p className="text-xl font-black text-gray-900">₹{financialBreakdown.pending.total.toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2">
+                
+                {/* Collected Side */}
+                <div className="space-y-6 lg:pr-12 lg:border-r lg:border-gray-100">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Collection Breakdown</span>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-orange-50/10 rounded-2xl border border-orange-100/50 group transition-all hover:border-orange-200/50 hover:bg-orange-50/20">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-orange-50 rounded-xl text-orange-600 group-hover:bg-orange-100 transition-colors">
+                          <Package className="w-5 h-5" />
+                        </div>
+                        <span className="text-sm font-bold text-gray-700">Cash in Hand</span>
+                      </div>
+                      <span className="font-bold text-gray-900 text-lg">₹{financialBreakdown.collected.cash.toLocaleString()}</span>
+                    </div>
+
+                    <div className="space-y-3 p-4 bg-blue-50/5 rounded-2xl border border-blue-100/20 transition-all hover:border-blue-100/40">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-blue-50 rounded-xl text-blue-600">
+                            <CreditCard
+                              className="w-5 h-5" />
+                          </div>
+                          <span className="text-sm font-bold text-gray-700">UPI Transfers</span>
+                        </div>
+                        <span className="font-bold text-blue-600 text-lg">₹{financialBreakdown.collected.upi.toLocaleString()}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 pl-11">
+                        {financialBreakdown.collected.upiBreakdown.map((upi, idx) => (
+                          <div key={idx} className="flex justify-between items-center py-2 px-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
+                            <span className="text-[10px] font-bold text-gray-400 truncate mr-2">{upi.name}</span>
+                            <span className="text-[11px] font-black text-gray-700">₹{upi.amount.toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pending Side */}
+                <div className="space-y-6 lg:pl-12">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Pending Breakdown</span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-50/10 rounded-2xl border border-gray-100/50 group transition-all hover:border-gray-200/50 hover:bg-gray-50/20">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-gray-50 rounded-xl text-gray-400 group-hover:bg-gray-100 transition-colors">
+                          <Package className="w-5 h-5" />
+                        </div>
+                        <span className="text-sm font-semibold text-gray-500 italic">Expected Cash</span>
+                      </div>
+                      <span className="font-bold text-gray-400 text-lg">₹{financialBreakdown.pending.cash.toLocaleString()}</span>
+                    </div>
+
+                    <div className="space-y-3 p-4 bg-amber-50/5 rounded-2xl border border-amber-100/20 transition-all hover:border-amber-100/40">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-amber-50 rounded-xl text-amber-600">
+                            <Lock className="w-5 h-5" />
+                          </div>
+                          <span className="text-sm font-bold text-gray-700">Expected UPI</span>
+                        </div>
+                        <span className="font-bold text-amber-600 text-lg">₹{financialBreakdown.pending.upi.toLocaleString()}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 pl-11">
+                        {financialBreakdown.pending.upiBreakdown.map((upi, idx) => (
+                          <div key={idx} className="flex justify-between items-center py-2 px-3 bg-amber-50/30 rounded-xl border border-amber-100/30">
+                            <span className="text-[10px] font-bold text-amber-600/60 truncate mr-2">{upi.name}</span>
+                            <span className="text-[11px] font-black text-amber-900">₹{upi.amount.toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent Shipments Table Container */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[400px] flex flex-col">
@@ -407,9 +540,9 @@ const Dashboard: React.FC = () => {
                     <td className="px-6 py-4">
                       {shipment.shipment_date
                         ? format(
-                            new Date(shipment.shipment_date),
-                            "dd MMM yyyy",
-                          )
+                          new Date(shipment.shipment_date),
+                          "dd MMM yyyy",
+                        )
                         : "N/A"}
                     </td>
                     <td className="px-6 py-4">
@@ -419,11 +552,10 @@ const Dashboard: React.FC = () => {
                     <td className="px-6 py-4">{shipment.receiver_name}</td>
                     <td className="px-6 py-4">{shipment.destination}</td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        shipment.payment_type === 'Online' 
-                          ? 'bg-purple-50 text-purple-700 border border-purple-100' 
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${shipment.payment_type === 'Online'
+                          ? 'bg-purple-50 text-purple-700 border border-purple-100'
                           : 'bg-orange-50 text-orange-700 border border-orange-100'
-                      }`}>
+                        }`}>
                         {shipment.payment_type || 'Cash'}
                       </span>
                     </td>
@@ -436,11 +568,10 @@ const Dashboard: React.FC = () => {
                       ₹{shipment.billing_amount}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-bold border ${
-                        shipment.payment_status === 'Paid' 
-                          ? 'bg-green-50 text-green-700 border-green-100' 
+                      <span className={`px-2 py-1 rounded-full text-xs font-bold border ${shipment.payment_status === 'Paid'
+                          ? 'bg-green-50 text-green-700 border-green-100'
                           : 'bg-amber-50 text-amber-700 border-amber-100'
-                      }`}>
+                        }`}>
                         {shipment.payment_status || 'Pending'}
                       </span>
                     </td>

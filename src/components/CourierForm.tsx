@@ -286,6 +286,9 @@ const CourierForm: React.FC = () => {
     if (!formData.other.paymentType) {
       newErrors["other.paymentType"] = "Payment Type is required";
     }
+    if (formData.other.paymentType === "Online" && !formData.other.selectedUpiId) {
+      newErrors["other.selectedUpiId"] = "UPI Account is required for Online payments";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -458,11 +461,29 @@ const CourierForm: React.FC = () => {
     field: string,
     value: any,
   ) => {
+    let finalValue = value;
+
+    // Side effect: If switching to Online, auto-select a UPI if none is selected
+    if (section === "other" && field === "paymentType" && value === "Online") {
+      if (!formData.other.selectedUpiId && upiConfigs.length > 0) {
+        const defaultUpi = upiConfigs.find(c => c.is_active) || upiConfigs[0];
+        setFormData(prev => ({
+          ...prev,
+          other: {
+            ...prev.other,
+            paymentType: "Online",
+            selectedUpiId: defaultUpi.id
+          }
+        }));
+        return; // setFormData already handled
+      }
+    }
+
     setFormData((prev) => ({
       ...prev,
       [section]: {
         ...(prev[section] as any),
-        [field]: value,
+        [field]: finalValue,
       },
     }));
 
@@ -647,7 +668,7 @@ const CourierForm: React.FC = () => {
       };
 
       const blob = await pdf(<CourierPdf data={pdfData} />).toBlob();
-      
+
       // Upload PDF to Supabase
       const shipmentId = (updatedFormData as any)._shipmentId;
       if (shipmentId) {
@@ -660,7 +681,6 @@ const CourierForm: React.FC = () => {
             const url = URL.createObjectURL(blob);
             window.open(url, "_blank");
           }
-          console.log("PDF uploaded successfully to storage");
         } catch (uploadError) {
           console.error("Failed to upload PDF reference:", uploadError);
           // Fallback to local preview if upload fails
@@ -1056,8 +1076,8 @@ const CourierForm: React.FC = () => {
         {submitStatus && (
           <div
             className={`p-4 rounded-xl border flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${submitStatus.type === "success"
-                ? "bg-green-50 border-green-200 text-green-700"
-                : "bg-red-50 border-red-200 text-red-700"
+              ? "bg-green-50 border-green-200 text-green-700"
+              : "bg-red-50 border-red-200 text-red-700"
               }`}
           >
             <div

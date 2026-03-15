@@ -10,12 +10,16 @@ import {
   Package,
 } from "lucide-react";
 
+import { useOwnerMode } from "../../context/OwnerModeContext";
+
 const Layout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logoutOwnerMode } = useOwnerMode();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const handleLogout = () => {
+    logoutOwnerMode();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/login");

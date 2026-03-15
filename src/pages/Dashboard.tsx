@@ -59,6 +59,15 @@ const Dashboard: React.FC = () => {
   const [ownerPassword, setOwnerPassword] = useState("");
   const [ownerError, setOwnerError] = useState<string | null>(null);
   const [isVerifyingOwner, setIsVerifyingOwner] = useState(false);
+  const [statusModal, setStatusModal] = useState<{
+    isOpen: boolean;
+    id: string;
+    newStatus: Shipment['payment_status'];
+  }>({
+    isOpen: false,
+    id: "",
+    newStatus: 'Pending',
+  });
 
   // Consolidated effect for fetching shipments
   React.useEffect(() => {
@@ -121,9 +130,17 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleStatusToggle = async (id: string, currentStatus: Shipment['payment_status']) => {
+  const handleStatusToggle = (id: string, currentStatus: Shipment['payment_status']) => {
     const newStatus = currentStatus === 'Paid' ? 'Pending' : 'Paid';
+    setStatusModal({ isOpen: true, id, newStatus });
+  };
+
+  const handleConfirmStatusToggle = async () => {
+    const { id, newStatus } = statusModal;
+    const currentStatus = newStatus === 'Paid' ? 'Pending' : 'Paid';
+
     setTogglingId(id);
+    setStatusModal(prev => ({ ...prev, isOpen: false }));
 
     // Optimistic Update
     setShipments(prev => prev.map(s => s.id === id ? { ...s, payment_status: newStatus as 'Paid' | 'Pending' } : s));
@@ -687,6 +704,30 @@ const Dashboard: React.FC = () => {
           setDeleteError(null);
         }}
         onConfirm={handleConfirmDelete}
+      />
+
+      {/* Payment Status Confirmation Modal */}
+      <Modal
+        isOpen={statusModal.isOpen}
+        title="Update Payment Status?"
+        description={
+          <div className="space-y-3">
+            <p>
+              Are you sure you want to change the payment status to{" "}
+              <span className={`font-bold ${statusModal.newStatus === 'Paid' ? 'text-green-600' : 'text-amber-600'}`}>
+                {statusModal.newStatus}
+              </span>?
+            </p>
+          </div>
+        }
+        confirmLabel="Update Status"
+        cancelLabel="Cancel"
+        variant={statusModal.newStatus === 'Paid' ? 'primary' : 'warning'}
+        icon={CreditCard}
+        onClose={() => {
+          setStatusModal({ ...statusModal, isOpen: false });
+        }}
+        onConfirm={handleConfirmStatusToggle}
       />
 
       {/* Owner Mode Password Modal */}

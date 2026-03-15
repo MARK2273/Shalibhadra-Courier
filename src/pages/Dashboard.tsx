@@ -11,6 +11,9 @@ import {
   Edit2,
   Lock,
   Unlock,
+  TrendingUp,
+  TrendingDown,
+  Minus,
 } from "lucide-react";
 import api, { deleteShipment } from "../api/api";
 import Modal from "../components/ui/Modal";
@@ -34,6 +37,12 @@ const Dashboard: React.FC = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalOwnerCost, setTotalOwnerCost] = useState(0);
+  const [monthlyStats, setMonthlyStats] = useState({
+    thisMonthRevenue: 0,
+    thisMonthCost: 0,
+    lastMonthRevenue: 0,
+    lastMonthCost: 0,
+  });
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     id: string;
@@ -73,6 +82,12 @@ const Dashboard: React.FC = () => {
       setTotalCount(response.data.meta.total);
       setTotalRevenue(response.data.meta.totalRevenue);
       setTotalOwnerCost(response.data.meta.totalOwnerCost || 0);
+      setMonthlyStats({
+        thisMonthRevenue: response.data.meta.thisMonthRevenue || 0,
+        thisMonthCost: response.data.meta.thisMonthCost || 0,
+        lastMonthRevenue: response.data.meta.lastMonthRevenue || 0,
+        lastMonthCost: response.data.meta.lastMonthCost || 0,
+      });
       setInitialLoad(false);
     } catch (error) {
       console.error("Failed to fetch shipments", error);
@@ -206,19 +221,53 @@ const Dashboard: React.FC = () => {
                     },
                   ]
                 : []),
-            ].map((stat, idx) => (
-              <div
-                key={idx}
-                className={`p-6 rounded-xl shadow-sm border border-gray-100 ${stat.color}`}
-              >
-                <p className="text-sm font-medium text-gray-500">
-                  {stat.label}
-                </p>
-                <p className={`mt-2 text-3xl font-bold ${stat.text}`}>
-                  {stat.value}
-                </p>
-              </div>
-            ))}
+            ].map((stat, idx) => {
+              const renderTrend = (current: number, prev: number, isBadWhenUp = false) => {
+                if (prev === 0) return null;
+                const diff = ((current - prev) / prev) * 100;
+                const isPositive = diff >= 0;
+                const isFavorable = isBadWhenUp ? !isPositive : isPositive;
+                
+                return (
+                  <div className={`flex items-center gap-1 text-xs font-bold mt-2 ${isFavorable ? 'text-green-600' : 'text-red-600'}`}>
+                    {diff === 0 ? (
+                      <Minus className="w-3 h-3" />
+                    ) : isPositive ? (
+                      <TrendingUp className="w-3 h-3" />
+                    ) : (
+                      <TrendingDown className="w-3 h-3" />
+                    )}
+                    {Math.abs(diff).toFixed(1)}% vs last month
+                  </div>
+                );
+              };
+
+              return (
+                <div
+                  key={idx}
+                  className={`p-6 rounded-xl shadow-sm border border-gray-100 ${stat.color} flex flex-col justify-between`}
+                >
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">
+                      {stat.label}
+                    </p>
+                    <p className={`mt-2 text-3xl font-bold ${stat.text}`}>
+                      {stat.value}
+                    </p>
+                  </div>
+                  {isOwnerMode && stat.label !== "Total Shipments" && (
+                    <>
+                      {stat.label === "Total Revenue" && renderTrend(monthlyStats.thisMonthRevenue, monthlyStats.lastMonthRevenue)}
+                      {stat.label === "Total Owner Cost" && renderTrend(monthlyStats.thisMonthCost, monthlyStats.lastMonthCost, true)}
+                      {stat.label === "Total Profit" && renderTrend(
+                        monthlyStats.thisMonthRevenue - monthlyStats.thisMonthCost,
+                        monthlyStats.lastMonthRevenue - monthlyStats.lastMonthCost
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })}
       </div>
 
       {/* Recent Shipments Table Container */}

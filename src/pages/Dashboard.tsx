@@ -265,6 +265,11 @@ const Dashboard: React.FC = () => {
                       <td className="px-6 py-4">
                         <Skeleton className="h-4 w-20" />
                       </td>
+                      {isOwnerMode && (
+                        <td className="px-6 py-4 text-right font-medium text-green-600 bg-green-50/50">
+                          <Skeleton className="h-4 w-16 ml-auto" />
+                        </td>
+                      )}
                       <td className="px-6 py-4 text-right">
                         <Skeleton className="h-4 w-16 ml-auto" />
                       </td>
@@ -347,14 +352,14 @@ const Dashboard: React.FC = () => {
                         {shipment.payment_type || 'Cash'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right font-medium text-gray-900">
-                      ₹{shipment.billing_amount}
-                    </td>
                     {isOwnerMode && (
                       <td className="px-6 py-4 text-right font-medium text-green-600 bg-green-50/50">
                         ₹{shipment.owner_cost || 0}
                       </td>
                     )}
+                    <td className="px-6 py-4 text-right font-medium text-gray-900">
+                      ₹{shipment.billing_amount}
+                    </td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center justify-center gap-1">
                         <Tooltip text="View Details">

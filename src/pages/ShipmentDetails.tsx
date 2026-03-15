@@ -408,6 +408,18 @@ const ShipmentDetails: React.FC = () => {
           />
           <InfoRow label="Amount in Words" value={shipment.amount_in_words} />
           <InfoRow label="Payment Type" value={shipment.payment_type} />
+          <InfoRow 
+            label="Payment Status" 
+            value={
+              <span className={`px-2 py-1 rounded-full text-xs font-bold border ${
+                shipment.payment_status === 'Paid' 
+                  ? 'bg-green-50 text-green-700 border-green-100' 
+                  : 'bg-amber-50 text-amber-700 border-amber-100'
+              }`}>
+                {shipment.payment_status || 'Pending'}
+              </span>
+            } 
+          />
           {isOwnerMode && (
             <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-100 flex justify-between items-center">
               <span className="text-sm font-semibold text-green-700">Cost to Owner</span>

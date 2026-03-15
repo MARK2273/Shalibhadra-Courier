@@ -94,6 +94,7 @@ export interface CourierData {
     billingAmount: number;
     paymentType: "Cash" | "Online";
     selectedUpiId?: string | null;
+    paymentStatus: "Paid" | "Pending";
     ownerCost?: number;
   };
   barcodeBase64?: string;
@@ -197,6 +198,7 @@ const initialFormData: CourierData = {
     billingAmount: 0,
     paymentType: "Cash",
     selectedUpiId: null,
+    paymentStatus: "Pending",
     ownerCost: 0,
   },
 };
@@ -385,6 +387,7 @@ const CourierForm: React.FC = () => {
             billingAmount: data.billing_amount || 0,
             paymentType: data.payment_type || "Cash",
             selectedUpiId: data.selected_upi_id || null,
+            paymentStatus: data.payment_status || "Pending",
             ownerCost: data.owner_cost || 0,
           },
         });
@@ -1042,6 +1045,7 @@ const CourierForm: React.FC = () => {
             amountInWords={formData.other.amountInWords}
             currency={formData.other.currency}
             paymentType={formData.other.paymentType}
+            paymentStatus={formData.other.paymentStatus}
             selectedUpiId={formData.other.selectedUpiId}
             upiConfigs={upiConfigs}
             onNestedChange={handleNestedChange}

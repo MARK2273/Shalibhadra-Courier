@@ -13,6 +13,7 @@ interface SummaryCardProps {
   amountInWords: string;
   currency: string;
   paymentType: string;
+  paymentStatus: string;
   selectedUpiId?: string | null;
   upiConfigs?: UpiConfig[];
   ownerCost?: number;
@@ -31,6 +32,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   amountInWords,
   currency,
   paymentType,
+  paymentStatus,
   selectedUpiId,
   upiConfigs,
   ownerCost,
@@ -147,6 +149,19 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             icon={CreditCard}
             error={errors["other.paymentType"]}
             containerClassName="col-span-2"
+          />
+          
+          <FormSelect
+            label="Payment Status"
+            value={paymentStatus}
+            onChange={(e) => handleInternalChange("paymentStatus", e.target.value)}
+            options={[
+              { value: "Paid", label: "Paid" },
+              { value: "Pending", label: "Pending" },
+            ]}
+            icon={CreditCard}
+            containerClassName="col-span-2"
+            className={paymentStatus === 'Paid' ? 'text-green-700 font-bold bg-green-50' : 'text-amber-700 font-bold bg-amber-50'}
           />
 
           {isOwnerMode && (

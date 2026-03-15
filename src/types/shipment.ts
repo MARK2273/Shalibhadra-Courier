@@ -10,6 +10,7 @@ export interface Shipment {
   sender_contact?: string | null;
   payment_type: 'Cash' | 'Online';
   selected_upi_id?: string | null;
+  payment_status: 'Paid' | 'Pending';
   tracking_url?: string | null;
   owner_cost?: number;
 }
@@ -81,6 +82,7 @@ export interface ShipmentDetail {
   billing_amount: number | null;
   payment_type: 'Cash' | 'Online';
   selected_upi_id: string | null;
+  payment_status: 'Paid' | 'Pending';
   upi_details?: {
     upi_id: string;
     payee_name: string;

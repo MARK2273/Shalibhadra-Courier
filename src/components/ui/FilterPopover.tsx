@@ -76,6 +76,11 @@ const FilterPopover: React.FC<FilterPopoverProps> = ({
           }`}
       >
         <span>Filter By</span>
+        {activeFilterCount > 0 && (
+          <span className="flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 bg-white text-primary rounded-full text-[10px] font-black shadow-sm">
+            {activeFilterCount}
+          </span>
+        )}
         <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-90' : 'rotate-0'}`} />
       </button>
 

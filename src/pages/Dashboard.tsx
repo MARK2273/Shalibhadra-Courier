@@ -21,6 +21,7 @@ const Dashboard: React.FC = () => {
   const [initialLoad, setInitialLoad] = useState(true); // Track initial load
   const [search, setSearch] = useState("");
   const [activeStatusFilter, setActiveStatusFilter] = useState<"All" | "Paid" | "Pending">("All");
+  const [activePaymentTypeFilter, setActivePaymentTypeFilter] = useState<"All" | "Cash" | "Online">("All");
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -82,14 +83,15 @@ const Dashboard: React.FC = () => {
     }, delay);
 
     return () => clearTimeout(timer);
-  }, [page, search, activeStatusFilter]);
+  }, [page, search, activeStatusFilter, activePaymentTypeFilter]);
 
   const fetchShipments = async () => {
     setLoading(true);
     try {
       const statusParam = activeStatusFilter !== "All" ? `&status=${activeStatusFilter}` : "";
+      const paymentParam = activePaymentTypeFilter !== "All" ? `&paymentType=${activePaymentTypeFilter}` : "";
       const response = await api.get(
-        `/form/mydata?page=${page}&limit=10&search=${search}${statusParam}`,
+        `/form/mydata?page=${page}&limit=10&search=${search}${statusParam}${paymentParam}`,
       );
       setShipments(response.data.data);
       setTotalPages(response.data.meta.totalPages);
@@ -179,15 +181,27 @@ const Dashboard: React.FC = () => {
         { label: 'Pending Only', value: 'Pending' },
       ],
     },
+    {
+      id: 'paymentType',
+      label: 'Payment Method',
+      type: 'select',
+      options: [
+        { label: 'All Methods', value: 'All' },
+        { label: 'Cash Only', value: 'Cash' },
+        { label: 'Online Only', value: 'Online' },
+      ],
+    },
   ];
 
   const handleApplyFilters = (values: Record<string, any>) => {
     setActiveStatusFilter(values.status || 'All');
+    setActivePaymentTypeFilter(values.paymentType || 'All');
     setPage(1);
   };
 
   const handleClearAllFilters = () => {
     setActiveStatusFilter('All');
+    setActivePaymentTypeFilter('All');
     setPage(1);
   };
 
@@ -476,10 +490,10 @@ const Dashboard: React.FC = () => {
             {/* Reusable Filter Popover */}
             <FilterPopover
               fields={filterFields}
-              currentValues={{ status: activeStatusFilter }}
+              currentValues={{ status: activeStatusFilter, paymentType: activePaymentTypeFilter }}
               onApply={handleApplyFilters}
               onClear={handleClearAllFilters}
-              activeFilterCount={activeStatusFilter !== 'All' ? 1 : 0}
+              activeFilterCount={(activeStatusFilter !== 'All' ? 1 : 0) + (activePaymentTypeFilter !== 'All' ? 1 : 0)}
             />
           </div>
         </div>

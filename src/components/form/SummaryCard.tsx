@@ -48,7 +48,6 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
       onFieldChange(field, value);
     }
   };
-  // const isINR = currency === "INR";
 
   const currencyOptions = [
     { value: "INR", label: "Indian Rupee (INR)" },
@@ -60,8 +59,9 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
     { value: "AUD", label: "Australian Dollar (AUD)" },
     { value: "SGD", label: "Singapore Dollar (SGD)" },
   ];
+
   return (
-    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-visible">
       <div className="grid grid-cols-1 lg:grid-cols-2">
 
         {/* Left Side: Physical Measurements & Weight */}

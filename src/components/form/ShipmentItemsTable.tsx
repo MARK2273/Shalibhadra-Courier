@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, Plus, Box, ClipboardList, IndianRupee } from "lucide-react";
+import { Trash2, Plus, ClipboardList, IndianRupee } from "lucide-react";
 import { getHsCodes } from "../../api/api";
+import CustomSelect from "../ui/CustomSelect";
 
 interface LineItem {
   id: number;
@@ -240,23 +241,13 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                   <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
                     Box No
                   </span>
-                  <div className="relative w-full md:w-24">
-                    <select
-                      value={item.boxNo}
-                      onChange={(e) =>
-                        onItemChange(item.id, "boxNo", e.target.value)
-                      }
-                      className="block w-full pl-3 pr-8 py-2 text-sm border-gray-200 rounded-lg bg-white focus:border-primary focus:ring-primary/20 outline-none appearance-none font-medium shadow-sm transition-all"
-                    >
-                      {boxOptions.map((num) => (
-                        <option key={num} value={num}>
-                          {num}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none text-gray-400">
-                      <Box className="h-3 w-3" />
-                    </div>
+                  <div className="w-full md:w-24">
+                    <CustomSelect
+                      options={boxOptions.map(n => n.toString())}
+                      value={item.boxNo.toString()}
+                      onChange={(val) => onItemChange(item.id, "boxNo", val)}
+                      placeholder="Box"
+                    />
                   </div>
                   <div className="h-4"></div>
                 </td>

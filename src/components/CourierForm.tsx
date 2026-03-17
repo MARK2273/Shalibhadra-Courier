@@ -762,6 +762,7 @@ const CourierForm: React.FC = () => {
               options={["Select Origin", ...countryList]}
               value={formData.header.origin}
               error={errors["header.origin"]}
+              isSearchable={true}
               onChange={(e) => {
                 const val = e.target.value;
                 const country = countryData.find((c) => c.name === val);
@@ -789,6 +790,7 @@ const CourierForm: React.FC = () => {
               options={["Select Destination", ...countryList]}
               value={formData.header.destination}
               error={errors["header.destination"]}
+              isSearchable={true}
               onChange={(e) => {
                 const val = e.target.value;
                 const country = countryData.find((c) => c.name === val);

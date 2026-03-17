@@ -34,6 +34,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const isKeyboardActive = useRef(false);
+  const lastMousePos = useRef({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const optionsRef = useRef<HTMLDivElement>(null);
 
@@ -67,6 +69,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   // Keyboard navigation handler
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (disabled) return;
+    isKeyboardActive.current = true;
 
     if (!isOpen) {
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter') {
@@ -102,6 +105,21 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     }
   };
 
+  // Mouse move handler to resume mouse control
+  const handleMouseMove = (e: React.MouseEvent, index: number) => {
+    // Only update if the mouse has actually moved significantly 
+    // to prevent jitter from scroll-into-view
+    const deltaX = Math.abs(e.screenX - lastMousePos.current.x);
+    const deltaY = Math.abs(e.screenY - lastMousePos.current.y);
+    
+    if (deltaX > 2 || deltaY > 2) {
+      isKeyboardActive.current = false;
+      setHighlightedIndex(index);
+    }
+    
+    lastMousePos.current = { x: e.screenX, y: e.screenY };
+  };
+
   // Reset indices and focus
   useEffect(() => {
     if (!isOpen) {
@@ -123,7 +141,13 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     if (isOpen && highlightedIndex >= 0 && optionsRef.current) {
       const highlightedElement = optionsRef.current.children[highlightedIndex] as HTMLElement;
       if (highlightedElement) {
-        highlightedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        // We scroll if it's keyboard nav OR if it's the first time it opens 
+        // (to show the user where their current selection is)
+        const shouldScroll = isKeyboardActive.current || (isOpen && highlightedIndex === filteredOptions.findIndex(opt => opt.value === value));
+        
+        if (shouldScroll) {
+          highlightedElement.scrollIntoView({ block: 'nearest', behavior: isKeyboardActive.current ? 'auto' : 'smooth' });
+        }
       }
     }
   }, [highlightedIndex, isOpen]);
@@ -187,27 +211,38 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             className="max-h-60 overflow-y-auto custom-scrollbar font-bold"
           >
             {filteredOptions.length > 0 ? (
-              filteredOptions.map((option, index) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onMouseEnter={() => setHighlightedIndex(index)}
-                  onClick={() => {
-                    onChange(option.value);
-                    setIsOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-2.5 text-sm transition-all flex items-center justify-between ${
-                    highlightedIndex === index
-                      ? 'bg-primary text-white'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
-                >
-                  <span className="truncate">{option.label}</span>
-                  {value === option.value && (
-                    <div className="w-1.5 h-1.5 bg-white rounded-full shadow-sm flex-shrink-0" />
-                  )}
-                </button>
-              ))
+              filteredOptions.map((option, index) => {
+                const isSelected = value === option.value;
+                const isHighlighted = highlightedIndex === index;
+                
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onMouseMove={(e) => handleMouseMove(e, index)}
+                    onClick={() => {
+                      onChange(option.value);
+                      setIsOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-all flex items-center justify-between ${
+                      isHighlighted
+                        ? 'bg-primary text-white'
+                        : isSelected
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    <span className={`truncate ${isSelected && !isHighlighted ? 'text-primary' : ''}`}>
+                      {option.label}
+                    </span>
+                    {isSelected && (
+                      <div className={`w-1.5 h-1.5 rounded-full shadow-sm flex-shrink-0 ${
+                        isHighlighted ? 'bg-white' : 'bg-primary'
+                      }`} />
+                    )}
+                  </button>
+                );
+              })
             ) : (
               <div className="px-4 py-8 text-center text-xs text-gray-400 italic">
                 No matches found

@@ -4,6 +4,8 @@ import { Plus, Search, ChevronLeft, ChevronRight, Edit2, Trash2, Eye, Package, L
 import api, { deleteShipment, updatePaymentStatus } from "../api/api";
 import Modal from "../components/ui/Modal";
 import Tooltip from "../components/ui/Tooltip";
+import FilterPopover from "../components/ui/FilterPopover";
+import type { FilterField } from "../components/ui/FilterPopover";
 import { useOwnerMode } from "../context/OwnerModeContext";
 import { format } from "date-fns";
 import type { Shipment } from "../types/shipment";
@@ -18,6 +20,7 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [initialLoad, setInitialLoad] = useState(true); // Track initial load
   const [search, setSearch] = useState("");
+  const [activeStatusFilter, setActiveStatusFilter] = useState<"All" | "Paid" | "Pending">("All");
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -79,13 +82,14 @@ const Dashboard: React.FC = () => {
     }, delay);
 
     return () => clearTimeout(timer);
-  }, [page, search]);
+  }, [page, search, activeStatusFilter]);
 
   const fetchShipments = async () => {
     setLoading(true);
     try {
+      const statusParam = activeStatusFilter !== "All" ? `&status=${activeStatusFilter}` : "";
       const response = await api.get(
-        `/form/mydata?page=${page}&limit=10&search=${search}`,
+        `/form/mydata?page=${page}&limit=10&search=${search}${statusParam}`,
       );
       setShipments(response.data.data);
       setTotalPages(response.data.meta.totalPages);
@@ -158,10 +162,33 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Handle search input change - reset page to 1
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
     setPage(1); // Reset to first page on new search
+  };
+
+  // Filter configuration
+  const filterFields: FilterField[] = [
+    {
+      id: 'status',
+      label: 'Payment Status',
+      type: 'select',
+      options: [
+        { label: 'All Status', value: 'All' },
+        { label: 'Paid Only', value: 'Paid' },
+        { label: 'Pending Only', value: 'Pending' },
+      ],
+    },
+  ];
+
+  const handleApplyFilters = (values: Record<string, any>) => {
+    setActiveStatusFilter(values.status || 'All');
+    setPage(1);
+  };
+
+  const handleClearAllFilters = () => {
+    setActiveStatusFilter('All');
+    setPage(1);
   };
 
   return (
@@ -432,17 +459,27 @@ const Dashboard: React.FC = () => {
           <h2 className="text-lg font-semibold text-gray-800">
             Recent Shipments
           </h2>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <input
-              type="text"
-              id="dashboard-search"
-              name="dashboard-search"
-              autoComplete="off"
-              placeholder="Search shipments..."
-              className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-full sm:w-64"
-              value={search}
-              onChange={handleSearchChange}
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <div className="relative flex-1 sm:flex-initial">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="text"
+                id="dashboard-search"
+                name="dashboard-search"
+                autoComplete="off"
+                placeholder="Search shipments..."
+                className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-full sm:w-64"
+                value={search}
+                onChange={handleSearchChange}
+              />
+            </div>
+            {/* Reusable Filter Popover */}
+            <FilterPopover
+              fields={filterFields}
+              currentValues={{ status: activeStatusFilter }}
+              onApply={handleApplyFilters}
+              onClear={handleClearAllFilters}
+              activeFilterCount={activeStatusFilter !== 'All' ? 1 : 0}
             />
           </div>
         </div>

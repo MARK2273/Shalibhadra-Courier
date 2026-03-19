@@ -10,6 +10,11 @@ interface SummaryCardProps {
   volumetricWeight: string;
   totalAmount: number;
   billingAmount: number;
+  finalBillingAmount: number;
+  taxType: "none" | "cgst_sgst" | "igst";
+  cgst: number;
+  sgst: number;
+  igst: number;
   amountInWords: string;
   currency: string;
   paymentType: string;
@@ -29,6 +34,11 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   volumetricWeight,
   totalAmount,
   billingAmount,
+  finalBillingAmount,
+  taxType,
+  cgst,
+  sgst,
+  igst,
   amountInWords,
   currency,
   paymentType,
@@ -133,16 +143,68 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
           </div>
 
           <div className="space-y-6">
-            <FormInput
-              label="Billable Amount"
-              type="number"
-              min="0"
-              value={billingAmount || ""}
-              onChange={(e) => handleInternalChange("billingAmount", Number(e.target.value))}
-              icon={IndianRupee}
-              error={errors["other.billingAmount"]}
-              className="text-center font-bold text-xl bg-gray-50/50 border-gray-200 text-gray-900 h-14 rounded-xl focus:border-green-500"
-            />
+            <div className="grid grid-cols-1 gap-5">
+              <FormInput
+                label="Basic Amount"
+                type="number"
+                min="0"
+                value={billingAmount || ""}
+                onChange={(e) => handleInternalChange("billingAmount", Number(e.target.value))}
+                icon={IndianRupee}
+                error={errors["other.billingAmount"]}
+                className="text-center font-bold text-xl bg-gray-50/50 border-gray-200 text-gray-900 h-14 rounded-xl focus:border-green-500"
+              />
+            </div>
+
+            {/* Tax Selection */}
+            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Tax Configuration</p>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { id: 'none', label: 'No Tax' },
+                  { id: 'cgst_sgst', label: 'CGST + SGST (18%)' },
+                  { id: 'igst', label: 'IGST (18%)' }
+                ].map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => handleInternalChange("taxType", option.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all font-medium text-sm ${taxType === option.id
+                      ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-primary/30'
+                      }`}
+                  >
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${taxType === option.id ? 'border-white' : 'border-gray-300'}`}>
+                      {taxType === option.id && <div className="w-2 h-2 bg-white rounded-full" />}
+                    </div>
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Tax Breakdown */}
+            {taxType !== 'none' && (
+              <div className="space-y-2 px-2">
+                {taxType === 'cgst_sgst' ? (
+                  <>
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>CGST (9%)</span>
+                      <span className="font-bold">₹{cgst.toLocaleString("en-IN")}</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>SGST (9%)</span>
+                      <span className="font-bold">₹{sgst.toLocaleString("en-IN")}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>IGST (18%)</span>
+                    <span className="font-bold">₹{igst.toLocaleString("en-IN")}</span>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <FormSelect
@@ -211,7 +273,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
       </div>
 
       {/* Footer: Words */}
-      <div className="bg-gray-50/50 border-t border-gray-100 p-6 px-8">
+      <div className="bg-gray-50 border-t border-gray-100 p-6 px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">
             Amount In Words
@@ -219,6 +281,18 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
           <p className="text-gray-700 font-bold text-lg">
             {amountInWords}
           </p>
+        </div>
+
+        <div className="bg-primary text-white p-4 px-8 rounded-2xl shadow-xl shadow-primary/20 flex flex-col items-center sm:items-end">
+          <span className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">
+            Final Total
+          </span>
+          <div className="flex items-center gap-2">
+            <IndianRupee className="h-5 w-5" />
+            <span className="text-3xl font-black">
+              {finalBillingAmount.toLocaleString("en-IN")}
+            </span>
+          </div>
         </div>
       </div>
     </div>

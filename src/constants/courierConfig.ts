@@ -11,6 +11,7 @@ export interface CourierConfig {
   logoImage?: string; // If we want to support image logos later
   footerText?: string;
   tagline?: string;
+  gstNumber?: string;
 }
 
 export const courierConfigs: Record<string, CourierConfig> = {
@@ -25,6 +26,7 @@ export const courierConfigs: Record<string, CourierConfig> = {
     tagline: "Courier & Cargo",
     email: "shalibhadracourier1@gmail.com",
     contact: "9909408678",
+    gstNumber: "24CPIPP0336K1ZT",
   },
   navkar: {
     name: "Navkar",
@@ -37,6 +39,7 @@ export const courierConfigs: Record<string, CourierConfig> = {
     tagline: "Courier & Cargo",
     email: "navakrenterprise1812@gmail.com",
     contact: "9909408678", // Placeholder
+    gstNumber: "24AAQPZ1970N1ZS",
   },
 };
 

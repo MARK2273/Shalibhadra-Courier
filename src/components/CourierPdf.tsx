@@ -426,6 +426,11 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                 </Text>
               )}
               <Text style={{ fontSize: 10 }}>{currentConfig.tagline}</Text>
+              {currentConfig.gstNumber && (
+                <Text style={{ fontSize: 9, fontWeight: "bold", marginTop: 2 }}>
+                  GST: {currentConfig.gstNumber}
+                </Text>
+              )}
             </View>
             <View style={styles.originDestSection}>
               <View style={styles.odBox}>
@@ -476,6 +481,9 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={{ fontWeight: "bold" }}>{data.sender.name}</Text>
               <Text>{data.sender.address}</Text>
               <Text style={{ marginTop: 4 }}>Adhaar: {data.sender.adhaar}</Text>
+              {data.sender.gst && (
+                <Text>GST: {data.sender.gst}</Text>
+              )}
               <Text>
                 Contact:{" "}
                 <Link
@@ -601,54 +609,54 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
 
             {/* Total Charge */}
             <View style={{ width: "30%" }}>
-              <View
-                style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    borderRightWidth: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: 2,
-                  }}
-                >
-                  <Text style={{ fontWeight: "bold", fontSize: 8 }}>
-                    Billing Amount
-                  </Text>
+              {/* Basic Amount */}
+              <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
+                <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                  <Text style={{ fontSize: 8 }}>Basic Amount</Text>
                 </View>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text style={{ fontWeight: "bold" }}>
-                    {data.other.billingAmount || 0}
-                  </Text>
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ fontSize: 9 }}>{data.other.billingAmount || 0}</Text>
                 </View>
               </View>
-              <View style={{ flexDirection: "row", flex: 1 }}>
-                <View
-                  style={{
-                    flex: 1,
-                    borderRightWidth: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: 2,
-                  }}
-                >
-                  <Text style={{ fontSize: 9 }}>Product Value</Text>
+
+              {/* Tax Rows */}
+              {data.other.taxType === "cgst_sgst" ? (
+                <>
+                  <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
+                    <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                      <Text style={{ fontSize: 7 }}>CGST (9%)</Text>
+                    </View>
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                      <Text style={{ fontSize: 8 }}>{data.other.cgst}</Text>
+                    </View>
+                  </View>
+                  <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
+                    <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                      <Text style={{ fontSize: 7 }}>SGST (9%)</Text>
+                    </View>
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                      <Text style={{ fontSize: 8 }}>{data.other.sgst}</Text>
+                    </View>
+                  </View>
+                </>
+              ) : data.other.taxType === "igst" ? (
+                <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
+                  <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                    <Text style={{ fontSize: 7 }}>IGST (18%)</Text>
+                  </View>
+                  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ fontSize: 8 }}>{data.other.igst}</Text>
+                  </View>
                 </View>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text style={{ fontSize: 10 }}>{safeTotalAmount}</Text>
+              ) : null}
+
+              {/* Final Total */}
+              <View style={{ flexDirection: "row", flex: 1, backgroundColor: "#f0f0f0" }}>
+                <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                  <Text style={{ fontWeight: "bold", fontSize: 8 }}>Total Bill</Text>
+                </View>
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ fontWeight: "bold", fontSize: 10 }}>{data.other.finalBillingAmount || data.other.billingAmount || 0}</Text>
                 </View>
               </View>
             </View>
@@ -908,6 +916,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text>{data.sender.name}</Text>
               <Text>{data.sender.address}</Text>
               <Text>Adhar No. - {data.sender.adhaar}</Text>
+              {currentConfig.gstNumber && <Text>GST NO. - {currentConfig.gstNumber}</Text>}
             </View>
             <View style={styles.invHeaderRight}>
               <View style={styles.invHeaderRightTop}>
@@ -963,6 +972,9 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                   {data.receiver.contact}
                 </Link>
               </Text>
+              {data.sender.gst && (
+                <Text style={{ marginTop: 2 }}>GST NO.: {data.sender.gst}</Text>
+              )}
             </View>
             <View style={{ width: "50%", flexDirection: "column" }}>
               {/* PCS / Weight Header */}
@@ -1146,7 +1158,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               >
                 <Text style={{ fontSize: 9 }}>Amount in words :</Text>
                 <Text style={{ fontSize: 9 }}>
-                  {numberToWords(safeTotalAmount)} Only
+                  {numberToWords(Math.round(safeTotalAmount))} Only
                 </Text>
               </View>
               <View
@@ -1175,7 +1187,48 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
             </View>
 
             {/* Billing Amount Row */}
-            <View style={[styles.invFooterTotal, { borderTopWidth: 0 }]}>
+            {/* GST Tax Rows */}
+            {data.other.taxType === "cgst_sgst" ? (
+              <>
+                <View style={[styles.invFooterTotal, { borderTopWidth: 0, height: 25 }]}>
+                  <View style={{ width: "65%", borderRightWidth: 1, padding: 4, justifyContent: "center" }}>
+                    <Text style={{ fontSize: 8 }}>CGST (9%)</Text>
+                  </View>
+                  <View style={{ width: "17.5%", borderRightWidth: 1, padding: 4, justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ fontSize: 8 }}>Tax Amount</Text>
+                  </View>
+                  <View style={{ width: "17.5%", padding: 4, justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ fontSize: 8 }}>{data.other.cgst}</Text>
+                  </View>
+                </View>
+                <View style={[styles.invFooterTotal, { borderTopWidth: 0, height: 25 }]}>
+                  <View style={{ width: "65%", borderRightWidth: 1, padding: 4, justifyContent: "center" }}>
+                    <Text style={{ fontSize: 8 }}>SGST (9%)</Text>
+                  </View>
+                  <View style={{ width: "17.5%", borderRightWidth: 1, padding: 4, justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ fontSize: 8 }}>Tax Amount</Text>
+                  </View>
+                  <View style={{ width: "17.5%", padding: 4, justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ fontSize: 8 }}>{data.other.sgst}</Text>
+                  </View>
+                </View>
+              </>
+            ) : data.other.taxType === "igst" ? (
+              <View style={[styles.invFooterTotal, { borderTopWidth: 0, height: 25 }]}>
+                <View style={{ width: "65%", borderRightWidth: 1, padding: 4, justifyContent: "center" }}>
+                  <Text style={{ fontSize: 8 }}>IGST (18%)</Text>
+                </View>
+                <View style={{ width: "17.5%", borderRightWidth: 1, padding: 4, justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ fontSize: 8 }}>Tax Amount</Text>
+                </View>
+                <View style={{ width: "17.5%", padding: 4, justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ fontSize: 8 }}>{data.other.igst}</Text>
+                </View>
+              </View>
+            ) : null}
+
+            {/* Final Billing Amount Row */}
+            <View style={[styles.invFooterTotal, { borderTopWidth: 0, backgroundColor: "#f9f9f9" }]}>
               <View
                 style={{
                   width: "65%",
@@ -1186,8 +1239,8 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                 }}
               >
                 <Text style={{ fontSize: 9 }}>Amount in words :</Text>
-                <Text style={{ fontSize: 9 }}>
-                  {numberToWords(data.other.billingAmount || 0)} Only
+                <Text style={{ fontSize: 9, fontWeight: "bold" }}>
+                  {data.other.amountInWords} Only
                 </Text>
               </View>
               <View
@@ -1201,7 +1254,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                 }}
               >
                 <Text style={{ fontWeight: "bold", fontSize: 9 }}>
-                  Billing Amount
+                  Final Total
                 </Text>
               </View>
               <View
@@ -1214,7 +1267,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                 }}
               >
                 <Text style={{ fontWeight: "bold", fontSize: 10 }}>
-                  {data.other.currency} {data.other.billingAmount || 0}
+                  {data.other.currency} {data.other.finalBillingAmount || data.other.billingAmount || 0}
                 </Text>
               </View>
             </View>

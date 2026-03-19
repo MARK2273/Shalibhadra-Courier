@@ -72,6 +72,7 @@ export interface CourierData {
     adhaar: string;
     contact: string;
     email: string;
+    gst?: string;
   };
   receiver: {
     name: string;
@@ -96,6 +97,12 @@ export interface CourierData {
     selectedUpiId?: string | null;
     paymentStatus: "Paid" | "Pending";
     ownerCost?: number;
+    taxType: "none" | "cgst_sgst" | "igst";
+    cgst: number;
+    sgst: number;
+    igst: number;
+    taxAmount: number;
+    finalBillingAmount: number;
   };
   barcodeBase64?: string;
   qrCodeBase64?: string;
@@ -166,6 +173,7 @@ const initialFormData: CourierData = {
     adhaar: "",
     contact: "",
     email: "",
+    gst: "",
   },
   receiver: {
     name: "",
@@ -200,6 +208,12 @@ const initialFormData: CourierData = {
     selectedUpiId: null,
     paymentStatus: "Pending",
     ownerCost: 0,
+    taxType: "none",
+    cgst: 0,
+    sgst: 0,
+    igst: 0,
+    taxAmount: 0,
+    finalBillingAmount: 0,
   },
 };
 
@@ -368,6 +382,7 @@ const CourierForm: React.FC = () => {
             adhaar: data.sender_adhaar || "",
             contact: data.sender_contact || "",
             email: data.sender_email || "",
+            gst: data.sender_gst || "",
           },
           receiver: {
             name: data.receiver_name || "",
@@ -392,6 +407,12 @@ const CourierForm: React.FC = () => {
             selectedUpiId: data.selected_upi_id || null,
             paymentStatus: data.payment_status || "Pending",
             ownerCost: data.owner_cost || 0,
+            taxType: data.tax_type || "none",
+            cgst: data.cgst || 0,
+            sgst: data.sgst || 0,
+            igst: data.igst || 0,
+            taxAmount: data.tax_amount || 0,
+            finalBillingAmount: data.final_billing_amount || data.billing_amount || 0,
           },
         });
       } catch (error) {
@@ -419,17 +440,49 @@ const CourierForm: React.FC = () => {
 
   useEffect(() => {
     const total = formData.items.reduce((sum, item) => sum + item.amount, 0);
-    const words = numberToWords(Math.round(total));
-
     setFormData((prev) => ({
       ...prev,
       other: {
         ...prev.other,
         totalAmount: total,
-        amountInWords: words,
       },
     }));
   }, [formData.items]);
+
+  useEffect(() => {
+    const basicAmount = formData.other.billingAmount || 0;
+    const { taxType } = formData.other;
+    let cgst = 0;
+    let sgst = 0;
+    let igst = 0;
+    let taxAmount = 0;
+
+    if (taxType === "cgst_sgst") {
+      cgst = Number((basicAmount * 0.09).toFixed(2));
+      sgst = Number((basicAmount * 0.09).toFixed(2));
+      taxAmount = cgst + sgst;
+    } else if (taxType === "igst") {
+      igst = Number((basicAmount * 0.18).toFixed(2));
+      taxAmount = igst;
+    }
+
+    const finalTotal = Number((basicAmount + taxAmount).toFixed(2));
+    const words = numberToWords(Math.round(finalTotal));
+
+    setFormData((prev) => ({
+      ...prev,
+      other: {
+        ...prev.other,
+        cgst,
+        sgst,
+        igst,
+        taxAmount,
+        finalBillingAmount: finalTotal,
+        amountInWords: words,
+      },
+    }));
+  }, [formData.other.billingAmount, formData.other.taxType]);
+
   const handleClone = () => {
     // Reset unique/temporary fields
     const clonedData: CourierData = {
@@ -631,7 +684,7 @@ const CourierForm: React.FC = () => {
       try {
         // Use billing amount or fallback to total amount
         const amount =
-          formData.other.billingAmount || formData.other.totalAmount || 0;
+          formData.other.finalBillingAmount || formData.other.billingAmount || formData.other.totalAmount || 0;
 
         // Get selected UPI details from state
         const selectedUpi = upiConfigs.find(
@@ -920,6 +973,16 @@ const CourierForm: React.FC = () => {
                 }
                 placeholder="sender@example.com"
               />
+              <FormInput
+                label="Customer GST Number"
+                placeholder="e.g. 24AAAAA0000A1Z5"
+                value={formData.sender.gst || ""}
+                onChange={(e) =>
+                  handleNestedChange("sender", "gst", e.target.value)
+                }
+                icon={Hash}
+                error={errors["sender.gst"]}
+              />
             </div>
           </ShipmentSectionCard>
 
@@ -1062,14 +1125,19 @@ const CourierForm: React.FC = () => {
             volumetricWeight={formData.other.volumetricWeight}
             totalAmount={formData.other.totalAmount}
             billingAmount={formData.other.billingAmount}
-            ownerCost={formData.other.ownerCost}
-            isOwnerMode={isOwnerMode}
+            finalBillingAmount={formData.other.finalBillingAmount}
+            taxType={formData.other.taxType}
+            cgst={formData.other.cgst}
+            sgst={formData.other.sgst}
+            igst={formData.other.igst}
             amountInWords={formData.other.amountInWords}
             currency={formData.other.currency}
             paymentType={formData.other.paymentType}
-            paymentStatus={formData.other.paymentStatus}
             selectedUpiId={formData.other.selectedUpiId}
             upiConfigs={upiConfigs}
+            paymentStatus={formData.other.paymentStatus}
+            ownerCost={formData.other.ownerCost}
+            isOwnerMode={isOwnerMode}
             onNestedChange={handleNestedChange}
             errors={errors}
           />

@@ -299,7 +299,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   invFooter: {
-    height: 150,
     borderTopWidth: 1,
     borderTopColor: "#000",
     flexDirection: "column",
@@ -312,7 +311,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   invDeclaration: {
-    flex: 1,
     padding: 5,
     fontSize: 8,
     flexDirection: "row",
@@ -1286,7 +1284,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                   read,understood and agree's to the standard terms and
                   conditions of carriage.
                 </Text>
-                <Text style={{ marginTop: 10 }}>
+                <Text style={{ marginTop: 5 }}>
                   We declare that this invoice shows the actual price of the
                   good Described and that all particulars are true and correct
                 </Text>
@@ -1296,7 +1294,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                   width: "30%",
                   borderLeftWidth: 1,
                   borderTopWidth: 1, // Visual separation
-                  marginTop: 40, // Push to bottom
+                  marginTop: 5, // Reduced to minimize white space
                   justifyContent: "flex-end",
                   alignItems: "center",
                   padding: 2,

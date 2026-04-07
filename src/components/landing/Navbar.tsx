@@ -46,6 +46,12 @@ const Navbar: React.FC = () => {
             >
               Services
             </a>
+            <a
+              href="#contact"
+              className="text-gray-600 hover:text-primary font-medium transition-colors"
+            >
+              Contact
+            </a>
             <Link
               to="/login"
               className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-full hover:bg-blue-700 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
@@ -85,6 +91,12 @@ const Navbar: React.FC = () => {
               className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
             >
               Services
+            </a>
+            <a
+              href="#contact"
+              className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
+            >
+              Contact
             </a>
             <Link
               to="/login"

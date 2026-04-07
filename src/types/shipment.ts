@@ -6,6 +6,8 @@ export interface Shipment {
   receiver_name: string;
   destination: string;
   billing_amount: number;
+  total_amount?: number;
+  final_billing_amount?: number | null;
   awb_no: string;
   sender_contact?: string | null;
   payment_type: 'Cash' | 'Online';
@@ -80,6 +82,7 @@ export interface ShipmentDetail {
   total_amount: number | null;
   amount_in_words: string | null;
   billing_amount: number | null;
+  final_billing_amount?: number | null;
   payment_type: 'Cash' | 'Online';
   selected_upi_id: string | null;
   payment_status: 'Paid' | 'Pending';

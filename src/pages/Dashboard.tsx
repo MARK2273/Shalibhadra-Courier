@@ -634,7 +634,7 @@ const Dashboard: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right font-bold text-gray-900">
-                      ₹{shipment.billing_amount?.toLocaleString()}
+                      ₹{(shipment.final_billing_amount ?? shipment.billing_amount ?? shipment.total_amount ?? 0).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 text-center">
                       <button

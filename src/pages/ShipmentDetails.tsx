@@ -120,8 +120,8 @@ const ShipmentDetails: React.FC = () => {
         const upiId = shipment.upi_details?.upi_id || "";
         const payeeName = shipment.upi_details?.payee_name || "";
 
-        // Use billing amount or fallback to total amount
-        const amount = shipment.billing_amount || shipment.total_amount || 0;
+        // Use final billing amount, billing amount, or fallback to total amount
+        const amount = shipment.final_billing_amount ?? shipment.billing_amount ?? shipment.total_amount ?? 0;
 
         // Construct standard UPI payment link format
         const qrData = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(
@@ -172,7 +172,7 @@ const ShipmentDetails: React.FC = () => {
           currency: shipment.currency || "INR",
           totalAmount: shipment.total_amount || 0,
           amountInWords: shipment.amount_in_words || "",
-          billingAmount: shipment.billing_amount || 0,
+          billingAmount: shipment.final_billing_amount ?? shipment.billing_amount ?? 0,
           paymentType: shipment.payment_type || "Cash",
         },
         barcodeBase64,
@@ -310,7 +310,7 @@ const ShipmentDetails: React.FC = () => {
           },
           {
             label: "Billing Amount",
-            value: `₹${(shipment.billing_amount ?? 0).toLocaleString()}`,
+            value: `₹${(shipment.final_billing_amount ?? shipment.billing_amount ?? 0).toLocaleString()}`,
             color: "bg-green-50",
             text: "text-green-600",
           },
@@ -401,8 +401,8 @@ const ShipmentDetails: React.FC = () => {
           <InfoRow
             label="Billing Amount"
             value={
-              shipment.billing_amount != null
-                ? `₹${shipment.billing_amount.toLocaleString()}`
+              (shipment.final_billing_amount ?? shipment.billing_amount) != null
+                ? `₹${(shipment.final_billing_amount ?? shipment.billing_amount)?.toLocaleString()}`
                 : null
             }
           />

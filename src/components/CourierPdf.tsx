@@ -603,6 +603,10 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                   <Text>{safeVolWeight}</Text>
                 </View>
               </View>
+              <View style={{ flex: 1, justifyContent: "center", paddingLeft: 4, borderTopWidth: 1 }}>
+                <Text style={{ fontSize: 7, fontWeight: "bold" }}>Tracking Info:</Text>
+                <Text style={{ fontSize: 8 }}>{data.header.serviceDetails}</Text>
+              </View>
             </View>
 
             {/* Total Charge */}
@@ -657,6 +661,16 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                   <Text style={{ fontWeight: "bold", fontSize: 10 }}>{data.other.finalBillingAmount || data.other.billingAmount || 0}</Text>
                 </View>
               </View>
+              {data.other.utrNumber && (
+                <View style={{ flexDirection: "row", flex: 1, backgroundColor: "#f0f0f0" }}>
+                  <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                    <Text style={{ fontSize: 7, fontWeight: "bold" }}>UTR No.</Text>
+                  </View>
+                  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ fontSize: 8 }}>{data.other.utrNumber}</Text>
+                  </View>
+                </View>
+              )}
             </View>
           </View>
 
@@ -863,6 +877,16 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                     .join(" , ")}{" "}
                   ,
                 </Text>
+                {data.header.serviceDetails && (
+                  <Text style={{ fontSize: 8, marginTop: 4 }}>
+                    Tracking No: {data.header.serviceDetails}
+                  </Text>
+                )}
+                {data.other.utrNumber && (
+                  <Text style={{ fontSize: 8, marginTop: 2 }}>
+                    UTR No: {data.other.utrNumber}
+                  </Text>
+                )}
               </View>
             </View>
 
@@ -1071,6 +1095,12 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                 </Text>
               </View>
               <Text style={{ marginTop: 2 }}>{data.header.origin}</Text>
+              <View style={{ flexDirection: "row", marginTop: 4, width: "100%", borderTopWidth: 1, borderTopColor: "#eee", paddingTop: 2 }}>
+                <Text style={{ fontSize: 7, fontWeight: "bold" }}>Service: </Text>
+                <Text style={{ fontSize: 7 }}>{data.header.service}</Text>
+                <Text style={{ fontSize: 7, fontWeight: "bold", marginLeft: 10 }}>Tracking: </Text>
+                <Text style={{ fontSize: 7 }}>{data.header.serviceDetails}</Text>
+              </View>
             </View>
           </View>
 
@@ -1270,6 +1300,17 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               </View>
             </View>
 
+            {data.other.utrNumber && (
+              <View style={[styles.invFooterTotal, { borderTopWidth: 0, backgroundColor: "#eef2ff", height: 20 }]}>
+                <View style={{ width: "65%", borderRightWidth: 1, padding: 4, justifyContent: "center" }}>
+                  <Text style={{ fontSize: 8, fontWeight: "bold" }}>UTR / Transaction Reference Number</Text>
+                </View>
+                <View style={{ width: "35%", padding: 4, justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ fontSize: 9 }}>{data.other.utrNumber}</Text>
+                </View>
+              </View>
+            )}
+
             {/* Declaration & Signature */}
             <View style={styles.invDeclaration}>
               <View style={{ width: "70%" }}>
@@ -1448,7 +1489,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 8 }}>Company</Text>
+                <Text style={{ fontSize: 8 }}>Tracking Info</Text>
               </View>
               <View
                 style={{
@@ -1457,7 +1498,9 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                   flex: 1,
                 }}
               >
-                <Text style={{ fontWeight: "bold" }}></Text>
+                <Text style={{ fontWeight: "bold", fontSize: 9 }}>
+                  {data.header.serviceDetails}
+                </Text>
               </View>
             </View>
             <View

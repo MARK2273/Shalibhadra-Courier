@@ -408,6 +408,9 @@ const ShipmentDetails: React.FC = () => {
           />
           <InfoRow label="Amount in Words" value={shipment.amount_in_words} />
           <InfoRow label="Payment Type" value={shipment.payment_type} />
+          {shipment.payment_type === 'Online' && shipment.utr_number && (
+            <InfoRow label="UTR / Ref No." value={shipment.utr_number} />
+          )}
           <InfoRow 
             label="Payment Status" 
             value={

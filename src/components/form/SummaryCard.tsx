@@ -22,6 +22,7 @@ interface SummaryCardProps {
   selectedUpiId?: string | null;
   upiConfigs?: UpiConfig[];
   ownerCost?: number;
+  utrNumber?: string;
   isOwnerMode?: boolean;
   onFieldChange?: (field: string, value: any) => void;
   onNestedChange?: (section: any, field: string, value: any) => void;
@@ -46,6 +47,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   selectedUpiId,
   upiConfigs,
   ownerCost,
+  utrNumber,
   isOwnerMode,
   onFieldChange,
   onNestedChange,
@@ -256,6 +258,18 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                 />
               )}
             </div>
+
+            {paymentType === "Online" && (
+              <FormInput
+                label="UTR / Reference Number"
+                type="text"
+                placeholder="e.g. 123456789012"
+                value={utrNumber || ""}
+                onChange={(e) => handleInternalChange("utrNumber", e.target.value)}
+                icon={CreditCard}
+                className="font-medium bg-blue-50/30 border-blue-100 text-blue-900 h-12 focus:border-blue-500"
+              />
+            )}
 
             {isOwnerMode && (
               <FormInput

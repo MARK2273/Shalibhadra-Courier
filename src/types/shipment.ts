@@ -15,6 +15,7 @@ export interface Shipment {
   payment_status: 'Paid' | 'Pending';
   tracking_url?: string | null;
   owner_cost?: number;
+  utr_number?: string | null;
 }
 
 export interface UpiConfig {
@@ -94,5 +95,6 @@ export interface ShipmentDetail {
   tracking_url?: string | null;
 
   owner_cost?: number;
+  utr_number?: string | null;
   created_at: string;
 }

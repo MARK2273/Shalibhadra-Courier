@@ -55,6 +55,7 @@ export interface ShipmentDetail {
   shipment_date: string | null;
   service_details: string | null;
   box_count: number;
+  shipment_type: 'Docs' | 'Non-Docs';
 
   // Sender
   sender_name: string;

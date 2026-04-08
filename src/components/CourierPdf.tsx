@@ -521,7 +521,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
             </View>
           </View>
 
-          <View style={styles.itemsRow}>
+          <View style={[styles.itemsRow, data.header.shipmentType === "Docs" ? { height: 100 } : {}]}>
             {/* Service */}
             <View
               style={{
@@ -532,146 +532,169 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               }}
             >
               <Text>{data.header.service}</Text>
+              <Text style={{ fontSize: 9, fontWeight: "bold", marginTop: 5, color: "blue" }}>{data.header.shipmentType}</Text>
             </View>
 
             {/* Shipment Info */}
-            <View style={{ width: "40%", borderRightWidth: 1 }}>
-              <View
-                style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    borderRightWidth: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "#f9f9f9",
-                  }}
-                >
-                  <Text style={{ fontSize: 7 }}>Box</Text>
+            <View style={{ width: data.header.shipmentType === "Docs" ? "70%" : "40%", borderRightWidth: data.header.shipmentType === "Docs" ? 0 : 1 }}>
+              {data.header.shipmentType === "Docs" ? (
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 10 }}>
+                  <Text style={{ fontSize: 12, fontWeight: "bold", marginBottom: 5 }}>DOCUMENT SHIPMENT</Text>
+                  <Text style={{ fontSize: 10 }}>This shipment is regarding the document only.</Text>
+                  <View style={{ marginTop: 10, width: "100%", paddingLeft: 10 }}>
+                    <Text style={{ fontSize: 8, fontWeight: "bold" }}>Tracking Info:</Text>
+                    <Text style={{ fontSize: 9 }}>{data.header.serviceDetails}</Text>
+                  </View>
                 </View>
-                <View
-                  style={{
-                    flex: 1,
-                    borderRightWidth: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "#f9f9f9",
-                  }}
-                >
-                  <Text style={{ fontSize: 7 }}>Weight</Text>
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "#f9f9f9",
-                  }}
-                >
-                  <Text style={{ fontSize: 7 }}>Vol. Wt</Text>
-                </View>
-              </View>
-              <View style={{ flexDirection: "row", flex: 1 }}>
-                <View
-                  style={{
-                    flex: 1,
-                    borderRightWidth: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text>{safePcs}</Text>
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    borderRightWidth: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text>{safeWeight}</Text>
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text>{safeVolWeight}</Text>
-                </View>
-              </View>
-              <View style={{ flex: 1, justifyContent: "center", paddingLeft: 4, borderTopWidth: 1 }}>
-                <Text style={{ fontSize: 7, fontWeight: "bold" }}>Tracking Info:</Text>
-                <Text style={{ fontSize: 8 }}>{data.header.serviceDetails}</Text>
-              </View>
-            </View>
-
-            {/* Total Charge */}
-            <View style={{ width: "30%" }}>
-              {/* Basic Amount */}
-              <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
-                <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                  <Text style={{ fontSize: 8 }}>Basic Amount</Text>
-                </View>
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                  <Text style={{ fontSize: 9 }}>{data.other.billingAmount || 0}</Text>
-                </View>
-              </View>
-
-              {/* Tax Rows */}
-              {data.other.taxType === "cgst_sgst" ? (
+              ) : (
                 <>
-                  <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
-                    <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                      <Text style={{ fontSize: 7 }}>CGST (9%)</Text>
+                  <View
+                    style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}
+                  >
+                    <View
+                      style={{
+                        flex: 1,
+                        borderRightWidth: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#f9f9f9",
+                      }}
+                    >
+                      <Text style={{ fontSize: 7 }}>Box</Text>
                     </View>
-                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                      <Text style={{ fontSize: 8 }}>{data.other.cgst}</Text>
+                    <View
+                      style={{
+                        flex: 1,
+                        borderRightWidth: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#f9f9f9",
+                      }}
+                    >
+                      <Text style={{ fontSize: 7 }}>Weight</Text>
+                    </View>
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#f9f9f9",
+                      }}
+                    >
+                      <Text style={{ fontSize: 7 }}>Vol. Wt</Text>
                     </View>
                   </View>
-                  <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
-                    <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                      <Text style={{ fontSize: 7 }}>SGST (9%)</Text>
+                  <View style={{ flexDirection: "row", flex: 1 }}>
+                    <View
+                      style={{
+                        flex: 1,
+                        borderRightWidth: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text>{safePcs}</Text>
                     </View>
-                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                      <Text style={{ fontSize: 8 }}>{data.other.sgst}</Text>
+                    <View
+                      style={{
+                        flex: 1,
+                        borderRightWidth: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text>{safeWeight}</Text>
                     </View>
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text>{safeVolWeight}</Text>
+                    </View>
+                  </View>
+                  <View style={{ flex: 1, justifyContent: "center", paddingLeft: 4, borderTopWidth: 1 }}>
+                    <Text style={{ fontSize: 7, fontWeight: "bold" }}>Tracking Info:</Text>
+                    <Text style={{ fontSize: 8 }}>{data.header.serviceDetails}</Text>
                   </View>
                 </>
-              ) : data.other.taxType === "igst" ? (
-                <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
-                  <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                    <Text style={{ fontSize: 7 }}>IGST (18%)</Text>
-                  </View>
-                  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <Text style={{ fontSize: 8 }}>{data.other.igst}</Text>
-                  </View>
-                </View>
-              ) : null}
-
-              {/* Final Total */}
-              <View style={{ flexDirection: "row", flex: 1, backgroundColor: "#f0f0f0" }}>
-                <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                  <Text style={{ fontWeight: "bold", fontSize: 8 }}>Total Bill</Text>
-                </View>
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                  <Text style={{ fontWeight: "bold", fontSize: 10 }}>{data.other.finalBillingAmount || data.other.billingAmount || 0}</Text>
-                </View>
-              </View>
-              {data.other.utrNumber && (
-                <View style={{ flexDirection: "row", flex: 1, backgroundColor: "#f0f0f0" }}>
-                  <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                    <Text style={{ fontSize: 7, fontWeight: "bold" }}>UTR No.</Text>
-                  </View>
-                  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <Text style={{ fontSize: 8 }}>{data.other.utrNumber}</Text>
-                  </View>
-                </View>
               )}
             </View>
+
+            {/* Total Charge - Only if NOT Docs or moved to next row if Docs? 
+               Usually Consignment Note has financial summary.
+               The user said "when we select th docs we'll remove the Shipment Items options".
+               I'll keep the Charge section but hide items list.
+            */}
+            {data.header.shipmentType !== "Docs" && (
+              <View style={{ width: "30%" }}>
+                {/* Basic Amount */}
+                <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
+                  <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                    <Text style={{ fontSize: 8 }}>Basic Amount</Text>
+                  </View>
+                  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ fontSize: 9 }}>{data.other.billingAmount || 0}</Text>
+                  </View>
+                </View>
+
+                {/* Tax Rows */}
+                {data.other.taxType === "cgst_sgst" ? (
+                  <>
+                    <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
+                      <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                        <Text style={{ fontSize: 7 }}>CGST (9%)</Text>
+                      </View>
+                      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <Text style={{ fontSize: 8 }}>{data.other.cgst}</Text>
+                      </View>
+                    </View>
+                    <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
+                      <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                        <Text style={{ fontSize: 7 }}>SGST (9%)</Text>
+                      </View>
+                      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <Text style={{ fontSize: 8 }}>{data.other.sgst}</Text>
+                      </View>
+                    </View>
+                  </>
+                ) : data.other.taxType === "igst" ? (
+                  <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
+                    <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                      <Text style={{ fontSize: 7 }}>IGST (18%)</Text>
+                    </View>
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                      <Text style={{ fontSize: 8 }}>{data.other.igst}</Text>
+                    </View>
+                  </View>
+                ) : null}
+
+                {/* Final Total */}
+                <View style={{ flexDirection: "row", flex: 1, backgroundColor: "#f0f0f0" }}>
+                  <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                    <Text style={{ fontWeight: "bold", fontSize: 8 }}>Total Bill</Text>
+                  </View>
+                  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ fontWeight: "bold", fontSize: 10 }}>{data.other.finalBillingAmount || data.other.billingAmount || 0}</Text>
+                  </View>
+                </View>
+                {data.other.utrNumber && (
+                  <View style={{ flexDirection: "row", flex: 1, backgroundColor: "#f0f0f0" }}>
+                    <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                      <Text style={{ fontSize: 7, fontWeight: "bold" }}>UTR No.</Text>
+                    </View>
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                      <Text style={{ fontSize: 8 }}>{data.other.utrNumber}</Text>
+                    </View>
+                  </View>
+                )}
+              </View>
+            )}
+            {data.header.shipmentType === "Docs" && (
+              <View style={{ width: "0%" }} />
+            )}
           </View>
 
           {/* Terms and QR */}
@@ -1121,55 +1144,63 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
 
           {/* Table Body */}
           <View style={styles.invTableBody}>
-            {data.items.map((item, index) => (
-              <View key={index} style={styles.invTableRow}>
-                <Text
-                  style={{
-                    width: "40%",
-                    borderRightWidth: 1,
-                    paddingLeft: 4,
-                    fontSize: 9,
-                  }}
-                >
-                  {item.description}
-                </Text>
-                <Text
-                  style={{
-                    width: "10%",
-                    borderRightWidth: 1,
-                    textAlign: "center",
-                    fontSize: 9,
-                  }}
-                >
-                  {item.boxNo || "1"}
-                </Text>
-                <Text
-                  style={{
-                    width: "15%",
-                    borderRightWidth: 1,
-                    textAlign: "center",
-                    fontSize: 9,
-                  }}
-                >
-                  {item.quantity}
-                </Text>
-                <Text
-                  style={{
-                    width: "17.5%",
-                    borderRightWidth: 1,
-                    textAlign: "center",
-                    fontSize: 9,
-                  }}
-                >
-                  {item.rate}
-                </Text>
-                <Text
-                  style={{ width: "17.5%", textAlign: "center", fontSize: 9 }}
-                >
-                  {item.amount}
-                </Text>
+            {data.header.shipmentType === "Docs" ? (
+              <View style={{ padding: 20, alignItems: "center", justifyContent: "center", flex: 1 }}>
+                <Text style={{ fontSize: 14, fontWeight: "bold", marginBottom: 10 }}>DOCUMENT SHIPMENT</Text>
+                <Text style={{ fontSize: 11 }}>This shipment is regarding the document only.</Text>
+                <Text style={{ fontSize: 11, marginTop: 5 }}>No itemized goods are included in this shipment.</Text>
               </View>
-            ))}
+            ) : (
+              data.items.map((item, index) => (
+                <View key={index} style={styles.invTableRow}>
+                  <Text
+                    style={{
+                      width: "40%",
+                      borderRightWidth: 1,
+                      paddingLeft: 4,
+                      fontSize: 9,
+                    }}
+                  >
+                    {item.description}
+                  </Text>
+                  <Text
+                    style={{
+                      width: "10%",
+                      borderRightWidth: 1,
+                      textAlign: "center",
+                      fontSize: 9,
+                    }}
+                  >
+                    {item.boxNo || "1"}
+                  </Text>
+                  <Text
+                    style={{
+                      width: "15%",
+                      borderRightWidth: 1,
+                      textAlign: "center",
+                      fontSize: 9,
+                    }}
+                  >
+                    {item.quantity}
+                  </Text>
+                  <Text
+                    style={{
+                      width: "17.5%",
+                      borderRightWidth: 1,
+                      textAlign: "center",
+                      fontSize: 9,
+                    }}
+                  >
+                    {item.rate}
+                  </Text>
+                  <Text
+                    style={{ width: "17.5%", textAlign: "center", fontSize: 9 }}
+                  >
+                    {item.amount}
+                  </Text>
+                </View>
+              ))
+            )}
           </View>
 
           {/* Footer Totals */}

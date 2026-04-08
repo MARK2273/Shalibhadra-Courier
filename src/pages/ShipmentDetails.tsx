@@ -147,6 +147,7 @@ const ShipmentDetails: React.FC = () => {
           boxNumber: (shipment.box_count || 1).toString(),
           service: shipment.service || "Standard",
           serviceDetails: shipment.service_details || "",
+          shipmentType: shipment.shipment_type || "Non-Docs",
         },
         sender: {
           name: shipment.sender_name || "",
@@ -352,6 +353,7 @@ const ShipmentDetails: React.FC = () => {
             value={formatDate(shipment.invoice_date)}
           />
           <InfoRow label="Service" value={shipment.service} />
+          <InfoRow label="Shipment Type" value={<span className="font-bold text-primary">{shipment.shipment_type || 'Non-Docs'}</span>} />
           <InfoRow label="Service Details" value={shipment.service_details} />
           <InfoRow label="Port of Loading" value={shipment.port_of_loading} />
         </SectionCard>
@@ -413,17 +415,16 @@ const ShipmentDetails: React.FC = () => {
           {shipment.payment_type === 'Online' && shipment.utr_number && (
             <InfoRow label="UTR / Ref No." value={shipment.utr_number} />
           )}
-          <InfoRow 
-            label="Payment Status" 
+          <InfoRow
+            label="Payment Status"
             value={
-              <span className={`px-2 py-1 rounded-full text-xs font-bold border ${
-                shipment.payment_status === 'Paid' 
-                  ? 'bg-green-50 text-green-700 border-green-100' 
-                  : 'bg-amber-50 text-amber-700 border-amber-100'
-              }`}>
+              <span className={`px-2 py-1 rounded-full text-xs font-bold border ${shipment.payment_status === 'Paid'
+                ? 'bg-green-50 text-green-700 border-green-100'
+                : 'bg-amber-50 text-amber-700 border-amber-100'
+                }`}>
                 {shipment.payment_status || 'Pending'}
               </span>
-            } 
+            }
           />
           {isOwnerMode && (
             <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-100 flex justify-between items-center">
@@ -435,11 +436,16 @@ const ShipmentDetails: React.FC = () => {
       </div>
 
       {/* Packages Table */}
-      {shipment.packages && shipment.packages.length > 0 && (
-        <SectionCard
-          title="Package Items"
-          icon={<Package className="w-5 h-5 text-primary" />}
-        >
+      <SectionCard
+        title="Package Items"
+        icon={<Package className="w-5 h-5 text-primary" />}
+      >
+        {shipment.shipment_type === 'Docs' ? (
+          <div className="py-8 text-center bg-blue-50 rounded-lg border border-blue-100">
+            <FileText className="w-10 h-10 text-blue-400 mx-auto mb-3" />
+            <p className="text-blue-700 font-medium">This shipment is regarding the document only.</p>
+          </div>
+        ) : (
           <div className="overflow-x-auto -mx-6 -mb-4">
             <table className="w-full text-left text-sm text-gray-600">
               <thead className="bg-gray-50 text-xs uppercase font-medium text-gray-500">
@@ -476,8 +482,9 @@ const ShipmentDetails: React.FC = () => {
               </tbody>
             </table>
           </div>
-        </SectionCard>
-      )}
+        )}
+      </SectionCard>
+
     </div>
   );
 };

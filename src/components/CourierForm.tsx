@@ -65,6 +65,7 @@ export interface CourierData {
     serviceDetails: string;
     serviceId?: string;
     service?: string;
+    shipmentType: "Docs" | "Non-Docs";
   };
   sender: {
     name: string;
@@ -168,6 +169,7 @@ const initialFormData: CourierData = {
     boxNumber: "",
     serviceDetails: "",
     service: "",
+    shipmentType: "Non-Docs",
   },
   sender: {
     name: "",
@@ -235,6 +237,7 @@ const CourierForm: React.FC = () => {
   const [dbServices, setDbServices] = useState<Service[]>([]);
   const [upiConfigs, setUpiConfigs] = useState<UpiConfig[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  console.log(errors);
   const [submitStatus, setSubmitStatus] = useState<{
     type: "success" | "error";
     message: string;
@@ -285,16 +288,18 @@ const CourierForm: React.FC = () => {
     }
 
     // Items Validation
-    if (formData.items.length === 0) {
-      newErrors["items"] = "At least one item is required";
-    } else {
-      formData.items.forEach((item, index) => {
-        if (!item.description)
-          newErrors[`items.${index}.description`] = "Description required";
-        if (item.quantity <= 0)
-          newErrors[`items.${index}.quantity`] = "Qty > 0";
-        if (item.rate <= 0) newErrors[`items.${index}.rate`] = "Rate > 0";
-      });
+    if (formData.header.shipmentType !== "Docs") {
+      if (formData.items.length === 0) {
+        newErrors["items"] = "At least one item is required";
+      } else {
+        formData.items.forEach((item, index) => {
+          if (!item.description)
+            newErrors[`items.${index}.description`] = "Description required";
+          if (item.quantity <= 0)
+            newErrors[`items.${index}.quantity`] = "Qty > 0";
+          if (item.rate <= 0) newErrors[`items.${index}.rate`] = "Rate > 0";
+        });
+      }
     }
 
     // Summary Validation
@@ -378,6 +383,7 @@ const CourierForm: React.FC = () => {
             boxNumber: data.box_count?.toString() || "",
             serviceDetails: data.service_details || "",
             serviceId: data.service_id,
+            shipmentType: (data as any).shipment_type || "Non-Docs",
             service: (data as any).service || "Standard",
           },
           sender: {
@@ -881,6 +887,20 @@ const CourierForm: React.FC = () => {
                 handleNestedChange("header", "date", e.target.value)
               }
             />
+            <FormSelect
+              label="Shipment Type"
+              icon={FileText}
+              options={["Non-Docs", "Docs"]}
+              value={formData.header.shipmentType}
+              onChange={(e) => {
+                const val = e.target.value as "Docs" | "Non-Docs";
+                handleNestedChange("header", "shipmentType", val);
+                if (val === "Docs") {
+                  // Optionally clear items if switching to Docs
+                  setFormData(prev => ({ ...prev, items: [] }));
+                }
+              }}
+            />
           </div>
         </ShipmentSectionCard>
         {/* Invoice Info */}
@@ -1108,15 +1128,27 @@ const CourierForm: React.FC = () => {
               )}
           </div>
         </ShipmentSectionCard>
-        {/* Items Table */}
-        <ShipmentItemsTable
-          items={formData.items}
-          onItemChange={handleItemChange}
-          onAddItem={addItem}
-          onRemoveItem={removeItem}
-          boxOptions={boxOptions}
-          errors={errors}
-        />
+        {/* Items Table / Docs Remark */}
+        {formData.header.shipmentType === "Docs" ? (
+          <div className="bg-blue-50 border border-blue-100 rounded-3xl p-8 text-center space-y-3">
+            <div className="bg-blue-100 w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-2">
+              <FileText className="h-6 w-6 text-blue-600" />
+            </div>
+            <h3 className="text-lg font-bold text-blue-900">Document Shipment</h3>
+            <p className="text-blue-700 max-w-md mx-auto">
+              This shipment is regarding the document only. No item details are required.
+            </p>
+          </div>
+        ) : (
+          <ShipmentItemsTable
+            items={formData.items}
+            onItemChange={handleItemChange}
+            onAddItem={addItem}
+            onRemoveItem={removeItem}
+            boxOptions={boxOptions}
+            errors={errors}
+          />
+        )}
         {/* Summary */}
         <div className="relative">
           {isOwnerMode && (

@@ -104,6 +104,7 @@ export interface CourierData {
     taxAmount: number;
     finalBillingAmount: number;
     utrNumber?: string;
+    itemCurrency: string;
   };
   barcodeBase64?: string;
   qrCodeBase64?: string;
@@ -216,6 +217,7 @@ const initialFormData: CourierData = {
     taxAmount: 0,
     finalBillingAmount: 0,
     utrNumber: "",
+    itemCurrency: "INR",
   },
 };
 
@@ -416,6 +418,7 @@ const CourierForm: React.FC = () => {
             taxAmount: data.tax_amount || 0,
             finalBillingAmount: data.final_billing_amount || data.billing_amount || 0,
             utrNumber: data.utr_number || "",
+            itemCurrency: data.item_currency || "INR",
           },
         });
       } catch (error) {
@@ -1141,6 +1144,7 @@ const CourierForm: React.FC = () => {
             paymentStatus={formData.other.paymentStatus}
             ownerCost={formData.other.ownerCost}
             utrNumber={formData.other.utrNumber}
+            itemCurrency={formData.other.itemCurrency}
             isOwnerMode={isOwnerMode}
             onNestedChange={handleNestedChange}
             errors={errors}

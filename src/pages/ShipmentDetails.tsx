@@ -170,6 +170,7 @@ const ShipmentDetails: React.FC = () => {
           weight: shipment.weight || "",
           volumetricWeight: shipment.volumetric_weight || "",
           currency: shipment.currency || "INR",
+          itemCurrency: shipment.item_currency || "INR",
           totalAmount: shipment.total_amount || 0,
           amountInWords: shipment.amount_in_words || "",
           billingAmount: shipment.final_billing_amount ?? shipment.billing_amount ?? 0,
@@ -389,12 +390,13 @@ const ShipmentDetails: React.FC = () => {
             label="Volumetric Weight"
             value={shipment.volumetric_weight}
           />
-          <InfoRow label="Currency" value={shipment.currency} />
+          <InfoRow label="Billing Currency" value={shipment.currency} />
+          <InfoRow label="Item Currency" value={shipment.item_currency} />
           <InfoRow
             label="Product Value"
             value={
               shipment.total_amount != null
-                ? `₹${shipment.total_amount.toLocaleString()}`
+                ? `${shipment.item_currency || 'INR'} ${shipment.total_amount.toLocaleString()}`
                 : null
             }
           />
@@ -464,10 +466,10 @@ const ShipmentDetails: React.FC = () => {
                       {pkg.quantity ?? "—"}
                     </td>
                     <td className="px-6 py-3 text-right">
-                      {pkg.rate != null ? `₹${pkg.rate}` : "—"}
+                      {pkg.rate != null ? `${shipment.item_currency || 'INR'} ${pkg.rate}` : "—"}
                     </td>
                     <td className="px-6 py-3 text-right font-medium text-gray-900">
-                      {pkg.amount != null ? `₹${pkg.amount}` : "—"}
+                      {pkg.amount != null ? `${shipment.item_currency || 'INR'} ${pkg.amount}` : "—"}
                     </td>
                   </tr>
                 ))}

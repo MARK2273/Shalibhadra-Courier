@@ -23,6 +23,7 @@ interface SummaryCardProps {
   upiConfigs?: UpiConfig[];
   ownerCost?: number;
   utrNumber?: string;
+  itemCurrency: string;
   isOwnerMode?: boolean;
   onFieldChange?: (field: string, value: any) => void;
   onNestedChange?: (section: any, field: string, value: any) => void;
@@ -48,6 +49,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   upiConfigs,
   ownerCost,
   utrNumber,
+  itemCurrency,
   isOwnerMode,
   onFieldChange,
   onNestedChange,
@@ -126,7 +128,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                   Product Value
                 </p>
                 <div className="flex items-center text-primary">
-                  <IndianRupee className="h-4 w-4 mr-1" />
+                  <span className="text-xs font-bold mr-1">{itemCurrency}</span>
                   <span className="text-2xl font-black">{totalAmount.toLocaleString("en-IN")}</span>
                 </div>
               </div>
@@ -210,12 +212,22 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <FormSelect
-                label="Currency"
+                label="Billing Currency"
                 value={currency}
                 onChange={(e) => handleInternalChange("currency", e.target.value)}
                 options={currencyOptions}
                 icon={CreditCard}
               />
+              <FormSelect
+                label="Item Currency"
+                value={itemCurrency}
+                onChange={(e) => handleInternalChange("itemCurrency", e.target.value)}
+                options={currencyOptions}
+                icon={CreditCard}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <FormSelect
                 label="Payment Type"
                 value={paymentType}

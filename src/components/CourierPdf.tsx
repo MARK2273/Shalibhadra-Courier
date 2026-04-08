@@ -692,7 +692,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                 the information contained on this way bill is true and correct.
               </Text>
               <Text style={{ marginTop: 6, fontWeight: "bold" }}>
-                Shipment Total Goods Value = {goodsValue}
+                Shipment Total Goods Value = {data.other.itemCurrency} {goodsValue.toLocaleString("en-IN")}
               </Text>
               <Text style={{ marginTop: 2, fontWeight: "bold" }}>
                 NO CLAIMS FOR SHORT / LATE DELIVERY WILL BE ENTERTAINED.
@@ -1116,7 +1116,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
             <Text style={{ width: "17.5%", borderRightWidth: 1 }}>
               Rate Per Piece
             </Text>
-            <Text style={{ width: "17.5%" }}>In INR Amount</Text>
+            <Text style={{ width: "17.5%" }}>In {data.other.itemCurrency} Amount</Text>
           </View>
 
           {/* Table Body */}
@@ -1210,7 +1210,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 9 }}>{safeTotalAmount}</Text>
+                <Text style={{ fontSize: 9 }}>{data.other.itemCurrency} {goodsValue.toLocaleString("en-IN")}</Text>
               </View>
             </View>
 

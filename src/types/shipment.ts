@@ -80,6 +80,7 @@ export interface ShipmentDetail {
   weight: string | null;
   volumetric_weight: string | null;
   currency: string | null;
+  item_currency: string | null;
   total_amount: number | null;
   amount_in_words: string | null;
   billing_amount: number | null;

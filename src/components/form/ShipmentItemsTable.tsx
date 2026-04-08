@@ -310,8 +310,9 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                   </span>
                   <input
                     type="number"
+                    step="any"
                     min="0"
-                    value={item.quantity || ""}
+                    value={item.quantity === 0 ? "" : item.quantity}
                     onChange={(e) =>
                       onItemChange(item.id, "quantity", Number(e.target.value))
                     }
@@ -336,8 +337,9 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                   </span>
                   <input
                     type="number"
+                    step="any"
                     min="0"
-                    value={item.rate || ""}
+                    value={item.rate === 0 ? "" : item.rate}
                     onChange={(e) =>
                       onItemChange(item.id, "rate", Number(e.target.value))
                     }
@@ -366,7 +368,8 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                     </div>
                     <input
                       type="number"
-                      value={item.amount || ""}
+                      step="any"
+                      value={item.amount === 0 ? "" : item.amount}
                       readOnly
                       className="block w-full pl-6 pr-3 py-2 text-sm border-transparent rounded-lg bg-gray-50 text-gray-500 font-bold text-right shadow-inner"
                     />

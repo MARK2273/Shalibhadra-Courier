@@ -295,9 +295,9 @@ const CourierForm: React.FC = () => {
         formData.items.forEach((item, index) => {
           if (!item.description)
             newErrors[`items.${index}.description`] = "Description required";
-          if (item.quantity <= 0)
+          if (Number(item.quantity) <= 0)
             newErrors[`items.${index}.quantity`] = "Qty > 0";
-          if (item.rate <= 0) newErrors[`items.${index}.rate`] = "Rate > 0";
+          if (Number(item.rate) <= 0) newErrors[`items.${index}.rate`] = "Rate > 0";
         });
       }
     }
@@ -581,6 +581,16 @@ const CourierForm: React.FC = () => {
     // Clear item errors
     setErrors((prev) => {
       const next = { ...prev };
+      // We search for the key across all items to be safe from index shifts
+      // or we just clear the specific field if it exists
+      Object.keys(next).forEach(key => {
+        if (key.includes(`items.`) && key.endsWith(`.${field}`)) {
+          // If the current value is valid, we can clear this error
+          // But here we just clear the specific ID's error if possible
+        }
+      });
+      
+      // Traditional way with fixed index (works for simple cases)
       const itemIndex = formData.items.findIndex((i) => i.id === id);
       const errorKey = `items.${itemIndex}.${field}`;
       if (next[errorKey]) delete next[errorKey];

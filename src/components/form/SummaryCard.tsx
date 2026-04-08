@@ -151,8 +151,9 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
               <FormInput
                 label="Basic Amount"
                 type="number"
+                step="any"
                 min="0"
-                value={billingAmount || ""}
+                value={billingAmount === 0 ? "" : billingAmount}
                 onChange={(e) => handleInternalChange("billingAmount", Number(e.target.value))}
                 icon={IndianRupee}
                 error={errors["other.billingAmount"]}
@@ -287,8 +288,9 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
               <FormInput
                 label="Owner Cost"
                 type="number"
+                step="any"
                 min="0"
-                value={ownerCost || ""}
+                value={ownerCost === 0 ? "" : ownerCost}
                 onChange={(e) => handleInternalChange("ownerCost", Number(e.target.value))}
                 icon={IndianRupee}
                 className="text-center font-medium bg-gray-50 border-gray-200 text-gray-600 h-10"

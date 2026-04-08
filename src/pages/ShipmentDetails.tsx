@@ -151,6 +151,7 @@ const ShipmentDetails: React.FC = () => {
         },
         sender: {
           name: shipment.sender_name || "",
+          companyName: shipment.sender_company || "",
           address: shipment.sender_address || "",
           adhaar: shipment.sender_adhaar || "",
           contact: shipment.sender_contact || "",
@@ -158,6 +159,7 @@ const ShipmentDetails: React.FC = () => {
         },
         receiver: {
           name: shipment.receiver_name || "",
+          companyName: shipment.receiver_company || "",
           address: shipment.receiver_address || "",
           contact: shipment.receiver_contact || "",
           email: shipment.receiver_email || "",
@@ -364,6 +366,9 @@ const ShipmentDetails: React.FC = () => {
           icon={<User className="w-5 h-5 text-primary" />}
         >
           <InfoRow label="Name" value={shipment.sender_name} />
+          {shipment.sender_company && (
+            <InfoRow label="Company" value={shipment.sender_company} />
+          )}
           <InfoRow label="Address" value={shipment.sender_address} />
           <InfoRow label="Contact" value={shipment.sender_contact} />
           <InfoRow label="Email" value={shipment.sender_email} />
@@ -376,6 +381,9 @@ const ShipmentDetails: React.FC = () => {
           icon={<MapPin className="w-5 h-5 text-primary" />}
         >
           <InfoRow label="Name" value={shipment.receiver_name} />
+          {shipment.receiver_company && (
+            <InfoRow label="Company" value={shipment.receiver_company} />
+          )}
           <InfoRow label="Address" value={shipment.receiver_address} />
           <InfoRow label="Contact" value={shipment.receiver_contact} />
           <InfoRow label="Email" value={shipment.receiver_email} />

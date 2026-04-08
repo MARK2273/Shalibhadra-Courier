@@ -59,6 +59,7 @@ export interface ShipmentDetail {
 
   // Sender
   sender_name: string;
+  sender_company: string | null;
   sender_address: string;
   sender_adhaar: string | null;
   sender_contact: string | null;
@@ -66,6 +67,7 @@ export interface ShipmentDetail {
 
   // Receiver
   receiver_name: string;
+  receiver_company: string | null;
   receiver_address: string;
   receiver_contact: string | null;
   receiver_email: string | null;

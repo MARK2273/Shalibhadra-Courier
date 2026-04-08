@@ -477,6 +477,9 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
             <View style={styles.senderBox}>
               <Text style={styles.sectionTitle}>FROM (SENDER)</Text>
               <Text style={{ fontWeight: "bold" }}>{data.sender.name}</Text>
+              {data.sender.companyName && (
+                <Text style={{ fontWeight: "bold" }}>{data.sender.companyName}</Text>
+              )}
               <Text>{data.sender.address}</Text>
               <Text style={{ marginTop: 4 }}>Adhaar: {data.sender.adhaar}</Text>
               {data.sender.gst && (
@@ -495,6 +498,9 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
             <View style={styles.receiverBox}>
               <Text style={styles.sectionTitle}>TO (RECEIVER)</Text>
               <Text style={{ fontWeight: "bold" }}>{data.receiver.name}</Text>
+              {data.receiver.companyName && (
+                <Text style={{ fontWeight: "bold" }}>{data.receiver.companyName}</Text>
+              )}
               <Text>{data.receiver.address}</Text>
               <Text style={{ marginTop: 4 }}>
                 Contact:{" "}
@@ -871,6 +877,17 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                 >
                   {data.receiver.name}
                 </Text>
+                {data.receiver.companyName && (
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      fontWeight: "bold",
+                      marginBottom: 2,
+                    }}
+                  >
+                    {data.receiver.companyName}
+                  </Text>
+                )}
                 <Text style={{ fontSize: 10, lineHeight: 1.2, width: "90%" }}>
                   {data.receiver.address.toUpperCase()}
                 </Text>
@@ -958,12 +975,16 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
           <View style={[styles.invRow, { height: 130 }]}>
             <View style={styles.invHeaderLeft}>
               <Text style={{ fontWeight: "bold" }}>Exporter,</Text>
-              <Text>{data.sender.name}</Text>
+              <Text style={{ fontWeight: "bold" }}>{data.sender.name}</Text>
+              {data.sender.companyName && (
+                <Text style={{ fontWeight: "bold" }}>{data.sender.companyName}</Text>
+              )}
               <Text>{data.sender.address}</Text>
               <Text>Adhar No. - {data.sender.adhaar}</Text>
               {currentConfig.gstNumber && <Text>GST NO. - {currentConfig.gstNumber}</Text>}
             </View>
             <View style={styles.invHeaderRight}>
+              {/* ... existing header right ... */}
               <View style={styles.invHeaderRightTop}>
                 <View
                   style={{
@@ -1006,7 +1027,10 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
           <View style={styles.invConsigneeSection}>
             <View style={[styles.invCol, { width: "50%" }]}>
               <Text style={{ fontWeight: "bold" }}>Consignee,</Text>
-              <Text>{data.receiver.name}</Text>
+              <Text style={{ fontWeight: "bold" }}>{data.receiver.name}</Text>
+              {data.receiver.companyName && (
+                <Text style={{ fontWeight: "bold" }}>{data.receiver.companyName}</Text>
+              )}
               <Text>{data.receiver.address.toUpperCase()}</Text>
               <Text>
                 MOB NO.:{" "}
@@ -1455,6 +1479,9 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={styles.hannySectionTitle}>FROM (SENDER)</Text>
               <View style={styles.hannyAddressBox}>
                 <Text style={{ fontWeight: "bold" }}>{data.sender.name}</Text>
+                {data.sender.companyName && (
+                  <Text style={{ fontWeight: "bold" }}>{data.sender.companyName}</Text>
+                )}
                 <Text>{data.sender.address}</Text>
               </View>
             </View>
@@ -1462,6 +1489,9 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               <Text style={styles.hannySectionTitle}>TO (RECEIVER)</Text>
               <View style={styles.hannyAddressBox}>
                 <Text style={{ fontWeight: "bold" }}>{data.receiver.name}</Text>
+                {data.receiver.companyName && (
+                  <Text style={{ fontWeight: "bold" }}>{data.receiver.companyName}</Text>
+                )}
                 <Text>{data.receiver.address.toUpperCase()}</Text>
                 <Text>
                   MOB NO.:{" "}

@@ -32,6 +32,7 @@ import {
   Save,
   Copy,
   Lock,
+  Building,
 } from "lucide-react";
 import { useOwnerMode } from "../context/OwnerModeContext";
 
@@ -69,6 +70,7 @@ export interface CourierData {
   };
   sender: {
     name: string;
+    companyName: string;
     address: string;
     adhaar: string;
     contact: string;
@@ -77,6 +79,7 @@ export interface CourierData {
   };
   receiver: {
     name: string;
+    companyName: string;
     address: string;
     contact: string;
     email: string;
@@ -173,6 +176,7 @@ const initialFormData: CourierData = {
   },
   sender: {
     name: "",
+    companyName: "",
     address: "",
     adhaar: "",
     contact: "",
@@ -181,6 +185,7 @@ const initialFormData: CourierData = {
   },
   receiver: {
     name: "",
+    companyName: "",
     address: "",
     contact: "",
     email: "",
@@ -388,6 +393,7 @@ const CourierForm: React.FC = () => {
           },
           sender: {
             name: data.sender_name || "",
+            companyName: data.sender_company || "",
             address: data.sender_address || "",
             adhaar: data.sender_adhaar || "",
             contact: data.sender_contact || "",
@@ -396,6 +402,7 @@ const CourierForm: React.FC = () => {
           },
           receiver: {
             name: data.receiver_name || "",
+            companyName: data.receiver_company || "",
             address: data.receiver_address || "",
             contact: data.receiver_contact || "",
             email: data.receiver_email || "",
@@ -589,7 +596,7 @@ const CourierForm: React.FC = () => {
           // But here we just clear the specific ID's error if possible
         }
       });
-      
+
       // Traditional way with fixed index (works for simple cases)
       const itemIndex = formData.items.findIndex((i) => i.id === id);
       const errorKey = `items.${itemIndex}.${field}`;
@@ -965,7 +972,16 @@ const CourierForm: React.FC = () => {
                 onChange={(e) =>
                   handleNestedChange("sender", "name", e.target.value)
                 }
-                placeholder="Company or Person Name"
+                placeholder="Person Name"
+              />
+              <FormInput
+                label="Company Name (Optional)"
+                icon={Building}
+                value={formData.sender.companyName}
+                onChange={(e) =>
+                  handleNestedChange("sender", "companyName", e.target.value)
+                }
+                placeholder="Company Name"
               />
               <FormTextArea
                 label="Address"
@@ -1037,7 +1053,16 @@ const CourierForm: React.FC = () => {
                 onChange={(e) =>
                   handleNestedChange("receiver", "name", e.target.value)
                 }
-                placeholder="Company or Person Name"
+                placeholder="Person Name"
+              />
+              <FormInput
+                label="Company Name (Optional)"
+                icon={Building}
+                value={formData.receiver.companyName}
+                onChange={(e) =>
+                  handleNestedChange("receiver", "companyName", e.target.value)
+                }
+                placeholder="Company Name"
               />
               <FormTextArea
                 label="Address"

@@ -981,7 +981,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               )}
               <Text>{data.sender.address}</Text>
               <Text>Adhar No. - {data.sender.adhaar}</Text>
-              {currentConfig.gstNumber && <Text>GST NO. - {currentConfig.gstNumber}</Text>}
+              {data.sender.gst && <Text>GST NO. - {data.sender.gst}</Text>}
             </View>
             <View style={styles.invHeaderRight}>
               {/* ... existing header right ... */}

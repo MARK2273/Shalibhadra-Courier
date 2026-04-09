@@ -25,6 +25,7 @@ interface SummaryCardProps {
   utrNumber?: string;
   itemCurrency: string;
   isOwnerMode?: boolean;
+  canShowTax?: boolean;
   onFieldChange?: (field: string, value: any) => void;
   onNestedChange?: (section: any, field: string, value: any) => void;
   errors: Record<string, string>;
@@ -51,6 +52,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   utrNumber,
   itemCurrency,
   isOwnerMode,
+  canShowTax = true,
   onFieldChange,
   onNestedChange,
   errors,
@@ -162,34 +164,36 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             </div>
 
             {/* Tax Selection */}
-            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Tax Configuration</p>
-              <div className="flex flex-wrap gap-3">
-                {[
-                  { id: 'none', label: 'No Tax' },
-                  { id: 'cgst_sgst', label: 'CGST + SGST (18%)' },
-                  { id: 'igst', label: 'IGST (18%)' }
-                ].map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    onClick={() => handleInternalChange("taxType", option.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all font-medium text-sm ${taxType === option.id
-                      ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-primary/30'
-                      }`}
-                  >
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${taxType === option.id ? 'border-white' : 'border-gray-300'}`}>
-                      {taxType === option.id && <div className="w-2 h-2 bg-white rounded-full" />}
-                    </div>
-                    {option.label}
-                  </button>
-                ))}
+            {canShowTax && (
+              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Tax Configuration</p>
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    { id: 'none', label: 'No Tax' },
+                    { id: 'cgst_sgst', label: 'CGST + SGST (18%)' },
+                    { id: 'igst', label: 'IGST (18%)' }
+                  ].map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => handleInternalChange("taxType", option.id)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all font-medium text-sm ${taxType === option.id
+                        ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
+                        : 'bg-white text-gray-600 border-gray-200 hover:border-primary/30'
+                        }`}
+                    >
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${taxType === option.id ? 'border-white' : 'border-gray-300'}`}>
+                        {taxType === option.id && <div className="w-2 h-2 bg-white rounded-full" />}
+                      </div>
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Tax Breakdown */}
-            {taxType !== 'none' && (
+            {canShowTax && taxType !== 'none' && (
               <div className="space-y-2 px-2">
                 {taxType === 'cgst_sgst' ? (
                   <>

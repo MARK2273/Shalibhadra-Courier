@@ -236,6 +236,7 @@ const CourierForm: React.FC = () => {
   const isEditMode = !!id;
 
   const [formData, setFormData] = useState<CourierData>(initialFormData);
+  const [user, setUser] = useState<any>(null);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [isFetching, setIsFetching] = useState(isEditMode);
@@ -321,6 +322,13 @@ const CourierForm: React.FC = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -470,17 +478,17 @@ const CourierForm: React.FC = () => {
 
   useEffect(() => {
     const basicAmount = formData.other.billingAmount || 0;
-    const { taxType } = formData.other;
+    const effectiveTaxType = user?.can_show_tax === false ? "none" : formData.other.taxType;
     let cgst = 0;
     let sgst = 0;
     let igst = 0;
     let taxAmount = 0;
 
-    if (taxType === "cgst_sgst") {
+    if (effectiveTaxType === "cgst_sgst") {
       cgst = Number((basicAmount * 0.09).toFixed(2));
       sgst = Number((basicAmount * 0.09).toFixed(2));
       taxAmount = cgst + sgst;
-    } else if (taxType === "igst") {
+    } else if (effectiveTaxType === "igst") {
       igst = Number((basicAmount * 0.18).toFixed(2));
       taxAmount = igst;
     }
@@ -1025,16 +1033,18 @@ const CourierForm: React.FC = () => {
                 }
                 placeholder="sender@example.com"
               />
-              <FormInput
-                label="Customer GST Number"
-                placeholder="e.g. 24AAAAA0000A1Z5"
-                value={formData.sender.gst || ""}
-                onChange={(e) =>
-                  handleNestedChange("sender", "gst", e.target.value)
-                }
-                icon={Hash}
-                error={errors["sender.gst"]}
-              />
+              {(user?.can_show_tax !== false) && (
+                <FormInput
+                  label="Customer GST Number"
+                  placeholder="e.g. 24AAAAA0000A1Z5"
+                  value={formData.sender.gst || ""}
+                  onChange={(e) =>
+                    handleNestedChange("sender", "gst", e.target.value)
+                  }
+                  icon={Hash}
+                  error={errors["sender.gst"]}
+                />
+              )}
             </div>
           </ShipmentSectionCard>
 
@@ -1213,6 +1223,7 @@ const CourierForm: React.FC = () => {
             utrNumber={formData.other.utrNumber}
             itemCurrency={formData.other.itemCurrency}
             isOwnerMode={isOwnerMode}
+            canShowTax={user?.can_show_tax !== false}
             onNestedChange={handleNestedChange}
             errors={errors}
           />

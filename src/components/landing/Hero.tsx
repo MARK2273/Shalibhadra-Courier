@@ -92,7 +92,7 @@ const Hero: React.FC = () => {
                       setTrackingId(e.target.value);
                       if (error) setError(null);
                     }}
-                    placeholder="Enter Tracking ID (e.g. AWB123456)"
+                    placeholder="Enter Tracking ID (e.g. 2026270001)"
                     className="w-full px-4 py-3 bg-transparent border-none focus:ring-0 text-gray-900 placeholder-gray-400 text-base"
                     disabled={isLoading}
                   />

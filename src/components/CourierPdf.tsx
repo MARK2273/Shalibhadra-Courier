@@ -1271,7 +1271,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
 
             {/* Billing Amount Row */}
             {/* GST Tax Rows */}
-            {data.other.taxType === "cgst_sgst" ? (
+            {/* {data.other.taxType === "cgst_sgst" ? (
               <>
                 <View style={[styles.invFooterTotal, { borderTopWidth: 0, height: 25 }]}>
                   <View style={{ width: "65%", borderRightWidth: 1, padding: 4, justifyContent: "center" }}>
@@ -1308,10 +1308,10 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                   <Text style={{ fontSize: 8 }}>{data.other.igst}</Text>
                 </View>
               </View>
-            ) : null}
+            ) : null} */}
 
             {/* Final Billing Amount Row */}
-            <View style={[styles.invFooterTotal, { borderTopWidth: 0, backgroundColor: "#f9f9f9" }]}>
+            {/* <View style={[styles.invFooterTotal, { borderTopWidth: 0, backgroundColor: "#f9f9f9" }]}>
               <View
                 style={{
                   width: "65%",
@@ -1353,7 +1353,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
                   {data.other.currency} {data.other.finalBillingAmount || data.other.billingAmount || 0}
                 </Text>
               </View>
-            </View>
+            </View> */}
 
             {data.other.utrNumber && (
               <View style={[styles.invFooterTotal, { borderTopWidth: 0, backgroundColor: "#eef2ff", height: 20 }]}>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Search, ArrowRight, Loader2 } from "lucide-react";
 import { trackShipment } from "../../api/api";
 import { brandKey } from "../../constants/courierConfig";
+import { motion } from "framer-motion";
 
 const Hero: React.FC = () => {
   const [trackingId, setTrackingId] = useState("");
@@ -40,50 +41,72 @@ const Hero: React.FC = () => {
   return (
     <div
       id="track"
-      className="relative pt-24 pb-16 lg:pt-32 lg:pb-24 flex items-center min-h-[90vh] bg-gradient-to-b from-blue-50/50 via-white to-white overflow-hidden"
+      className="relative pt-24 pb-16 lg:pt-32 lg:pb-24 flex items-center min-h-[90vh] bg-gradient-to-br from-indigo-50/50 via-white to-blue-50/30 overflow-hidden"
     >
+      {/* Abstract Background Shapes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{
+            y: [0, 20, 0],
+            rotate: [0, 5, 0],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-40 -right-40 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-[100px] opacity-20"
+        />
+        <motion.div
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, -5, 0],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-40 -left-20 w-72 h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-[100px] opacity-20"
+        />
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="text-center lg:text-left space-y-8">
-            <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-sm font-medium mb-4">
-              <span className="flex h-2 w-2 rounded-full bg-blue-600 mr-2"></span>
-              Fast • Secure • Real-Time Courier Tracking
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm border border-blue-100/50 text-blue-700 text-sm font-semibold shadow-sm mb-6">
+                <span className="relative flex h-3 w-3 mr-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                </span>
+                Next-Gen Global Delivery Solutions
+              </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight">
-              Global Logistics <br />
-              <span className="text-primary relative inline-block">
-                Simplified
-                <svg
-                  className="absolute w-full h-3 -bottom-1 left-0 text-blue-200 -z-10"
-                  viewBox="0 0 100 10"
-                  preserveAspectRatio="none"
-                >
-                  <path
-                    d="M0 5 Q 50 10 100 5"
-                    stroke="currentColor"
-                    strokeWidth="8"
-                    fill="none"
-                  />
-                </svg>
-              </span>
-            </h1>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 tracking-tight leading-[1.1]">
+                Delivering <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 relative inline-block">
+                  Trust & Speed
+                </span>
+              </h1>
 
-            <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              Reliable, fast, and secure delivery services designed to move your
-              business forward. Track your shipments instantly.
-            </p>
+              <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+                Experience seamless logistics with our state-of-the-art tracking
+                and lightning-fast delivery network. Your packages, our priority.
+              </p>
+            </motion.div>
 
             {/* Tracking Bar */}
-            <div className="mt-8 max-w-lg mx-auto lg:mx-0">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mt-10 max-w-lg mx-auto lg:mx-0"
+            >
               <form onSubmit={handleTrack} className="relative group">
-                <div className="absolute inset-0 bg-blue-200 opacity-20 blur-xl rounded-full group-hover:opacity-30 transition-opacity"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
                 <div
-                  className={`relative flex items-center bg-white rounded-full shadow-lg border ${error ? "border-red-300 ring-4 ring-red-50" : "border-gray-100 focus-within:ring-4 focus-within:ring-blue-100"} p-1.5 transition-all`}
+                  className={`relative flex items-center bg-white/90 backdrop-blur-md rounded-2xl shadow-xl ${error ? "border-red-300 ring-2 ring-red-100" : "border-gray-100"} p-2 transition-all`}
                 >
                   <div className="pl-4 text-gray-400">
-                    <Search className="h-5 w-5" />
+                    <Search className="h-6 w-6" />
                   </div>
                   <input
                     type="text"
@@ -93,22 +116,22 @@ const Hero: React.FC = () => {
                       if (error) setError(null);
                     }}
                     placeholder="Enter Tracking ID (e.g. 2026270001)"
-                    className="w-full px-4 py-3 bg-transparent border-none focus:ring-0 text-gray-900 placeholder-gray-400 text-base"
+                    className="w-full px-4 py-4 bg-transparent border-none focus:ring-0 text-gray-900 placeholder-gray-400 text-lg font-medium outline-none"
                     disabled={isLoading}
                   />
                   <button
                     type="submit"
                     disabled={isLoading || !trackingId.trim()}
-                    className={`flex-shrink-0 bg-primary text-white px-8 py-3 rounded-full hover:bg-blue-700 font-bold tracking-wide transition-all shadow-md hover:shadow-lg flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed`}
+                    className={`flex-shrink-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl hover:shadow-lg hover:scale-[1.02] active:scale-95 font-bold tracking-wide transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed`}
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Wait...
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Locating...
                       </>
                     ) : (
                       <>
-                        Track <ArrowRight className="h-4 w-4" />
+                        Track <ArrowRight className="h-5 w-5" />
                       </>
                     )}
                   </button>
@@ -116,148 +139,96 @@ const Hero: React.FC = () => {
               </form>
 
               {error && (
-                <div className="mt-3 px-4 flex items-center gap-2 text-sm text-red-600 font-medium animate-in fade-in slide-in-from-top-1">
-                  <span className="flex h-1.5 w-1.5 rounded-full bg-red-600"></span>
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="mt-4 px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-semibold flex items-center gap-2"
+                >
+                  <span className="flex h-2 w-2 rounded-full bg-red-600"></span>
                   {error}
-                </div>
+                </motion.div>
               )}
 
-              <div className="mt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <p className="text-sm text-gray-400">Try: AWB12345678</p>
-                <span className="hidden sm:inline text-gray-300">|</span>
+              <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2">
+                <p className="text-sm font-medium text-gray-500">Popular: <span className="text-gray-900">AWB12345678</span></p>
+                <div className="hidden sm:block w-1 h-1 rounded-full bg-gray-300"></div>
                 <a
                   href="#services"
-                  className="text-sm font-medium text-primary hover:underline"
+                  className="text-sm font-bold text-blue-600 hover:text-indigo-600 transition-colors"
                 >
-                  View Services
+                  Explore Services →
                 </a>
               </div>
-            </div>
+            </motion.div>
           </div>
 
-          {/* Right Content - Illustration */}
-          <div className="relative hidden lg:block">
-            <div className="absolute top-10 right-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-            <div className="absolute -bottom-10 left-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-
-            <div className="relative">
-              {/* SVG Illustration - Replacing simple one with a more detailed abstract logistic composition */}
-              <svg
-                className="w-full h-auto drop-shadow-2xl"
-                viewBox="0 0 600 500"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+          {/* Right Content - Modern Abstract Visual */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="relative hidden lg:flex items-center justify-center"
+          >
+            <div className="relative w-full max-w-md aspect-square">
+              {/* Glass Card 1 */}
+              <motion.div
+                animate={{ y: [-10, 10, -10] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-10 right-0 w-64 h-80 bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] p-6 z-20"
               >
-                <rect
-                  x="50"
-                  y="50"
-                  width="500"
-                  height="400"
-                  rx="20"
-                  fill="white"
-                  fillOpacity="0.8"
-                />
-                {/* Map */}
-                <path
-                  d="M100 150 L200 100 L400 120 L500 200"
-                  stroke="#E2E8F0"
-                  strokeWidth="4"
-                  strokeDasharray="8 8"
-                />
-                <circle cx="100" cy="150" r="8" fill="#3B82F6" />
-                <circle cx="500" cy="200" r="8" fill="#10B981" />
+                <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
+                  <Search className="w-6 h-6 text-blue-600" />
+                </div>
+                <div className="h-4 w-3/4 bg-gray-200/80 rounded-full mb-4"></div>
+                <div className="h-4 w-1/2 bg-gray-200/80 rounded-full mb-8"></div>
 
-                {/* Truck Card */}
-                <g transform="translate(180, 220)">
-                  <rect
-                    width="240"
-                    height="140"
-                    rx="16"
-                    fill="white"
-                    className="shadow-lg"
-                    filter="url(#shadow)"
-                  />
-                  <rect
-                    x="20"
-                    y="20"
-                    width="48"
-                    height="48"
-                    rx="12"
-                    fill="#EFF6FF"
-                  />
-                  <path
-                    d="M34 44H54M34 34H54"
-                    stroke="#3B82F6"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                  <text
-                    x="80"
-                    y="45"
-                    fontFamily="sans-serif"
-                    fontSize="16"
-                    fontWeight="bold"
-                    fill="#1E293B"
-                  >
-                    Delivery On The Way
-                  </text>
-                  <text
-                    x="80"
-                    y="70"
-                    fontFamily="sans-serif"
-                    fontSize="14"
-                    fill="#64748B"
-                  >
-                    Arriving in 2 hours
-                  </text>
-                  <rect
-                    x="20"
-                    y="100"
-                    width="200"
-                    height="8"
-                    rx="4"
-                    fill="#F1F5F9"
-                  />
-                  <rect
-                    x="20"
-                    y="100"
-                    width="140"
-                    height="8"
-                    rx="4"
-                    fill="#3B82F6"
-                  />
-                </g>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="h-3 w-full bg-gray-200/80 rounded-full mb-2"></div>
+                      <div className="h-2 w-2/3 bg-gray-200/80 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 opacity-50">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                      <div className="w-3 h-3 rounded-full bg-gray-400"></div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="h-3 w-full bg-gray-200/80 rounded-full mb-2"></div>
+                      <div className="h-2 w-2/3 bg-gray-200/80 rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
 
-                {/* Floating Elements */}
-                <circle
-                  cx="450"
-                  cy="100"
-                  r="40"
-                  fill="#3B82F6"
-                  fillOpacity="0.1"
-                />
-                <circle
-                  cx="100"
-                  cy="400"
-                  r="30"
-                  fill="#10B981"
-                  fillOpacity="0.1"
-                />
+              {/* Glass Card 2 */}
+              <motion.div
+                animate={{ y: [10, -10, 10] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -bottom-10 left-0 w-72 h-48 bg-white/60 backdrop-blur-lg border border-white/80 rounded-3xl shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] p-6 z-30"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <span className="font-bold text-gray-800">In Transit</span>
+                  <span className="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-700 rounded-full">Today, 2:30 PM</span>
+                </div>
+                <div className="relative w-full h-2 bg-gray-100 rounded-full mb-6">
+                  <div className="absolute top-0 left-0 h-full w-2/3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+                  <div className="absolute top-1/2 left-2/3 w-4 h-4 bg-white border-4 border-indigo-500 rounded-full transform -translate-y-1/2 -translate-x-1/2 shadow-lg"></div>
+                </div>
+                <div className="flex justify-between text-sm font-medium text-gray-500">
+                  <span>New York</span>
+                  <span>London</span>
+                </div>
+              </motion.div>
 
-                <defs>
-                  <filter id="shadow" x="-20" y="-20" width="280" height="180">
-                    <feDropShadow
-                      dx="0"
-                      dy="10"
-                      stdDeviation="15"
-                      floodColor="#000000"
-                      floodOpacity="0.1"
-                    />
-                  </filter>
-                </defs>
-              </svg>
+              {/* Background Decoration Elements */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 border border-blue-200/50 rounded-full z-0"></div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 border border-indigo-200/40 rounded-full z-0"></div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

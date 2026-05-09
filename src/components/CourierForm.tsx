@@ -926,6 +926,17 @@ const CourierForm: React.FC = () => {
                 }
               }}
             />
+            <FormInput
+              label={isEditMode ? "AWB No. (Locked)" : "AWB No. (Optional)"}
+              icon={Hash}
+              value={formData.header.awbNo}
+              disabled={isEditMode}
+              onChange={(e) =>
+                handleNestedChange("header", "awbNo", e.target.value)
+              }
+              placeholder={isEditMode ? "" : "Leave blank for auto-generation"}
+              title={isEditMode ? "AWB number cannot be changed after creation" : "Enter a custom AWB number or leave blank to auto-generate"}
+            />
           </div>
         </ShipmentSectionCard>
         {/* Invoice Info */}

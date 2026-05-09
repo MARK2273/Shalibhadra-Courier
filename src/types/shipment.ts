@@ -88,6 +88,11 @@ export interface ShipmentDetail {
   amount_in_words: string | null;
   billing_amount: number | null;
   final_billing_amount?: number | null;
+  tax_type?: 'none' | 'cgst_sgst' | 'igst' | null;
+  cgst?: number | null;
+  sgst?: number | null;
+  igst?: number | null;
+  tax_amount?: number | null;
   payment_type: 'Cash' | 'Online';
   selected_upi_id: string | null;
   payment_status: 'Paid' | 'Pending';

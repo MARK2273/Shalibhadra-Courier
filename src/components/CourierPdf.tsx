@@ -542,7 +542,7 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
             </View>
 
             {/* Shipment Info */}
-            <View style={{ width: data.header.shipmentType === "Docs" ? "70%" : "40%", borderRightWidth: data.header.shipmentType === "Docs" ? 0 : 1 }}>
+            <View style={{ width: "40%", borderRightWidth: 1 }}>
               {data.header.shipmentType === "Docs" ? (
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 10 }}>
                   <Text style={{ fontSize: 12, fontWeight: "bold", marginBottom: 5 }}>DOCUMENT SHIPMENT</Text>
@@ -629,78 +629,69 @@ const CourierPdf = ({ data }: CourierPdfProps) => {
               )}
             </View>
 
-            {/* Total Charge - Only if NOT Docs or moved to next row if Docs? 
-               Usually Consignment Note has financial summary.
-               The user said "when we select th docs we'll remove the Shipment Items options".
-               I'll keep the Charge section but hide items list.
-            */}
-            {data.header.shipmentType !== "Docs" && (
-              <View style={{ width: "30%" }}>
-                {/* Basic Amount */}
-                <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
-                  <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                    <Text style={{ fontSize: 8 }}>Basic Amount</Text>
-                  </View>
-                  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <Text style={{ fontSize: 9 }}>{data.other.billingAmount || 0}</Text>
-                  </View>
+            {/* Total Charge - Always shown for all shipment types */}
+            <View style={{ width: "30%" }}>
+              {/* Basic Amount */}
+              <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
+                <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                  <Text style={{ fontSize: 8 }}>Basic Amount</Text>
                 </View>
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ fontSize: 9 }}>{data.other.billingAmount || 0}</Text>
+                </View>
+              </View>
 
-                {/* Tax Rows */}
-                {data.other.taxType === "cgst_sgst" ? (
-                  <>
-                    <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
-                      <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                        <Text style={{ fontSize: 7 }}>CGST (9%)</Text>
-                      </View>
-                      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                        <Text style={{ fontSize: 8 }}>{data.other.cgst}</Text>
-                      </View>
-                    </View>
-                    <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
-                      <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                        <Text style={{ fontSize: 7 }}>SGST (9%)</Text>
-                      </View>
-                      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                        <Text style={{ fontSize: 8 }}>{data.other.sgst}</Text>
-                      </View>
-                    </View>
-                  </>
-                ) : data.other.taxType === "igst" ? (
+              {/* Tax Rows */}
+              {data.other.taxType === "cgst_sgst" ? (
+                <>
                   <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
                     <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                      <Text style={{ fontSize: 7 }}>IGST (18%)</Text>
+                      <Text style={{ fontSize: 7 }}>CGST (9%)</Text>
                     </View>
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                      <Text style={{ fontSize: 8 }}>{data.other.igst}</Text>
+                      <Text style={{ fontSize: 8 }}>{data.other.cgst}</Text>
                     </View>
                   </View>
-                ) : null}
-
-                {/* Final Total */}
-                <View style={{ flexDirection: "row", flex: 1, backgroundColor: "#f0f0f0" }}>
+                  <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
+                    <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                      <Text style={{ fontSize: 7 }}>SGST (9%)</Text>
+                    </View>
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                      <Text style={{ fontSize: 8 }}>{data.other.sgst}</Text>
+                    </View>
+                  </View>
+                </>
+              ) : data.other.taxType === "igst" ? (
+                <View style={{ flexDirection: "row", borderBottomWidth: 1, flex: 1 }}>
                   <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 8 }}>Total Bill</Text>
+                    <Text style={{ fontSize: 7 }}>IGST (18%)</Text>
                   </View>
                   <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 10 }}>{data.other.finalBillingAmount || data.other.billingAmount || 0}</Text>
+                    <Text style={{ fontSize: 8 }}>{data.other.igst}</Text>
                   </View>
                 </View>
-                {data.other.utrNumber && (
-                  <View style={{ flexDirection: "row", flex: 1, backgroundColor: "#f0f0f0" }}>
-                    <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
-                      <Text style={{ fontSize: 7, fontWeight: "bold" }}>UTR No.</Text>
-                    </View>
-                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                      <Text style={{ fontSize: 8 }}>{data.other.utrNumber}</Text>
-                    </View>
-                  </View>
-                )}
+              ) : null}
+
+              {/* Final Total */}
+              <View style={{ flexDirection: "row", flex: 1, backgroundColor: "#f0f0f0" }}>
+                <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                  <Text style={{ fontWeight: "bold", fontSize: 8 }}>Total Bill</Text>
+                </View>
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ fontWeight: "bold", fontSize: 10 }}>{data.other.finalBillingAmount || data.other.billingAmount || 0}</Text>
+                </View>
               </View>
-            )}
-            {data.header.shipmentType === "Docs" && (
-              <View style={{ width: "0%" }} />
-            )}
+              {data.other.utrNumber && (
+                <View style={{ flexDirection: "row", flex: 1, backgroundColor: "#f0f0f0" }}>
+                  <View style={{ flex: 1, borderRightWidth: 1, justifyContent: "center", alignItems: "center", padding: 2 }}>
+                    <Text style={{ fontSize: 7, fontWeight: "bold" }}>UTR No.</Text>
+                  </View>
+                  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ fontSize: 8 }}>{data.other.utrNumber}</Text>
+                  </View>
+                </View>
+              )}
+            </View>
           </View>
 
           {/* Terms and QR */}

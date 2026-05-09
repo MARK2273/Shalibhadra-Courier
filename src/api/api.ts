@@ -55,6 +55,10 @@ export const deleteShipment = async (id: string): Promise<void> => {
   await api.delete(`/form/${id}`);
 };
 
+export const permanentDeleteShipment = async (id: string): Promise<void> => {
+  await api.delete(`/form/${id}/permanent`);
+};
+
 export const updatePaymentStatus = async (id: string, status: 'Paid' | 'Pending'): Promise<void> => {
   await api.patch(`/form/${id}/status`, { status });
 };

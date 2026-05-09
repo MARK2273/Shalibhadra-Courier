@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, ChevronLeft, ChevronRight, Edit2, Trash2, Eye, Package, Lock, Unlock, TrendingUp, TrendingDown, Minus, CreditCard, Loader2 } from "lucide-react";
-import api, { deleteShipment, updatePaymentStatus } from "../api/api";
+import { Plus, Search, ChevronLeft, ChevronRight, Edit2, Trash2, Eye, Package, Lock, Unlock, TrendingUp, TrendingDown, Minus, CreditCard, Loader2, AlertTriangle } from "lucide-react";
+import api, { deleteShipment, updatePaymentStatus, permanentDeleteShipment } from "../api/api";
 import Modal from "../components/ui/Modal";
 import Tooltip from "../components/ui/Tooltip";
 import FilterPopover from "../components/ui/FilterPopover";
@@ -73,6 +73,33 @@ const Dashboard: React.FC = () => {
   });
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  // Permanent Delete State (Admin Only)
+  const [permanentDeleteModal, setPermanentDeleteModal] = useState<{
+    isOpen: boolean;
+    id: string;
+    awb: string;
+  }>({
+    isOpen: false,
+    id: "",
+    awb: "",
+  });
+  const [isPermanentDeleting, setIsPermanentDeleting] = useState(false);
+  const [permanentDeleteError, setPermanentDeleteError] = useState<string | null>(null);
+
+  // Check if current user is admin (can_show_tax)
+  const isAdminUser = React.useMemo(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        return user.can_show_tax === true;
+      }
+    } catch {
+      // Ignore parse errors
+    }
+    return false;
+  }, []);
 
   const { isOwnerMode, setOwnerMode } = useOwnerMode();
   const [ownerModal, setOwnerModal] = useState(false);
@@ -160,6 +187,26 @@ const Dashboard: React.FC = () => {
       setDeleteError("Failed to delete shipment. Please try again.");
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handlePermanentDeleteClick = (id: string, awb: string) => {
+    setPermanentDeleteModal({ isOpen: true, id, awb });
+  };
+
+  const handleConfirmPermanentDelete = async () => {
+    setIsPermanentDeleting(true);
+    setPermanentDeleteError(null);
+    try {
+      await permanentDeleteShipment(permanentDeleteModal.id);
+      fetchShipments();
+      setPermanentDeleteModal({ isOpen: false, id: "", awb: "" });
+    } catch (error: any) {
+      console.error("Failed to permanently delete shipment", error);
+      const errorMsg = error?.response?.data?.message || "Failed to permanently delete shipment. Please try again.";
+      setPermanentDeleteError(errorMsg);
+    } finally {
+      setIsPermanentDeleting(false);
     }
   };
 
@@ -740,6 +787,19 @@ const Dashboard: React.FC = () => {
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </Tooltip>
+
+                        {isAdminUser && (
+                          <Tooltip text="Permanently Delete">
+                            <button
+                              onClick={() =>
+                                handlePermanentDeleteClick(shipment.id, shipment.awb_no)
+                              }
+                              className="p-2 text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all active:scale-95 shadow-sm"
+                            >
+                              <AlertTriangle className="w-4 h-4" />
+                            </button>
+                          </Tooltip>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -826,6 +886,39 @@ const Dashboard: React.FC = () => {
           setStatusModal({ ...statusModal, isOpen: false });
         }}
         onConfirm={handleConfirmStatusToggle}
+      />
+
+      {/* Permanent Delete Confirmation Modal (Admin Only) */}
+      <Modal
+        isOpen={permanentDeleteModal.isOpen}
+        title="⚠️ Permanently Delete Shipment?"
+        description={
+          <div className="space-y-3">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800 font-bold text-sm">
+                This action will permanently remove the shipment record from the database. This cannot be undone.
+              </p>
+            </div>
+            <p className="text-gray-600 text-sm">
+              Shipment <span className="font-bold text-gray-900">{permanentDeleteModal.awb || 'N/A'}</span> and its associated PDF will be permanently deleted.
+            </p>
+            {permanentDeleteError && (
+              <div className="p-2 bg-red-50 border border-red-100 text-red-600 font-bold rounded text-[11px] animate-pulse">
+                {permanentDeleteError}
+              </div>
+            )}
+          </div>
+        }
+        confirmLabel="Permanently Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        icon={AlertTriangle}
+        isConfirmLoading={isPermanentDeleting}
+        onClose={() => {
+          setPermanentDeleteModal({ ...permanentDeleteModal, isOpen: false });
+          setPermanentDeleteError(null);
+        }}
+        onConfirm={handleConfirmPermanentDelete}
       />
 
       {/* Owner Mode Password Modal */}

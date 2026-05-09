@@ -93,8 +93,8 @@ const ShipmentDetails: React.FC = () => {
     if (!shipment) return;
 
     // Use stored PDF URL if available
-    if ((shipment as any).pdf_url) {
-      window.open((shipment as any).pdf_url, "_blank");
+    if ((shipment as any).storage_pdf_url) {
+      window.open((shipment as any).storage_pdf_url, "_blank");
       return;
     }
 

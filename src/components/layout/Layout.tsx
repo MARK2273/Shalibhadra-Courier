@@ -22,6 +22,7 @@ const Layout: React.FC = () => {
     logoutOwnerMode();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("dashboard_filters");
     navigate("/login");
   };
 

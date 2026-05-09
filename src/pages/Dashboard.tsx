@@ -15,14 +15,29 @@ const Skeleton = ({ className }: { className?: string }) => (
   <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
 );
 
+const FILTER_STORAGE_KEY = 'dashboard_filters';
+
+const getStoredFilters = () => {
+  try {
+    const stored = localStorage.getItem(FILTER_STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch {
+    // Ignore parse errors
+  }
+  return null;
+};
+
 const Dashboard: React.FC = () => {
+  const storedFilters = getStoredFilters();
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [loading, setLoading] = useState(true);
   const [initialLoad, setInitialLoad] = useState(true); // Track initial load
   const [search, setSearch] = useState("");
-  const [activeStatusFilter, setActiveStatusFilter] = useState<"All" | "Paid" | "Pending">("All");
-  const [activePaymentTypeFilter, setActivePaymentTypeFilter] = useState<"All" | "Cash" | "Online">("All");
-  const [activeTaxFilter, setActiveTaxFilter] = useState<"All" | "Taxed" | "Non-Taxed">("All");
+  const [activeStatusFilter, setActiveStatusFilter] = useState<"All" | "Paid" | "Pending">(storedFilters?.status || "All");
+  const [activePaymentTypeFilter, setActivePaymentTypeFilter] = useState<"All" | "Cash" | "Online">(storedFilters?.paymentType || "All");
+  const [activeTaxFilter, setActiveTaxFilter] = useState<"All" | "Taxed" | "Non-Taxed">(storedFilters?.taxFilter || "All");
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -73,6 +88,16 @@ const Dashboard: React.FC = () => {
     id: "",
     newStatus: 'Pending',
   });
+
+  // Persist filters to localStorage whenever they change
+  React.useEffect(() => {
+    const filters = {
+      status: activeStatusFilter,
+      paymentType: activePaymentTypeFilter,
+      taxFilter: activeTaxFilter,
+    };
+    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
+  }, [activeStatusFilter, activePaymentTypeFilter, activeTaxFilter]);
 
   // Consolidated effect for fetching shipments
   React.useEffect(() => {

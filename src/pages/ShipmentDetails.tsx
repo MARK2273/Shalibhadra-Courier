@@ -435,6 +435,8 @@ const ShipmentDetails: React.FC = () => {
             value={
               <span className={`px-2 py-1 rounded-full text-xs font-bold border ${shipment.payment_status === 'Paid'
                 ? 'bg-green-50 text-green-700 border-green-100'
+                : shipment.payment_status === 'Cancelled'
+                ? 'bg-red-50 text-red-600 border-red-100'
                 : 'bg-amber-50 text-amber-700 border-amber-100'
                 }`}>
                 {shipment.payment_status || 'Pending'}

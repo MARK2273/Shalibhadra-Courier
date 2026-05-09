@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, ChevronLeft, ChevronRight, Edit2, Trash2, Eye, Package, Lock, Unlock, TrendingUp, TrendingDown, Minus, CreditCard, Loader2, AlertTriangle } from "lucide-react";
-import api, { deleteShipment, updatePaymentStatus, permanentDeleteShipment } from "../api/api";
+import { Plus, Search, ChevronLeft, ChevronRight, Edit2, XCircle, Eye, Package, Lock, Unlock, TrendingUp, TrendingDown, Minus, CreditCard, Loader2, Trash2, Ban } from "lucide-react";
+import api, { cancelShipment, updatePaymentStatus, permanentDeleteShipment } from "../api/api";
 import Modal from "../components/ui/Modal";
 import Tooltip from "../components/ui/Tooltip";
 import FilterPopover from "../components/ui/FilterPopover";
@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [initialLoad, setInitialLoad] = useState(true); // Track initial load
   const [search, setSearch] = useState("");
-  const [activeStatusFilter, setActiveStatusFilter] = useState<"All" | "Paid" | "Pending">(storedFilters?.status || "All");
+  const [activeStatusFilter, setActiveStatusFilter] = useState<"All" | "Paid" | "Pending" | "Cancelled">(storedFilters?.status || "All");
   const [activePaymentTypeFilter, setActivePaymentTypeFilter] = useState<"All" | "Cash" | "Online">(storedFilters?.paymentType || "All");
   const [activeTaxFilter, setActiveTaxFilter] = useState<"All" | "Taxed" | "Non-Taxed">(storedFilters?.taxFilter || "All");
   const [togglingId, setTogglingId] = useState<string | null>(null);
@@ -64,15 +64,15 @@ const Dashboard: React.FC = () => {
       total: 0
     }
   });
-  const [deleteModal, setDeleteModal] = useState<{
+  const [cancelModal, setCancelModal] = useState<{
     isOpen: boolean;
     id: string;
   }>({
     isOpen: false,
     id: "",
   });
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   // Permanent Delete State (Admin Only)
   const [permanentDeleteModal, setPermanentDeleteModal] = useState<{
@@ -170,23 +170,23 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleDeleteClick = (id: string, _awb: string) => {
-    setDeleteModal({ isOpen: true, id });
+  const handleCancelClick = (id: string, _awb: string) => {
+    setCancelModal({ isOpen: true, id });
   };
 
-  const handleConfirmDelete = async () => {
-    setIsDeleting(true);
-    setDeleteError(null);
+  const handleConfirmCancel = async () => {
+    setIsCancelling(true);
+    setCancelError(null);
     try {
-      await deleteShipment(deleteModal.id);
+      await cancelShipment(cancelModal.id);
       // Refresh the list
       fetchShipments();
-      setDeleteModal({ isOpen: false, id: "" });
+      setCancelModal({ isOpen: false, id: "" });
     } catch (error) {
-      console.error("Failed to delete shipment", error);
-      setDeleteError("Failed to delete shipment. Please try again.");
+      console.error("Failed to cancel shipment", error);
+      setCancelError("Failed to cancel shipment. Please try again.");
     } finally {
-      setIsDeleting(false);
+      setIsCancelling(false);
     }
   };
 
@@ -223,7 +223,7 @@ const Dashboard: React.FC = () => {
     setStatusModal(prev => ({ ...prev, isOpen: false }));
 
     // Optimistic Update
-    setShipments(prev => prev.map(s => s.id === id ? { ...s, payment_status: newStatus as 'Paid' | 'Pending' } : s));
+    setShipments(prev => prev.map(s => s.id === id ? { ...s, payment_status: newStatus as 'Paid' | 'Pending' | 'Cancelled' } : s));
 
     try {
       await updatePaymentStatus(id, newStatus as 'Paid' | 'Pending');
@@ -253,6 +253,7 @@ const Dashboard: React.FC = () => {
         { label: 'All Status', value: 'All' },
         { label: 'Paid Only', value: 'Paid' },
         { label: 'Pending Only', value: 'Pending' },
+        { label: 'Cancelled Only', value: 'Cancelled' },
       ],
     },
     {
@@ -731,6 +732,12 @@ const Dashboard: React.FC = () => {
                       ₹{(shipment.final_billing_amount ?? shipment.billing_amount ?? shipment.total_amount ?? 0).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 text-center">
+                      {shipment.payment_status === 'Cancelled' ? (
+                        <span className="px-2.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border bg-red-50 text-red-600 border-red-200 cursor-default flex items-center justify-center gap-1 w-fit mx-auto">
+                          <Ban className="w-3 h-3" />
+                          Cancelled
+                        </span>
+                      ) : (
                       <button
                         onClick={() => handleStatusToggle(shipment.id, shipment.payment_status as 'Paid' | 'Pending')}
                         disabled={togglingId === shipment.id}
@@ -751,6 +758,7 @@ const Dashboard: React.FC = () => {
                           Click to toggle status
                         </div>
                       </button>
+                      )}
                     </td>
                     {isOwnerMode && (
                       <td className="px-6 py-4 text-right font-medium text-gray-500 italic">
@@ -777,16 +785,18 @@ const Dashboard: React.FC = () => {
                           </Link>
                         </Tooltip>
 
-                        <Tooltip text="Delete Shipment">
+                        {shipment.payment_status !== 'Cancelled' && (
+                        <Tooltip text="Cancel Shipment">
                           <button
                             onClick={() =>
-                              handleDeleteClick(shipment.id, shipment.awb_no)
+                              handleCancelClick(shipment.id, shipment.awb_no)
                             }
                             className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-all active:scale-95"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <XCircle className="w-4 h-4" />
                           </button>
                         </Tooltip>
+                        )}
 
                         {isAdminUser && (
                           <Tooltip text="Permanently Delete">
@@ -794,9 +804,9 @@ const Dashboard: React.FC = () => {
                               onClick={() =>
                                 handlePermanentDeleteClick(shipment.id, shipment.awb_no)
                               }
-                              className="p-2 text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all active:scale-95 shadow-sm"
+                              className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-all active:scale-95"
                             >
-                              <AlertTriangle className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </Tooltip>
                         )}
@@ -835,33 +845,32 @@ const Dashboard: React.FC = () => {
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Cancel Shipment Confirmation Modal */}
       <Modal
-        isOpen={deleteModal.isOpen}
-        title="Delete Shipment?"
+        isOpen={cancelModal.isOpen}
+        title="Cancel Shipment?"
         description={
           <div className="space-y-3">
             <p>
-              Are you sure you want to delete this shipment? This action cannot
-              be undone.
+              Are you sure you want to cancel this shipment? The shipment will be marked as cancelled and excluded from billing calculations.
             </p>
-            {deleteError && (
+            {cancelError && (
               <div className="p-2 bg-red-50 border border-red-100 text-red-600 font-bold rounded text-[11px] animate-pulse">
-                {deleteError}
+                {cancelError}
               </div>
             )}
           </div>
         }
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        confirmLabel="Cancel Shipment"
+        cancelLabel="Go Back"
         variant="danger"
-        icon={Trash2}
-        isConfirmLoading={isDeleting}
+        icon={XCircle}
+        isConfirmLoading={isCancelling}
         onClose={() => {
-          setDeleteModal({ ...deleteModal, isOpen: false });
-          setDeleteError(null);
+          setCancelModal({ ...cancelModal, isOpen: false });
+          setCancelError(null);
         }}
-        onConfirm={handleConfirmDelete}
+        onConfirm={handleConfirmCancel}
       />
 
       {/* Payment Status Confirmation Modal */}
@@ -912,7 +921,7 @@ const Dashboard: React.FC = () => {
         confirmLabel="Permanently Delete"
         cancelLabel="Cancel"
         variant="danger"
-        icon={AlertTriangle}
+        icon={Trash2}
         isConfirmLoading={isPermanentDeleting}
         onClose={() => {
           setPermanentDeleteModal({ ...permanentDeleteModal, isOpen: false });

@@ -51,8 +51,8 @@ export const updateShipment = async (id: string, data: any): Promise<void> => {
   await api.put(`/form/${id}`, data);
 };
 
-export const deleteShipment = async (id: string): Promise<void> => {
-  await api.delete(`/form/${id}`);
+export const cancelShipment = async (id: string): Promise<void> => {
+  await api.patch(`/form/${id}/cancel`);
 };
 
 export const permanentDeleteShipment = async (id: string): Promise<void> => {

@@ -12,7 +12,7 @@ export interface Shipment {
   sender_contact?: string | null;
   payment_type: 'Cash' | 'Online';
   selected_upi_id?: string | null;
-  payment_status: 'Paid' | 'Pending';
+  payment_status: 'Paid' | 'Pending' | 'Cancelled';
   tracking_url?: string | null;
   owner_cost?: number;
   utr_number?: string | null;
@@ -95,7 +95,7 @@ export interface ShipmentDetail {
   tax_amount?: number | null;
   payment_type: 'Cash' | 'Online';
   selected_upi_id: string | null;
-  payment_status: 'Paid' | 'Pending';
+  payment_status: 'Paid' | 'Pending' | 'Cancelled';
   upi_details?: {
     upi_id: string;
     payee_name: string;

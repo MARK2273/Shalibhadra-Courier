@@ -12,7 +12,7 @@ import type { Shipment } from "../types/shipment";
 
 // Simple Skeleton Component
 const Skeleton = ({ className }: { className?: string }) => (
-  <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
+  <div className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`} />
 );
 
 const FILTER_STORAGE_KEY = 'dashboard_filters';
@@ -325,7 +325,7 @@ const Dashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h1>
           <button
             onClick={() => {
               if (isOwnerMode) {
@@ -335,8 +335,8 @@ const Dashboard: React.FC = () => {
               }
             }}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${isOwnerMode
-              ? "bg-green-100 text-green-700 border border-green-200"
-              : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
+              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
+              : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
           >
             {isOwnerMode ? (
@@ -379,7 +379,7 @@ const Dashboard: React.FC = () => {
             .map((_, idx) => (
               <div
                 key={idx}
-                className="p-6 rounded-xl shadow-sm border border-gray-100 bg-white"
+                className="p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 transition-colors"
               >
                 <Skeleton className="h-4 w-24 mb-2" />
                 <Skeleton className="h-8 w-16" />
@@ -390,27 +390,27 @@ const Dashboard: React.FC = () => {
             {
               label: "Total Shipments",
               value: totalCount.toString(),
-              color: "bg-white",
-              text: "text-primary",
+              color: "bg-white dark:bg-gray-800",
+              text: "text-primary dark:text-blue-400",
             },
             {
               label: "Total Revenue",
               value: `₹${totalRevenue.toLocaleString()}`,
-              color: "bg-green-50",
-              text: "text-green-600",
+              color: "bg-green-50 dark:bg-green-900/20",
+              text: "text-green-600 dark:text-green-400",
             },
             ...(isOwnerMode
               ? [
                 {
                   label: "Total Owner Cost",
                   value: `₹${totalOwnerCost.toLocaleString()}`,
-                  color: "bg-orange-50",
-                  text: "text-orange-600",
+                  color: "bg-orange-50 dark:bg-orange-900/20",
+                  text: "text-orange-600 dark:text-orange-400",
                 },
                 {
                   label: "Total Profit",
                   value: `₹${(totalRevenue - totalOwnerCost).toLocaleString()}`,
-                  color: "bg-blue-50",
+                  color: "bg-blue-50 dark:bg-blue-900/20",
                   text:
                     totalRevenue - totalOwnerCost >= 0
                       ? "text-blue-600"
@@ -442,10 +442,10 @@ const Dashboard: React.FC = () => {
             return (
               <div
                 key={idx}
-                className={`p-6 rounded-xl shadow-sm border border-gray-100 ${stat.color} flex flex-col justify-between`}
+                className={`p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 ${stat.color} flex flex-col justify-between transition-colors`}
               >
                 <div>
-                  <p className="text-sm font-medium text-gray-500">
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {stat.label}
                   </p>
                   <p className={`mt-2 text-3xl font-bold ${stat.text}`}>
@@ -469,25 +469,25 @@ const Dashboard: React.FC = () => {
       {/* Owner Financial Insights Breakdown */}
       {isOwnerMode && (
         <div className="animate-in fade-in slide-in-from-top-4 duration-500 mb-8 mt-2">
-          <div className="bg-white rounded-[2rem] border border-gray-200 shadow-xl shadow-gray-900/5 overflow-hidden">
-            <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/30">
+          <div className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-200 dark:border-gray-700 shadow-xl shadow-gray-900/5 dark:shadow-black/20 overflow-hidden transition-colors">
+            <div className="px-8 py-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-gray-50/30 dark:bg-gray-800/30">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-primary/10 rounded-xl">
                   <TrendingUp className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 text-lg">Financial Overview</h3>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-widest">Global metrics</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-lg">Financial Overview</h3>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-widest">Global metrics</p>
                 </div>
               </div>
               <div className="flex gap-12">
                 <div className="text-right">
-                  <p className="text-xs font-bold text-green-600 uppercase tracking-tighter">Total Collected</p>
-                  <p className="text-xl font-black text-gray-900">₹{financialBreakdown.collected.total.toLocaleString()}</p>
+                  <p className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-tighter">Total Collected</p>
+                  <p className="text-xl font-black text-gray-900 dark:text-white">₹{financialBreakdown.collected.total.toLocaleString()}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-bold text-amber-600 uppercase tracking-tighter">Total Pending</p>
-                  <p className="text-xl font-black text-gray-900">₹{financialBreakdown.pending.total.toLocaleString()}</p>
+                  <p className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-tighter">Total Pending</p>
+                  <p className="text-xl font-black text-gray-900 dark:text-white">₹{financialBreakdown.pending.total.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -583,9 +583,9 @@ const Dashboard: React.FC = () => {
       )}
 
       {/* Recent Shipments Table Container */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[400px] flex flex-col">
-        <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <h2 className="text-lg font-semibold text-gray-800">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden min-h-[400px] flex flex-col transition-colors">
+        <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
             Recent Shipments
           </h2>
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
@@ -597,7 +597,7 @@ const Dashboard: React.FC = () => {
                 name="dashboard-search"
                 autoComplete="off"
                 placeholder="Search shipments..."
-                className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-full sm:w-64"
+                className="pl-9 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-full sm:w-64 bg-white dark:bg-gray-900 dark:text-white transition-colors"
                 value={search}
                 onChange={handleSearchChange}
               />
@@ -633,8 +633,8 @@ const Dashboard: React.FC = () => {
         {loading ? (
           // Table Row Skeletons
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-gray-600">
-              <thead className="bg-gray-50 text-xs uppercase font-medium text-gray-500">
+            <table className="w-full text-left text-gray-600 dark:text-gray-300">
+              <thead className="bg-gray-50 dark:bg-gray-800/50 text-xs uppercase font-medium text-gray-500 dark:text-gray-400">
                 <tr>
                   <th className="px-6 py-3">AWB No.</th>
                   <th className="px-6 py-3">Date</th>
@@ -697,13 +697,13 @@ const Dashboard: React.FC = () => {
         ) : shipments.length === 0 ? (
           /* Empty State UI */
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-            <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6">
-              <Package className="w-10 h-10 text-primary opacity-80" />
+            <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-6">
+              <Package className="w-10 h-10 text-primary dark:text-blue-400 opacity-80" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
               No Shipments Found
             </h3>
-            <p className="text-gray-500 max-w-sm mb-8">
+            <p className="text-gray-500 dark:text-gray-400 max-w-sm mb-8">
               You haven't created any shipments yet. Start by creating your
               first shipment invoice.
             </p>
@@ -718,8 +718,8 @@ const Dashboard: React.FC = () => {
         ) : (
           /* Table UI */
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-600">
-              <thead className="bg-gray-50 text-xs uppercase font-medium text-gray-500">
+            <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+              <thead className="bg-gray-50 dark:bg-gray-800/50 text-xs uppercase font-medium text-gray-500 dark:text-gray-400">
                 <tr>
                   <th className="px-6 py-3">AWB No.</th>
                   <th className="px-6 py-3">Date</th>
@@ -734,13 +734,13 @@ const Dashboard: React.FC = () => {
                   <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {shipments.map((shipment) => (
                   <tr
                     key={shipment.id}
-                    className="hover:bg-gray-50 transition-colors"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
-                    <td className="px-6 py-4 font-medium text-gray-900">
+                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
                       {shipment.awb_no || "N/A"}
                     </td>
                     <td className="px-6 py-4">
@@ -759,18 +759,18 @@ const Dashboard: React.FC = () => {
                     <td className="px-6 py-4">{shipment.destination}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-full text-xs font-semibold ${shipment.payment_type === 'Online'
-                        ? 'bg-blue-50 text-blue-700 border border-blue-100'
-                        : 'bg-orange-50 text-orange-700 border border-orange-100'
+                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-800'
+                        : 'bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border border-orange-100 dark:border-orange-800'
                         }`}>
                         {shipment.payment_type || 'Cash'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right font-bold text-gray-900">
+                    <td className="px-6 py-4 text-right font-bold text-gray-900 dark:text-white">
                       ₹{(shipment.final_billing_amount ?? shipment.billing_amount ?? shipment.total_amount ?? 0).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 text-center">
                       {shipment.payment_status === 'Cancelled' ? (
-                        <span className="px-2.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border bg-red-50 text-red-600 border-red-200 cursor-default flex items-center justify-center gap-1 w-fit mx-auto">
+                        <span className="px-2.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800 cursor-default flex items-center justify-center gap-1 w-fit mx-auto">
                           <Ban className="w-3 h-3" />
                           Cancelled
                         </span>
@@ -779,8 +779,8 @@ const Dashboard: React.FC = () => {
                         onClick={() => handleStatusToggle(shipment.id, shipment.payment_status as 'Paid' | 'Pending')}
                         disabled={togglingId === shipment.id}
                         className={`group relative px-2.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all active:scale-95 disabled:opacity-70 disabled:active:scale-100 ${shipment.payment_status === 'Paid'
-                          ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
-                          : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
+                          ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/40'
+                          : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/40'
                           }`}
                       >
                         {togglingId === shipment.id ? (
@@ -807,7 +807,7 @@ const Dashboard: React.FC = () => {
                         <Tooltip text="View Details">
                           <Link
                             to={`/shipments/${shipment.id}`}
-                            className="p-2 text-primary bg-blue-50 hover:bg-blue-100 rounded-xl transition-all active:scale-95"
+                            className="p-2 text-primary dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded-xl transition-all active:scale-95"
                           >
                             <Eye className="w-4 h-4" />
                           </Link>
@@ -816,7 +816,7 @@ const Dashboard: React.FC = () => {
                         <Tooltip text="Edit Shipment">
                           <Link
                             to={`/form/${shipment.id}`}
-                            className="p-2 text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-xl transition-all active:scale-95"
+                            className="p-2 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 dark:hover:bg-amber-900/40 rounded-xl transition-all active:scale-95"
                           >
                             <Edit2 className="w-4 h-4" />
                           </Link>
@@ -828,7 +828,7 @@ const Dashboard: React.FC = () => {
                             onClick={() =>
                               handleCancelClick(shipment.id, shipment.awb_no)
                             }
-                            className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-all active:scale-95"
+                            className="p-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-xl transition-all active:scale-95"
                           >
                             <XCircle className="w-4 h-4" />
                           </button>
@@ -858,22 +858,22 @@ const Dashboard: React.FC = () => {
 
         {/* Pagination Controls */}
         {shipments.length > 0 && (
-          <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center bg-gray-50">
-            <span className="text-sm text-gray-500">
+          <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               Showing Page {page} of {totalPages} ({totalCount} results)
             </span>
             <div className="flex gap-2">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="p-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -1016,24 +1016,24 @@ const Dashboard: React.FC = () => {
         title="Export Shipments"
         description={
           <div className="space-y-4 text-left mt-2">
-            <p className="text-sm text-gray-600">Select a date range to export shipments. Leave blank to export all.</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Select a date range to export shipments. Leave blank to export all.</p>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
                 <input
                   type="date"
                   value={exportStartDate}
                   onChange={(e) => setExportStartDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
                 <input
                   type="date"
                   value={exportEndDate}
                   onChange={(e) => setExportEndDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                 />
               </div>
             </div>

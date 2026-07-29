@@ -77,16 +77,16 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   ];
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-visible">
+    <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-visible transition-colors">
       <div className="grid grid-cols-1 lg:grid-cols-2">
 
         {/* Left Side: Physical Measurements & Weight */}
-        <div className="p-8 border-r border-gray-100 bg-gray-50/30">
+        <div className="p-8 border-r border-gray-100 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/30">
           <div className="flex items-center gap-3 mb-8">
-            <div className="bg-primary/5 p-2 rounded-lg">
+            <div className="bg-primary/5 dark:bg-primary/20 p-2 rounded-lg">
               <Box className="h-5 w-5 text-primary" />
             </div>
-            <h3 className="font-bold text-gray-900">Shipment Volume</h3>
+            <h3 className="font-bold text-gray-900 dark:text-white">Shipment Volume</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -97,7 +97,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
               value={pcs || ""}
               onChange={(e) => handleInternalChange("pcs", Number(e.target.value))}
               icon={Box}
-              className="font-semibold border-gray-200 focus:border-primary"
+              className="font-semibold border-gray-200 dark:border-gray-700 focus:border-primary"
             />
             <FormInput
               label="Volumetric Wt. (kg)"
@@ -107,7 +107,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
               value={volumetricWeight}
               onChange={(e) => handleInternalChange("volumetricWeight", e.target.value)}
               icon={Scale}
-              className="font-semibold border-gray-200 focus:border-primary"
+              className="font-semibold border-gray-200 dark:border-gray-700 focus:border-primary"
             />
             <div className="sm:col-span-2">
               <FormInput
@@ -118,15 +118,15 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                 value={weight}
                 onChange={(e) => handleInternalChange("weight", e.target.value)}
                 icon={Scale}
-                className="font-bold text-lg text-center border-gray-200 focus:border-primary bg-white"
+                className="font-bold text-lg text-center border-gray-200 dark:border-gray-700 focus:border-primary bg-white dark:bg-gray-900"
               />
             </div>
           </div>
 
-          <div className="mt-8 p-6 bg-white rounded-2xl border border-gray-100">
+          <div className="mt-8 p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">
+                <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-widest font-bold mb-1">
                   Product Value
                 </p>
                 <div className="flex items-center text-primary">
@@ -134,18 +134,18 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                   <span className="text-2xl font-black">{totalAmount.toLocaleString("en-IN")}</span>
                 </div>
               </div>
-              <Box className="h-8 w-8 text-gray-100" />
+              <Box className="h-8 w-8 text-gray-100 dark:text-gray-700" />
             </div>
           </div>
         </div>
 
         {/* Right Side: Financials & Payment */}
-        <div className="p-8 bg-white">
+        <div className="p-8 bg-white dark:bg-gray-800">
           <div className="flex items-center gap-3 mb-8">
-            <div className="bg-green-50 p-2 rounded-lg">
-              <CreditCard className="h-5 w-5 text-green-600" />
+            <div className="bg-green-50 dark:bg-green-900/20 p-2 rounded-lg">
+              <CreditCard className="h-5 w-5 text-green-600 dark:text-green-400" />
             </div>
-            <h3 className="font-bold text-gray-900">Billing & Payment</h3>
+            <h3 className="font-bold text-gray-900 dark:text-white">Billing & Payment</h3>
           </div>
 
           <div className="space-y-6">
@@ -159,14 +159,14 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                 onChange={(e) => handleInternalChange("billingAmount", Number(e.target.value))}
                 icon={IndianRupee}
                 error={errors["other.billingAmount"]}
-                className="text-center font-bold text-xl bg-gray-50/50 border-gray-200 text-gray-900 h-14 rounded-xl focus:border-green-500"
+                className="text-center font-bold text-xl bg-gray-50/50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white h-14 rounded-xl focus:border-green-500"
               />
             </div>
 
             {/* Tax Selection */}
             {canShowTax && (
-              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Tax Configuration</p>
+              <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
+                <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Tax Configuration</p>
                 <div className="flex flex-wrap gap-3">
                   {[
                     { id: 'none', label: 'No Tax' },
@@ -179,10 +179,10 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                       onClick={() => handleInternalChange("taxType", option.id)}
                       className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all font-medium text-sm ${taxType === option.id
                         ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
-                        : 'bg-white text-gray-600 border-gray-200 hover:border-primary/30'
+                        : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-primary/30'
                         }`}
                     >
-                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${taxType === option.id ? 'border-white' : 'border-gray-300'}`}>
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${taxType === option.id ? 'border-white' : 'border-gray-300 dark:border-gray-600'}`}>
                         {taxType === option.id && <div className="w-2 h-2 bg-white rounded-full" />}
                       </div>
                       {option.label}
@@ -197,19 +197,19 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
               <div className="space-y-2 px-2">
                 {taxType === 'cgst_sgst' ? (
                   <>
-                    <div className="flex justify-between text-sm text-gray-600">
+                    <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
                       <span>CGST (9%)</span>
-                      <span className="font-bold">₹{cgst.toLocaleString("en-IN")}</span>
+                      <span className="font-bold dark:text-gray-300">₹{cgst.toLocaleString("en-IN")}</span>
                     </div>
-                    <div className="flex justify-between text-sm text-gray-600">
+                    <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
                       <span>SGST (9%)</span>
-                      <span className="font-bold">₹{sgst.toLocaleString("en-IN")}</span>
+                      <span className="font-bold dark:text-gray-300">₹{sgst.toLocaleString("en-IN")}</span>
                     </div>
                   </>
                 ) : (
-                  <div className="flex justify-between text-sm text-gray-600">
+                  <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
                     <span>IGST (18%)</span>
-                    <span className="font-bold">₹{igst.toLocaleString("en-IN")}</span>
+                    <span className="font-bold dark:text-gray-300">₹{igst.toLocaleString("en-IN")}</span>
                   </div>
                 )}
               </div>
@@ -257,8 +257,8 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                 ]}
                 icon={CreditCard}
                 className={`font-semibold rounded-xl transition-all ${paymentStatus === 'Paid'
-                  ? 'text-green-600 bg-green-50/50 border-green-100'
-                  : 'text-amber-600 bg-amber-50/50 border-amber-100'
+                  ? 'text-green-600 dark:text-green-400 bg-green-50/50 dark:bg-green-900/20 border-green-100 dark:border-green-800'
+                  : 'text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-900/20 border-amber-100 dark:border-amber-800'
                   }`}
               />
               {paymentType === "Online" && upiConfigs && upiConfigs.length > 0 && (
@@ -284,7 +284,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                 value={utrNumber || ""}
                 onChange={(e) => handleInternalChange("utrNumber", e.target.value)}
                 icon={CreditCard}
-                className="font-medium bg-blue-50/30 border-blue-100 text-blue-900 h-12 focus:border-blue-500"
+                className="font-medium bg-blue-50/30 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800 text-blue-900 dark:text-blue-100 h-12 focus:border-blue-500"
               />
             )}
 
@@ -297,7 +297,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
                 value={ownerCost === 0 ? "" : ownerCost}
                 onChange={(e) => handleInternalChange("ownerCost", Number(e.target.value))}
                 icon={IndianRupee}
-                className="text-center font-medium bg-gray-50 border-gray-200 text-gray-600 h-10"
+                className="text-center font-medium bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 h-10"
               />
             )}
           </div>
@@ -305,12 +305,12 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
       </div>
 
       {/* Footer: Words */}
-      <div className="bg-gray-50 border-t border-gray-100 p-6 px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="bg-gray-50 dark:bg-gray-800/80 border-t border-gray-100 dark:border-gray-700 p-6 px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex flex-col sm:flex-row items-center gap-4">
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">
+          <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest whitespace-nowrap">
             Amount In Words
           </span>
-          <p className="text-gray-700 font-bold text-lg">
+          <p className="text-gray-700 dark:text-gray-300 font-bold text-lg">
             {amountInWords}
           </p>
         </div>

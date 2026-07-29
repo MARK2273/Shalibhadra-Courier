@@ -31,7 +31,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
 }) => {
   return (
     <div className={containerClassName}>
-      <label className="block text-sm font-medium text-gray-700 mb-1.5 ml-1">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 ml-1 transition-colors">
         {label}
       </label>
       <CustomSelect

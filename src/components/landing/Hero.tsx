@@ -40,23 +40,23 @@ const Hero: React.FC = () => {
   return (
     <div
       id="track"
-      className="relative pt-24 pb-16 lg:pt-32 lg:pb-24 flex items-center min-h-[90vh] bg-gradient-to-b from-blue-50/50 via-white to-white overflow-hidden"
+      className="relative pt-24 pb-16 lg:pt-32 lg:pb-24 flex items-center min-h-[90vh] bg-gradient-to-b from-blue-50/50 via-white to-white dark:from-blue-900/20 dark:via-gray-900 dark:to-gray-900 transition-colors overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="text-center lg:text-left space-y-8">
-            <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-sm font-medium mb-4">
-              <span className="flex h-2 w-2 rounded-full bg-blue-600 mr-2"></span>
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 text-blue-600 dark:text-blue-400 text-sm font-medium mb-4">
+              <span className="flex h-2 w-2 rounded-full bg-blue-600 dark:bg-blue-400 mr-2"></span>
               Fast • Secure • Real-Time Courier Tracking
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
               Global Logistics <br />
-              <span className="text-primary relative inline-block">
+              <span className="text-primary dark:text-blue-400 relative inline-block">
                 Simplified
                 <svg
-                  className="absolute w-full h-3 -bottom-1 left-0 text-blue-200 -z-10"
+                  className="absolute w-full h-3 -bottom-1 left-0 text-blue-200 dark:text-blue-900/50 -z-10"
                   viewBox="0 0 100 10"
                   preserveAspectRatio="none"
                 >
@@ -70,7 +70,7 @@ const Hero: React.FC = () => {
               </span>
             </h1>
 
-            <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
               Reliable, fast, and secure delivery services designed to move your
               business forward. Track your shipments instantly.
             </p>
@@ -78,9 +78,9 @@ const Hero: React.FC = () => {
             {/* Tracking Bar */}
             <div className="mt-8 max-w-lg mx-auto lg:mx-0">
               <form onSubmit={handleTrack} className="relative group">
-                <div className="absolute inset-0 bg-blue-200 opacity-20 blur-xl rounded-full group-hover:opacity-30 transition-opacity"></div>
+                <div className="absolute inset-0 bg-blue-200 dark:bg-blue-900 opacity-20 blur-xl rounded-full group-hover:opacity-30 transition-opacity"></div>
                 <div
-                  className={`relative flex items-center bg-white rounded-full shadow-lg border ${error ? "border-red-300 ring-4 ring-red-50" : "border-gray-100 focus-within:ring-4 focus-within:ring-blue-100"} p-1.5 transition-all`}
+                  className={`relative flex items-center bg-white dark:bg-gray-800 rounded-full shadow-lg border ${error ? "border-red-300 ring-4 ring-red-50 dark:ring-red-900/20" : "border-gray-100 dark:border-gray-700 focus-within:ring-4 focus-within:ring-blue-100 dark:focus-within:ring-blue-900/30"} p-1.5 transition-all`}
                 >
                   <div className="pl-4 text-gray-400">
                     <Search className="h-5 w-5" />
@@ -93,7 +93,7 @@ const Hero: React.FC = () => {
                       if (error) setError(null);
                     }}
                     placeholder="Enter Tracking ID (e.g. 2026270001)"
-                    className="w-full px-4 py-3 bg-transparent border-none focus:ring-0 text-gray-900 placeholder-gray-400 text-base"
+                    className="w-full px-4 py-3 bg-transparent border-none focus:ring-0 text-gray-900 dark:text-white placeholder-gray-400 text-base"
                     disabled={isLoading}
                   />
                   <button
@@ -116,18 +116,18 @@ const Hero: React.FC = () => {
               </form>
 
               {error && (
-                <div className="mt-3 px-4 flex items-center gap-2 text-sm text-red-600 font-medium animate-in fade-in slide-in-from-top-1">
-                  <span className="flex h-1.5 w-1.5 rounded-full bg-red-600"></span>
+                <div className="mt-3 px-4 flex items-center gap-2 text-sm text-red-600 dark:text-red-400 font-medium animate-in fade-in slide-in-from-top-1">
+                  <span className="flex h-1.5 w-1.5 rounded-full bg-red-600 dark:bg-red-400"></span>
                   {error}
                 </div>
               )}
 
               <div className="mt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <p className="text-sm text-gray-400">Try: AWB12345678</p>
-                <span className="hidden sm:inline text-gray-300">|</span>
+                <p className="text-sm text-gray-400 dark:text-gray-500">Try: AWB12345678</p>
+                <span className="hidden sm:inline text-gray-300 dark:text-gray-600">|</span>
                 <a
                   href="#services"
-                  className="text-sm font-medium text-primary hover:underline"
+                  className="text-sm font-medium text-primary dark:text-blue-400 hover:underline"
                 >
                   View Services
                 </a>

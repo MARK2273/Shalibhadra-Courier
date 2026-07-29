@@ -18,7 +18,7 @@ const FormInput: React.FC<FormInputProps> = ({
 }) => {
   return (
     <div className={containerClassName}>
-      <label className="block text-sm font-medium text-gray-700 mb-1.5 ml-1">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 ml-1 transition-colors">
         {label}
       </label>
       <div className="relative group">
@@ -28,10 +28,10 @@ const FormInput: React.FC<FormInputProps> = ({
           </div>
         )}
         <input
-          className={`block w-full ${Icon ? "pl-10" : "pl-4"} pr-4 h-12 rounded-xl bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 outline-none sm:text-sm placeholder:text-gray-400 font-medium text-gray-900 shadow-sm ${
+          className={`block w-full ${Icon ? "pl-10" : "pl-4"} pr-4 h-12 rounded-xl bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 outline-none sm:text-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 font-medium text-gray-900 dark:text-white shadow-sm ${
             error
-              ? "border-2 border-red-400 ring-2 ring-red-500/10 bg-red-50/50"
-              : "border-gray-200 border"
+              ? "border-2 border-red-400 ring-2 ring-red-500/10 bg-red-50/50 dark:bg-red-900/20"
+              : "border-gray-200 dark:border-gray-700 border"
           } ${className}`}
           {...props}
         />

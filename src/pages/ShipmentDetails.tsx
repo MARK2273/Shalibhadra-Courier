@@ -25,11 +25,11 @@ const InfoRow: React.FC<{ label: string; value: React.ReactNode }> = ({
   label,
   value,
 }) => (
-  <div className="flex flex-col sm:flex-row sm:items-center py-3 border-b border-gray-50 last:border-0">
-    <span className="text-sm font-medium text-gray-500 sm:w-44 shrink-0">
+  <div className="flex flex-col sm:flex-row sm:items-center py-3 border-b border-gray-50 dark:border-gray-700/50 last:border-0 transition-colors">
+    <span className="text-sm font-medium text-gray-500 dark:text-gray-400 sm:w-44 shrink-0">
       {label}
     </span>
-    <span className="text-sm text-gray-900 mt-1 sm:mt-0">{value || "—"}</span>
+    <span className="text-sm text-gray-900 dark:text-white mt-1 sm:mt-0">{value || "—"}</span>
   </div>
 );
 
@@ -39,10 +39,10 @@ const SectionCard: React.FC<{
   icon: React.ReactNode;
   children: React.ReactNode;
 }> = ({ title, icon, children }) => (
-  <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-      <div className="bg-primary/10 p-2 rounded-lg">{icon}</div>
-      <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
+    <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center gap-3">
+      <div className="bg-primary/10 dark:bg-primary/20 p-2 rounded-lg">{icon}</div>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{title}</h2>
     </div>
     <div className="px-6 py-4">{children}</div>
   </div>
@@ -204,24 +204,24 @@ const ShipmentDetails: React.FC = () => {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gray-200 rounded-lg animate-pulse" />
-          <div className="h-7 w-48 bg-gray-200 rounded animate-pulse" />
+          <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+          <div className="h-7 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
         </div>
         {Array(3)
           .fill(0)
           .map((_, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 transition-colors"
             >
-              <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-4" />
+              <div className="h-5 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-4" />
               <div className="space-y-3">
                 {Array(4)
                   .fill(0)
                   .map((_, j) => (
                     <div key={j} className="flex gap-4">
-                      <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
-                      <div className="h-4 w-48 bg-gray-200 rounded animate-pulse" />
+                      <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                      <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
                     </div>
                   ))}
               </div>
@@ -235,13 +235,13 @@ const ShipmentDetails: React.FC = () => {
   if (error || !shipment) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
-          <AlertCircle className="w-10 h-10 text-danger opacity-80" />
+        <div className="w-20 h-20 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-6">
+          <AlertCircle className="w-10 h-10 text-danger dark:text-red-400 opacity-80" />
         </div>
-        <h3 className="text-xl font-bold text-gray-900 mb-2">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
           {error || "Something went wrong"}
         </h3>
-        <p className="text-gray-500 max-w-sm mb-8">
+        <p className="text-gray-500 dark:text-gray-400 max-w-sm mb-8">
           We couldn&apos;t load this shipment. Please check the URL or go back
           to the dashboard.
         </p>
@@ -264,23 +264,23 @@ const ShipmentDetails: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate("/dashboard")}
-            className="p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+            className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             title="Back"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
               Shipment Details
             </h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
               AWB: {shipment.awb_no || "N/A"} · Created{" "}
               {formatDate(shipment.created_at)}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 text-primary uppercase">
+          <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 dark:bg-blue-900/30 text-primary dark:text-blue-400 uppercase">
             {shipment.service || "Standard"}
           </span>
           {shipment.tracking_url && (
@@ -310,33 +310,33 @@ const ShipmentDetails: React.FC = () => {
           {
             label: "Origin",
             value: shipment.origin,
-            color: "bg-white",
-            text: "text-gray-900",
+            color: "bg-white dark:bg-gray-800",
+            text: "text-gray-900 dark:text-white",
           },
           {
             label: "Destination",
             value: shipment.destination,
-            color: "bg-white",
-            text: "text-gray-900",
+            color: "bg-white dark:bg-gray-800",
+            text: "text-gray-900 dark:text-white",
           },
           {
             label: "Billing Amount",
             value: `₹${(shipment.final_billing_amount ?? shipment.billing_amount ?? 0).toLocaleString()}`,
-            color: "bg-green-50",
-            text: "text-green-600",
+            color: "bg-green-50 dark:bg-green-900/20",
+            text: "text-green-600 dark:text-green-400",
           },
           {
             label: "Boxes",
             value: shipment.box_count.toString(),
-            color: "bg-white",
-            text: "text-primary",
+            color: "bg-white dark:bg-gray-800",
+            text: "text-primary dark:text-blue-400",
           },
         ].map((stat, idx) => (
           <div
             key={idx}
-            className={`p-5 rounded-xl shadow-sm border border-gray-100 ${stat.color}`}
+            className={`p-5 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors ${stat.color}`}
           >
-            <p className="text-sm font-medium text-gray-500">{stat.label}</p>
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.label}</p>
             <p className={`mt-1 text-2xl font-bold ${stat.text}`}>
               {stat.value}
             </p>
@@ -362,7 +362,7 @@ const ShipmentDetails: React.FC = () => {
             value={formatDate(shipment.invoice_date)}
           />
           <InfoRow label="Service" value={shipment.service} />
-          <InfoRow label="Shipment Type" value={<span className="font-bold text-primary">{shipment.shipment_type || 'Non-Docs'}</span>} />
+          <InfoRow label="Shipment Type" value={<span className="font-bold text-primary dark:text-blue-400">{shipment.shipment_type || 'Non-Docs'}</span>} />
           <InfoRow label="Service Details" value={shipment.service_details} />
           <InfoRow label="Port of Loading" value={shipment.port_of_loading} />
         </SectionCard>
@@ -434,19 +434,19 @@ const ShipmentDetails: React.FC = () => {
             label="Payment Status"
             value={
               <span className={`px-2 py-1 rounded-full text-xs font-bold border ${shipment.payment_status === 'Paid'
-                ? 'bg-green-50 text-green-700 border-green-100'
+                ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-100 dark:border-green-800'
                 : shipment.payment_status === 'Cancelled'
-                ? 'bg-red-50 text-red-600 border-red-100'
-                : 'bg-amber-50 text-amber-700 border-amber-100'
+                ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-100 dark:border-red-800'
+                : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-800'
                 }`}>
                 {shipment.payment_status || 'Pending'}
               </span>
             }
           />
           {isOwnerMode && (
-            <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-100 flex justify-between items-center">
-              <span className="text-sm font-semibold text-green-700">Cost to Owner</span>
-              <span className="text-lg font-bold text-green-700">₹{shipment.owner_cost || 0}</span>
+            <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-100 dark:border-green-800 flex justify-between items-center transition-colors">
+              <span className="text-sm font-semibold text-green-700 dark:text-green-400">Cost to Owner</span>
+              <span className="text-lg font-bold text-green-700 dark:text-green-400">₹{shipment.owner_cost || 0}</span>
             </div>
           )}
         </SectionCard>
@@ -458,14 +458,14 @@ const ShipmentDetails: React.FC = () => {
         icon={<Package className="w-5 h-5 text-primary" />}
       >
         {shipment.shipment_type === 'Docs' ? (
-          <div className="py-8 text-center bg-blue-50 rounded-lg border border-blue-100">
+          <div className="py-8 text-center bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800 transition-colors">
             <FileText className="w-10 h-10 text-blue-400 mx-auto mb-3" />
-            <p className="text-blue-700 font-medium">This shipment is regarding the document only.</p>
+            <p className="text-blue-700 dark:text-blue-200 font-medium">This shipment is regarding the document only.</p>
           </div>
         ) : (
           <div className="overflow-x-auto -mx-6 -mb-4">
-            <table className="w-full text-left text-sm text-gray-600">
-              <thead className="bg-gray-50 text-xs uppercase font-medium text-gray-500">
+            <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+              <thead className="bg-gray-50 dark:bg-gray-800/50 text-xs uppercase font-medium text-gray-500 dark:text-gray-400">
                 <tr>
                   <th className="px-6 py-3">#</th>
                   <th className="px-6 py-3">Description</th>
@@ -476,11 +476,11 @@ const ShipmentDetails: React.FC = () => {
                   <th className="px-6 py-3 text-right">Amount</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {shipment.packages.map((pkg: PackageItem, idx: number) => (
-                  <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-3 text-gray-400">{idx + 1}</td>
-                    <td className="px-6 py-3 font-medium text-gray-900">
+                  <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <td className="px-6 py-3 text-gray-400 dark:text-gray-500">{idx + 1}</td>
+                    <td className="px-6 py-3 font-medium text-gray-900 dark:text-white">
                       {pkg.description || "—"}
                     </td>
                     <td className="px-6 py-3">{pkg.hsnCode || "—"}</td>
@@ -491,7 +491,7 @@ const ShipmentDetails: React.FC = () => {
                     <td className="px-6 py-3 text-right">
                       {pkg.rate != null ? `${shipment.item_currency || 'INR'} ${pkg.rate}` : "—"}
                     </td>
-                    <td className="px-6 py-3 text-right font-medium text-gray-900">
+                    <td className="px-6 py-3 text-right font-medium text-gray-900 dark:text-white">
                       {pkg.amount != null ? `${shipment.item_currency || 'INR'} ${pkg.amount}` : "—"}
                     </td>
                   </tr>

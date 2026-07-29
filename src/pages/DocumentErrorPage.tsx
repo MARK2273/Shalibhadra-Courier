@@ -38,14 +38,14 @@ const DocumentErrorPage: React.FC = () => {
   const { title, message, icon } = getErrorDetails();
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 max-w-md w-full text-center">
-        <div className="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4 font-sans transition-colors">
+      <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 max-w-md w-full text-center transition-colors">
+        <div className="bg-slate-50 dark:bg-slate-700/50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors">
           {icon}
         </div>
         
-        <h1 className="text-2xl font-bold text-slate-900 mb-3">{title}</h1>
-        <p className="text-slate-600 mb-8 leading-relaxed">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">{title}</h1>
+        <p className="text-slate-600 dark:text-slate-300 mb-8 leading-relaxed">
           {message}
         </p>
 
@@ -57,8 +57,8 @@ const DocumentErrorPage: React.FC = () => {
           Back to Home
         </Link>
         
-        <div className="mt-8 pt-6 border-t border-slate-100">
-          <p className="text-sm text-slate-400">
+        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700">
+          <p className="text-sm text-slate-400 dark:text-slate-500">
             Need help? Contact our support team.
           </p>
         </div>

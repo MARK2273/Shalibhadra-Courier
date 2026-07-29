@@ -9,6 +9,7 @@ import ShipmentDetails from "./pages/ShipmentDetails";
 import Layout from "./components/layout/Layout";
 import { OwnerModeProvider } from "./context/OwnerModeContext";
 
+import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
   // useEffect(() => {
@@ -17,29 +18,31 @@ function App() {
   // }, []);
 
   return (
-    <OwnerModeProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/document-error" element={<DocumentErrorPage />} />
+    <ThemeProvider>
+      <OwnerModeProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/document-error" element={<DocumentErrorPage />} />
 
-          {/* Protected Routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<Layout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/form" element={<CourierForm />} />
-              <Route path="/form/:id" element={<CourierForm />} />
-              <Route path="/shipments/:id" element={<ShipmentDetails />} />
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Layout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/form" element={<CourierForm />} />
+                <Route path="/form/:id" element={<CourierForm />} />
+                <Route path="/shipments/:id" element={<ShipmentDetails />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Catch all - redirect to dashboard if logged in, else landing */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </OwnerModeProvider>
+            {/* Catch all - redirect to dashboard if logged in, else landing */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </OwnerModeProvider>
+    </ThemeProvider>
   );
 }
 

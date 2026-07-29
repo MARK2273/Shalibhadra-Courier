@@ -31,19 +31,19 @@ const Modal: React.FC<ModalProps> = ({
 
   const variantStyles = {
     danger: {
-      iconBg: "bg-red-100",
-      iconColor: "text-red-600",
-      buttonBg: "bg-red-600 hover:bg-red-700 shadow-md shadow-red-200",
+      iconBg: "bg-red-100 dark:bg-red-900/40",
+      iconColor: "text-red-600 dark:text-red-400",
+      buttonBg: "bg-red-600 hover:bg-red-700 shadow-md shadow-red-200 dark:shadow-none",
     },
     primary: {
-      iconBg: "bg-blue-100",
-      iconColor: "text-primary",
-      buttonBg: "bg-primary hover:bg-blue-600 shadow-md shadow-blue-200",
+      iconBg: "bg-blue-100 dark:bg-blue-900/40",
+      iconColor: "text-primary dark:text-blue-400",
+      buttonBg: "bg-primary hover:bg-blue-600 shadow-md shadow-blue-200 dark:shadow-none",
     },
     warning: {
-      iconBg: "bg-amber-100",
-      iconColor: "text-amber-600",
-      buttonBg: "bg-amber-600 hover:bg-amber-700 shadow-md shadow-amber-200",
+      iconBg: "bg-amber-100 dark:bg-amber-900/40",
+      iconColor: "text-amber-600 dark:text-amber-400",
+      buttonBg: "bg-amber-600 hover:bg-amber-700 shadow-md shadow-amber-200 dark:shadow-none",
     },
   };
 
@@ -59,7 +59,7 @@ const Modal: React.FC<ModalProps> = ({
       />
 
       {/* Modal Content */}
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-[90vw] sm:max-w-sm w-full animate-in zoom-in-95 duration-200 border border-gray-100 p-6 m-4">
+      <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-[90vw] sm:max-w-sm w-full animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-gray-700 p-6 m-4 transition-colors">
         <div className="flex flex-col items-center text-center">
           {Icon && (
             <div
@@ -69,11 +69,11 @@ const Modal: React.FC<ModalProps> = ({
             </div>
           )}
 
-          <h3 className="text-xl font-bold text-gray-900 mb-2 tracking-tight">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
             {title}
           </h3>
 
-          <div className="text-gray-500 text-sm mb-6 leading-relaxed">
+          <div className="text-gray-500 dark:text-gray-400 text-sm mb-6 leading-relaxed">
             {description}
           </div>
 
@@ -81,7 +81,7 @@ const Modal: React.FC<ModalProps> = ({
             <button
               onClick={onClose}
               disabled={isConfirmLoading}
-              className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all disabled:opacity-50 active:scale-95"
+              className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all disabled:opacity-50 active:scale-95"
             >
               {cancelLabel}
             </button>

@@ -115,7 +115,7 @@ export interface CourierData {
 }
 
 const Skeleton = ({ className }: { className?: string }) => (
-  <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
+  <div className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`} />
 );
 
 const FormSkeleton = () => (
@@ -128,7 +128,7 @@ const FormSkeleton = () => (
       </div>
     </div>
 
-    <div className="bg-white p-8 rounded-3xl border border-gray-100 space-y-6">
+    <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 space-y-6 transition-colors">
       <Skeleton className="h-6 w-48" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Skeleton className="h-12 w-full rounded-xl" />
@@ -139,7 +139,7 @@ const FormSkeleton = () => (
     </div>
 
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <div className="bg-white p-8 rounded-3xl border border-gray-100 space-y-6">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 space-y-6 transition-colors">
         <Skeleton className="h-6 w-48" />
         <Skeleton className="h-12 w-full rounded-xl" />
         <Skeleton className="h-24 w-full rounded-xl" />
@@ -148,7 +148,7 @@ const FormSkeleton = () => (
           <Skeleton className="h-12 w-full rounded-xl" />
         </div>
       </div>
-      <div className="bg-white p-8 rounded-3xl border border-gray-100 space-y-6">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 space-y-6 transition-colors">
         <Skeleton className="h-6 w-48" />
         <Skeleton className="h-12 w-full rounded-xl" />
         <Skeleton className="h-24 w-full rounded-xl" />
@@ -805,14 +805,14 @@ const CourierForm: React.FC = () => {
     <div className="max-w-[1200px] mx-auto pb-12">
       {/* Page Header */}
       <div className="mb-8 flex items-center gap-3">
-        <div className="bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
-          <Truck className="h-8 w-8 text-primary" />
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
+          <Truck className="h-8 w-8 text-primary dark:text-blue-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             {isEditMode ? "Edit Shipment" : "Create New Shipment"}
           </h1>
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             {isEditMode
               ? "Update existing shipment details"
               : "Fill shipment, invoice and package details below"}
@@ -823,7 +823,7 @@ const CourierForm: React.FC = () => {
           <button
             type="button"
             onClick={handleClone}
-            className="ml-auto flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 transition-colors border border-indigo-100 font-medium"
+            className="ml-auto flex items-center gap-2 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors border border-indigo-100 dark:border-indigo-800 font-medium"
           >
             <Copy className="h-4 w-4" />
             Clone Shipment
@@ -1186,12 +1186,12 @@ const CourierForm: React.FC = () => {
         </ShipmentSectionCard>
         {/* Items Table / Docs Remark */}
         {formData.header.shipmentType === "Docs" ? (
-          <div className="bg-blue-50 border border-blue-100 rounded-3xl p-8 text-center space-y-3">
-            <div className="bg-blue-100 w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-2">
-              <FileText className="h-6 w-6 text-blue-600" />
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-3xl p-8 text-center space-y-3 transition-colors">
+            <div className="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-2">
+              <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
-            <h3 className="text-lg font-bold text-blue-900">Document Shipment</h3>
-            <p className="text-blue-700 max-w-md mx-auto">
+            <h3 className="text-lg font-bold text-blue-900 dark:text-blue-100">Document Shipment</h3>
+            <p className="text-blue-700 dark:text-blue-200 max-w-md mx-auto">
               This shipment is regarding the document only. No item details are required.
             </p>
           </div>
@@ -1243,12 +1243,12 @@ const CourierForm: React.FC = () => {
         {submitStatus && (
           <div
             className={`p-4 rounded-xl border flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${submitStatus.type === "success"
-              ? "bg-green-50 border-green-200 text-green-700"
-              : "bg-red-50 border-red-200 text-red-700"
+              ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400"
+              : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-400"
               }`}
           >
             <div
-              className={`p-1.5 rounded-full ${submitStatus.type === "success" ? "bg-green-100" : "bg-red-100"}`}
+              className={`p-1.5 rounded-full ${submitStatus.type === "success" ? "bg-green-100 dark:bg-green-900/40" : "bg-red-100 dark:bg-red-900/40"}`}
             >
               {submitStatus.type === "success" ? (
                 <Save className="h-4 w-4" />

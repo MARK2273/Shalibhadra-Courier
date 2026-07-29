@@ -81,16 +81,14 @@ const ItemDescriptionCombobox = React.forwardRef<
           }}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className={`block w-full pl-3 pr-8 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm font-medium ${
-            searchTerm ? "text-gray-900" : "text-gray-400"
-          } ${
-            error
-              ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
-              : "border-gray-200"
-          }`}
+          className={`block w-full pl-3 pr-8 py-2 text-sm border rounded-lg bg-white dark:bg-gray-800 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm font-medium ${searchTerm ? "text-gray-900 dark:text-white" : "text-gray-400 dark:text-gray-500"
+            } ${error
+              ? "border-2 border-red-400 bg-red-50/50 dark:bg-red-900/20 ring-2 ring-red-500/10"
+              : "border-gray-200 dark:border-gray-700"
+            }`}
         />
         <div
-          className="absolute inset-y-0 right-0 pr-2 flex items-center cursor-pointer text-gray-400 hover:text-gray-600"
+          className="absolute inset-y-0 right-0 pr-2 flex items-center cursor-pointer text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           onClick={() => setIsOpen(!isOpen)}
         >
           <svg
@@ -108,12 +106,12 @@ const ItemDescriptionCombobox = React.forwardRef<
           </svg>
         </div>
         {isOpen && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto overflow-x-hidden">
+          <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto overflow-x-hidden">
             {filteredOptions.length > 0 ? (
               filteredOptions.map((opt) => (
                 <div
                   key={opt.id}
-                  className="px-3 py-2 cursor-pointer hover:bg-blue-50 text-sm text-gray-900 whitespace-normal break-words"
+                  className="px-3 py-2 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 text-sm text-gray-900 dark:text-white whitespace-normal break-words"
                   onClick={() => {
                     setSearchTerm(opt.name);
                     onChange(opt.name);
@@ -124,7 +122,7 @@ const ItemDescriptionCombobox = React.forwardRef<
                 </div>
               ))
             ) : (
-              <div className="px-3 py-2 text-sm text-gray-500">
+              <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
                 No items found
               </div>
             )}
@@ -180,13 +178,13 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-visible">
-      <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center rounded-t-2xl">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-visible transition-colors">
+      <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center rounded-t-2xl">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-100 rounded-lg text-primary">
+          <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-primary dark:text-blue-400">
             <ClipboardList className="h-5 w-5" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-800">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
             Shipment Items
           </h3>
           {errors["items"] && (
@@ -208,7 +206,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
       <div className="overflow-visible">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-50/50 text-gray-500 text-xs uppercase tracking-wider font-semibold border-b border-gray-100 hidden md:table-row">
+            <tr className="bg-gray-50/50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider font-semibold border-b border-gray-100 dark:border-gray-700 hidden md:table-row">
               <th className="px-4 py-4 w-24">Box</th>
               <th className="px-4 py-4 w-[28%]">Description</th>
               <th className="px-4 py-4 w-28">HS Code</th>
@@ -218,7 +216,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
               <th className="px-4 py-4 w-12 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
             {items.map((item) => (
               <tr
                 key={item.id}
@@ -234,11 +232,12 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                     }
                   }
                 }}
-                className="group hover:bg-blue-50/30 transition-colors flex flex-col md:table-row p-4 md:p-0 border-b md:border-none relative"
+                // }}
+                className="group hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors flex flex-col md:table-row p-4 md:p-0 border-b md:border-none relative"
               >
                 {/* Mobile Label */}
                 <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
-                  <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
+                  <span className="md:hidden text-xs font-semibold text-gray-400 dark:text-gray-500 mb-1">
                     Box No
                   </span>
                   <div className="w-full md:w-24">
@@ -253,7 +252,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                 </td>
 
                 <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
-                  <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
+                  <span className="md:hidden text-xs font-semibold text-gray-400 dark:text-gray-500 mb-1">
                     Description
                   </span>
                   <div className="relative">
@@ -279,7 +278,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                 </td>
 
                 <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
-                  <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
+                  <span className="md:hidden text-xs font-semibold text-gray-400 dark:text-gray-500 mb-1">
                     HS
                   </span>
                   <input
@@ -289,11 +288,10 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                       onItemChange(item.id, "hsnCode", e.target.value)
                     }
                     placeholder="HS"
-                    className={`block w-full px-3 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-medium ${
-                      errors[`items.${items.indexOf(item)}.hsnCode`]
-                        ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
-                        : "border-gray-200"
-                    }`}
+                    className={`block w-full px-3 py-2 text-sm border rounded-lg bg-white dark:bg-gray-800 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-medium text-gray-900 dark:text-white ${errors[`items.${items.indexOf(item)}.hsnCode`]
+                        ? "border-2 border-red-400 bg-red-50/50 dark:bg-red-900/20 ring-2 ring-red-500/10"
+                        : "border-gray-200 dark:border-gray-700"
+                      }`}
                   />
                   <div className="h-4">
                     {errors[`items.${items.indexOf(item)}.hsnCode`] && (
@@ -305,7 +303,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                 </td>
 
                 <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
-                  <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
+                  <span className="md:hidden text-xs font-semibold text-gray-400 dark:text-gray-500 mb-1">
                     Quantity
                   </span>
                   <input
@@ -316,11 +314,10 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                     onChange={(e) =>
                       onItemChange(item.id, "quantity", Number(e.target.value))
                     }
-                    className={`block w-full px-2 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-bold text-gray-700 ${
-                      errors[`items.${items.indexOf(item)}.quantity`]
-                        ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
-                        : "border-gray-200"
-                    }`}
+                    className={`block w-full px-2 py-2 text-sm border rounded-lg bg-white dark:bg-gray-800 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-bold text-gray-700 dark:text-gray-300 ${errors[`items.${items.indexOf(item)}.quantity`]
+                        ? "border-2 border-red-400 bg-red-50/50 dark:bg-red-900/20 ring-2 ring-red-500/10"
+                        : "border-gray-200 dark:border-gray-700"
+                      }`}
                   />
                   <div className="h-4">
                     {errors[`items.${items.indexOf(item)}.quantity`] && (
@@ -332,7 +329,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                 </td>
 
                 <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
-                  <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
+                  <span className="md:hidden text-xs font-semibold text-gray-400 dark:text-gray-500 mb-1">
                     Rate
                   </span>
                   <input
@@ -343,11 +340,10 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                     onChange={(e) =>
                       onItemChange(item.id, "rate", Number(e.target.value))
                     }
-                    className={`block w-full px-3 py-2 text-sm border rounded-lg bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-medium ${
-                      errors[`items.${items.indexOf(item)}.rate`]
-                        ? "border-2 border-red-400 bg-red-50/50 ring-2 ring-red-500/10"
-                        : "border-gray-200"
-                    }`}
+                    className={`block w-full px-3 py-2 text-sm border rounded-lg bg-white dark:bg-gray-800 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-center font-medium text-gray-900 dark:text-white ${errors[`items.${items.indexOf(item)}.rate`]
+                        ? "border-2 border-red-400 bg-red-50/50 dark:bg-red-900/20 ring-2 ring-red-500/10"
+                        : "border-gray-200 dark:border-gray-700"
+                      }`}
                   />
                   <div className="h-4">
                     {errors[`items.${items.indexOf(item)}.rate`] && (
@@ -359,19 +355,19 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                 </td>
 
                 <td className="px-4 py-3 md:py-4 flex flex-col md:table-cell">
-                  <span className="md:hidden text-xs font-semibold text-gray-400 mb-1">
+                  <span className="md:hidden text-xs font-semibold text-gray-400 dark:text-gray-500 mb-1">
                     Amount
                   </span>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                      <IndianRupee className="h-3 w-3 text-gray-400" />
+                      <IndianRupee className="h-3 w-3 text-gray-400 dark:text-gray-500" />
                     </div>
                     <input
                       type="number"
                       step="any"
                       value={item.amount === 0 ? "" : item.amount}
                       readOnly
-                      className="block w-full pl-6 pr-3 py-2 text-sm border-transparent rounded-lg bg-gray-50 text-gray-500 font-bold text-right shadow-inner"
+                      className="block w-full pl-6 pr-3 py-2 text-sm border-transparent rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400 font-bold text-right shadow-inner"
                     />
                   </div>
                   <div className="h-4"></div>
@@ -381,7 +377,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
                   <button
                     type="button"
                     onClick={() => onRemoveItem(item.id)}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                    className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-all"
                     title="Remove Item"
                   >
                     <Trash2 className="h-5 w-5" />
@@ -393,7 +389,7 @@ const ShipmentItemsTable: React.FC<ShipmentItemsTableProps> = ({
               <tr>
                 <td
                   colSpan={7}
-                  className="px-6 py-12 text-center text-gray-400 italic"
+                  className="px-6 py-12 text-center text-gray-400 dark:text-gray-500 italic"
                 >
                   No items added. Click "Add Item" to start.
                 </td>

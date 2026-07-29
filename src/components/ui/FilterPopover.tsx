@@ -71,13 +71,13 @@ const FilterPopover: React.FC<FilterPopoverProps> = ({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-2 px-4 py-2 border rounded-xl text-sm font-semibold transition-all ${isOpen || activeFilterCount > 0
-            ? 'bg-primary text-white border-primary shadow-lg shadow-blue-200'
-            : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+            ? 'bg-primary text-white border-primary shadow-lg shadow-blue-200 dark:shadow-none'
+            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
           }`}
       >
         <span>Filter By</span>
         {activeFilterCount > 0 && (
-          <span className="flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 bg-white text-primary rounded-full text-[10px] font-black shadow-sm">
+          <span className="flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 bg-white dark:bg-gray-700 text-primary dark:text-blue-400 rounded-full text-[10px] font-black shadow-sm">
             {activeFilterCount}
           </span>
         )}
@@ -85,11 +85,11 @@ const FilterPopover: React.FC<FilterPopoverProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-80 bg-white rounded-[2rem] border border-gray-100 shadow-2xl p-6 z-50 animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute right-0 mt-3 w-80 bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-2xl p-6 z-50 animate-in fade-in zoom-in-95 duration-200 transition-colors">
           <div className="space-y-6">
             {fields.map((field) => (
               <div key={field.id} className="relative">
-                <label className="block text-[10px] font-black text-gray-700 uppercase tracking-widest mb-3">
+                <label className="block text-[10px] font-black text-gray-700 dark:text-gray-400 uppercase tracking-widest mb-3">
                   {field.label}
                 </label>
 
@@ -108,23 +108,23 @@ const FilterPopover: React.FC<FilterPopoverProps> = ({
                     value={stagedValues[field.id] || ''}
                     onChange={(e) => handleValueChange(field.id, e.target.value)}
                     placeholder={field.placeholder}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm font-bold text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                 )}
               </div>
             ))}
 
             {/* Footer Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
               <button
                 onClick={handleInternalClear}
-                className="flex-1 px-4 py-3 rounded-2xl text-sm font-black text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all text-center"
+                className="flex-1 px-4 py-3 rounded-2xl text-sm font-black text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-all text-center"
               >
                 Clear Filters
               </button>
               <button
                 onClick={handleApply}
-                className="flex-1 px-4 py-3 bg-primary text-white rounded-2xl text-sm font-black hover:bg-blue-600 shadow-lg shadow-blue-200 active:scale-95 transition-all text-center"
+                className="flex-1 px-4 py-3 bg-primary text-white rounded-2xl text-sm font-black hover:bg-blue-600 shadow-lg shadow-blue-200 dark:shadow-none active:scale-95 transition-all text-center"
               >
                 Apply Filter
               </button>

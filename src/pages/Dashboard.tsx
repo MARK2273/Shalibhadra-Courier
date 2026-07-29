@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, ChevronLeft, ChevronRight, Edit2, XCircle, Eye, Package, Lock, Unlock, TrendingUp, TrendingDown, Minus, CreditCard, Loader2, Trash2, Ban } from "lucide-react";
-import api, { cancelShipment, updatePaymentStatus, permanentDeleteShipment } from "../api/api";
+import { Plus, Search, ChevronLeft, ChevronRight, Edit2, XCircle, Eye, Package, Lock, Unlock, TrendingUp, TrendingDown, Minus, CreditCard, Loader2, Trash2, Ban, Download } from "lucide-react";
+import api, { cancelShipment, updatePaymentStatus, permanentDeleteShipment, exportShipments } from "../api/api";
 import Modal from "../components/ui/Modal";
 import Tooltip from "../components/ui/Tooltip";
 import FilterPopover from "../components/ui/FilterPopover";
@@ -86,6 +86,12 @@ const Dashboard: React.FC = () => {
   });
   const [isPermanentDeleting, setIsPermanentDeleting] = useState(false);
   const [permanentDeleteError, setPermanentDeleteError] = useState<string | null>(null);
+
+  // Export State
+  const [exportModal, setExportModal] = useState(false);
+  const [exportStartDate, setExportStartDate] = useState("");
+  const [exportEndDate, setExportEndDate] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
 
   // Check if current user is admin (can_show_tax)
   const isAdminUser = React.useMemo(() => {
@@ -241,6 +247,28 @@ const Dashboard: React.FC = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
     setPage(1); // Reset to first page on new search
+  };
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const blob = await exportShipments(exportStartDate, exportEndDate);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "shipments_export.csv";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      setExportModal(false);
+      setExportStartDate("");
+      setExportEndDate("");
+    } catch (error) {
+      console.error("Export failed", error);
+      alert("Failed to export shipments. Please try again.");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   // Filter configuration
@@ -590,6 +618,15 @@ const Dashboard: React.FC = () => {
                 (activeTaxFilter !== 'All' ? 1 : 0)
               }
             />
+            {isAdminUser && (
+              <button
+                onClick={() => setExportModal(true)}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-700 bg-white rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors whitespace-nowrap text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
+              >
+                <Download className="w-4 h-4" />
+                Export
+              </button>
+            )}
           </div>
         </div>
 
@@ -971,6 +1008,42 @@ const Dashboard: React.FC = () => {
           setOwnerError(null);
         }}
         onConfirm={handleVerifyOwner}
+      />
+      {/* Export Modal */}
+      <Modal
+        isOpen={exportModal}
+        onClose={() => setExportModal(false)}
+        title="Export Shipments"
+        description={
+          <div className="space-y-4 text-left mt-2">
+            <p className="text-sm text-gray-600">Select a date range to export shipments. Leave blank to export all.</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <input
+                  type="date"
+                  value={exportStartDate}
+                  onChange={(e) => setExportStartDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <input
+                  type="date"
+                  value={exportEndDate}
+                  onChange={(e) => setExportEndDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+              </div>
+            </div>
+          </div>
+        }
+        confirmLabel="Export to CSV"
+        cancelLabel="Cancel"
+        isConfirmLoading={isExporting}
+        onConfirm={handleExport}
+        icon={Download}
       />
     </div>
   );

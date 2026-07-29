@@ -63,6 +63,19 @@ export const updatePaymentStatus = async (id: string, status: 'Paid' | 'Pending'
   await api.patch(`/form/${id}/status`, { status });
 };
 
+export const exportShipments = async (startDate?: string, endDate?: string): Promise<Blob> => {
+  let url = '/form/export';
+  const params = new URLSearchParams();
+  if (startDate) params.append('startDate', startDate);
+  if (endDate) params.append('endDate', endDate);
+  
+  if (params.toString()) {
+    url += `?${params.toString()}`;
+  }
+
+  const response = await api.get(url, { responseType: 'blob' });
+  return response.data;
+};
 
 export const trackShipment = async (awb: string, tenant?: string): Promise<any> => {
   const response = await api.get(`/public/track/${awb}${tenant ? `?tenant=${tenant}` : ''}`);

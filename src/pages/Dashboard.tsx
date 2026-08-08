@@ -503,32 +503,32 @@ const Dashboard: React.FC = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-orange-50/10 rounded-2xl border border-orange-100/50 group transition-all hover:border-orange-200/50 hover:bg-orange-50/20">
+                    <div className="flex items-center justify-between p-4 bg-orange-50/10 dark:bg-orange-900/10 rounded-2xl border border-orange-100/50 dark:border-orange-900/50 group transition-all hover:border-orange-200/50 dark:hover:border-orange-800/50 hover:bg-orange-50/20 dark:hover:bg-orange-900/20">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-50 rounded-xl text-orange-600 group-hover:bg-orange-100 transition-colors">
+                        <div className="p-2 bg-orange-50 dark:bg-orange-900/30 rounded-xl text-orange-600 dark:text-orange-400 group-hover:bg-orange-100 dark:group-hover:bg-orange-900/50 transition-colors">
                           <Package className="w-5 h-5" />
                         </div>
-                        <span className="text-sm font-bold text-gray-700">Cash in Hand</span>
+                        <span className="text-sm font-bold text-gray-700 dark:text-gray-200">Cash in Hand</span>
                       </div>
-                      <span className="font-bold text-gray-900 text-lg">₹{financialBreakdown.collected.cash.toLocaleString()}</span>
+                      <span className="font-bold text-gray-900 dark:text-white text-lg">₹{financialBreakdown.collected.cash.toLocaleString()}</span>
                     </div>
 
-                    <div className="space-y-3 p-4 bg-blue-50/5 rounded-2xl border border-blue-100/20 transition-all hover:border-blue-100/40">
+                    <div className="space-y-3 p-4 bg-blue-50/5 dark:bg-blue-900/10 rounded-2xl border border-blue-100/20 dark:border-blue-900/30 transition-all hover:border-blue-100/40 dark:hover:border-blue-800/40">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 bg-blue-50 rounded-xl text-blue-600">
+                          <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400">
                             <CreditCard
                               className="w-5 h-5" />
                           </div>
-                          <span className="text-sm font-bold text-gray-700">UPI Transfers</span>
+                          <span className="text-sm font-bold text-gray-700 dark:text-gray-200">UPI Transfers</span>
                         </div>
-                        <span className="font-bold text-blue-600 text-lg">₹{financialBreakdown.collected.upi.toLocaleString()}</span>
+                        <span className="font-bold text-blue-600 dark:text-blue-400 text-lg">₹{financialBreakdown.collected.upi.toLocaleString()}</span>
                       </div>
                       <div className="grid grid-cols-2 gap-2 pl-11">
                         {financialBreakdown.collected.upiBreakdown.map((upi, idx) => (
-                          <div key={idx} className="flex justify-between items-center py-2 px-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
-                            <span className="text-[10px] font-bold text-gray-400 truncate mr-2">{upi.name}</span>
-                            <span className="text-[11px] font-black text-gray-700">₹{upi.amount.toLocaleString()}</span>
+                          <div key={idx} className="flex justify-between items-center py-2 px-3 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl border border-gray-100/50 dark:border-gray-700/50">
+                            <span className="text-[10px] font-bold text-gray-400 dark:text-gray-400 truncate mr-2">{upi.name}</span>
+                            <span className="text-[11px] font-black text-gray-700 dark:text-gray-300">₹{upi.amount.toLocaleString()}</span>
                           </div>
                         ))}
                       </div>
@@ -544,31 +544,31 @@ const Dashboard: React.FC = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-gray-50/10 rounded-2xl border border-gray-100/50 group transition-all hover:border-gray-200/50 hover:bg-gray-50/20">
+                    <div className="flex items-center justify-between p-4 bg-gray-50/10 dark:bg-gray-800/20 rounded-2xl border border-gray-100/50 dark:border-gray-700/50 group transition-all hover:border-gray-200/50 dark:hover:border-gray-600/50 hover:bg-gray-50/20 dark:hover:bg-gray-800/40">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gray-50 rounded-xl text-gray-400 group-hover:bg-gray-100 transition-colors">
+                        <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded-xl text-gray-400 dark:text-gray-500 group-hover:bg-gray-100 dark:group-hover:bg-gray-700 transition-colors">
                           <Package className="w-5 h-5" />
                         </div>
-                        <span className="text-sm font-semibold text-gray-500 italic">Expected Cash</span>
+                        <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 italic">Expected Cash</span>
                       </div>
-                      <span className="font-bold text-gray-400 text-lg">₹{financialBreakdown.pending.cash.toLocaleString()}</span>
+                      <span className="font-bold text-gray-400 dark:text-gray-300 text-lg">₹{financialBreakdown.pending.cash.toLocaleString()}</span>
                     </div>
 
-                    <div className="space-y-3 p-4 bg-amber-50/5 rounded-2xl border border-amber-100/20 transition-all hover:border-amber-100/40">
+                    <div className="space-y-3 p-4 bg-amber-50/5 dark:bg-amber-900/10 rounded-2xl border border-amber-100/20 dark:border-amber-900/30 transition-all hover:border-amber-100/40 dark:hover:border-amber-800/40">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 bg-amber-50 rounded-xl text-amber-600">
+                          <div className="p-2 bg-amber-50 dark:bg-amber-900/30 rounded-xl text-amber-600 dark:text-amber-400">
                             <Lock className="w-5 h-5" />
                           </div>
-                          <span className="text-sm font-bold text-gray-700">Expected UPI</span>
+                          <span className="text-sm font-bold text-gray-700 dark:text-gray-200">Expected UPI</span>
                         </div>
-                        <span className="font-bold text-amber-600 text-lg">₹{financialBreakdown.pending.upi.toLocaleString()}</span>
+                        <span className="font-bold text-amber-600 dark:text-amber-400 text-lg">₹{financialBreakdown.pending.upi.toLocaleString()}</span>
                       </div>
                       <div className="grid grid-cols-2 gap-2 pl-11">
                         {financialBreakdown.pending.upiBreakdown.map((upi, idx) => (
-                          <div key={idx} className="flex justify-between items-center py-2 px-3 bg-amber-50/30 rounded-xl border border-amber-100/30">
-                            <span className="text-[10px] font-bold text-amber-600/60 truncate mr-2">{upi.name}</span>
-                            <span className="text-[11px] font-black text-amber-900">₹{upi.amount.toLocaleString()}</span>
+                          <div key={idx} className="flex justify-between items-center py-2 px-3 bg-amber-50/30 dark:bg-amber-900/20 rounded-xl border border-amber-100/30 dark:border-amber-800/30">
+                            <span className="text-[10px] font-bold text-amber-600/60 dark:text-amber-500/80 truncate mr-2">{upi.name}</span>
+                            <span className="text-[11px] font-black text-amber-900 dark:text-amber-400">₹{upi.amount.toLocaleString()}</span>
                           </div>
                         ))}
                       </div>

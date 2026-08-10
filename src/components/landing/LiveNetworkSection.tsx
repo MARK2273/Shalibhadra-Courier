@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
 import { MapPin, Activity } from "lucide-react";
 
 interface NodeData {
@@ -31,8 +31,6 @@ const routes = [
 ];
 
 const LiveNetworkSection: React.FC = () => {
-  const [hoveredNode, setHoveredNode] = useState<NodeData | null>(null);
-
   return (
     <section id="network" className="py-24 bg-white dark:bg-[#0B1120] relative overflow-hidden z-20">
       

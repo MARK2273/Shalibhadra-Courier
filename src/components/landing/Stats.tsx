@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { motion, useInView, useAnimation, useIsomorphicLayoutEffect } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 const AnimatedNumber = ({ value, suffix = "" }: { value: number; suffix?: string }) => {
   const ref = useRef<HTMLSpanElement>(null);

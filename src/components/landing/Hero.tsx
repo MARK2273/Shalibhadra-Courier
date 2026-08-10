@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Search, ArrowRight, Loader2, MapPin, Package as PackageIcon } from "lucide-react";
 import { trackShipment } from "../../api/api";
 import { brandKey } from "../../constants/courierConfig";
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "../../utils/cn";
 
 const Hero: React.FC = () => {
@@ -49,12 +49,12 @@ const Hero: React.FC = () => {
     }
   };
 
-  const textVariants = {
+  const textVariants: any = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
   };
 
-  const containerVariants = {
+  const containerVariants: any = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
   };
